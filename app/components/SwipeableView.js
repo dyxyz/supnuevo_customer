@@ -13,6 +13,7 @@ export default class SwipeableView extends React.PureComponent {
     swipeableStyle: PropTypes.object || null,
     onDownSwipe: PropTypes.function || null,
     onUpSwipe: PropTypes.function || null,
+    onMorePress: PropTypes.function || null,
     onLeftSwipe: PropTypes.function || null,
     onRightSwipe: PropTypes.function || null,
   };
@@ -56,6 +57,7 @@ export default class SwipeableView extends React.PureComponent {
     if(_moveLeft > constants.SWIPE_DISTANCE && this.props.onRightSwipe)this.props.onRightSwipe();
     if(_moveTop < constants.RE_SWIPE_DISTANCE && this.props.onUpSwipe)this.props.onUpSwipe();
     if(_moveTop > constants.SWIPE_DISTANCE && this.props.onDownSwipe)this.props.onDownSwipe();
+    if(Math.abs(_moveTop)<constants.SWIPE_DISTANCE)this.props.onMorePress();
   }
 
   componentWillMount(evt, gestureState){

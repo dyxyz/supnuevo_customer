@@ -10,6 +10,34 @@ import * as authActions from "../actions/auth-actions";
 import * as rootActions from "../actions/root-actions";
 import strings from '../resources/strings';
 
+
+// 获取客户帮助信息
+function* getCustomerHelp (action) {
+    try {
+        const helpType=action.helpType;
+        const response = yield call(Api.getCustomerHelp,helpType);
+        if (response.re == 1) {
+          if(helpType=='01') {
+              const help = response.data;
+              yield put(authActions.getCustomerHelpSuccess(help));
+          }
+          else if(helpType=='02'){
+              const registerHelp = response.data;
+              yield put(authActions.getRegisterHelpSuccess(registerHelp));
+          }
+          else{
+              const loggedHelp = response.data;
+              yield put(authActions.getLoggedHelpSuccess(loggedHelp));
+          }
+        }
+        else {
+            yield put(authActions.getCustomerHelpFail(strings.getCustomerHelpFail));
+        }
+    } catch (error) {
+        yield put(authActions.getCustomerHelpFail(error));
+    }
+}
+
 function* login( action ) {
   const {username,password} = action;
 
@@ -95,6 +123,7 @@ function* logOut() {
 }
 
 export default [
+  takeEvery(actions.GET_CUSTOMER_HELP,getCustomerHelp),
   takeEvery(actions.LOGIN_ACTION,login),
   takeEvery(actions.REGISTER_ACTION,register),
   takeEvery(actions.SET_DEFAULT_MERCHANT,setCustomerDefaultMerchant),

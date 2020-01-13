@@ -74,7 +74,9 @@ export class UnionList extends Component {
                   style={styles.listView}
                   automaticallyAdjustContentInsets={false}
                   dataSource={ds.cloneWithRows(unions)}
-                  renderRow={this._renderItem}/>
+                  renderRow={this._renderItem}
+                  enableEmptySections={true}
+              />
           </View>:null
       );
   }

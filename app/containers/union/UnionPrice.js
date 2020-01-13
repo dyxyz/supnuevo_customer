@@ -19,6 +19,7 @@ import strings from "../../resources/strings";
 import RefreshListView from "../../components/RefreshListView";
 import {SpinnerWrapper} from "../../components/SpinnerLoading";
 import * as rootActions from "../../actions/root-actions";
+import commodityDetail from "../CommodityDetail";
 
 const count = constants.PRICE_LIST_PAGE;
 
@@ -72,9 +73,10 @@ export class UnionPrice extends Component {
 
         return (
             <View style={styles.container}>
-                <TopToolBar title="价格表" navigation={this.props.navigation}
-                            _onLeftIconPress={this._onVolumeIconPress}
-                            _onRightIconPress={this._onHelpIconPress}/>
+                {/*<TopToolBar title="价格表" navigation={this.props.navigation}*/}
+                            {/*_onLeftIconPress={this._onVolumeIconPress}*/}
+                            {/*_onRightIconPress={this._onHelpIconPress}/>*/}
+                <View style={{width:SCREEN_WIDTH,backgroundColor:colors.primaryColor,height:SCREEN_HEIGHT*0.05}}/>
                 {this._renderSearchBar()}
                 {this._renderPriceList()}
                 <BottomToolBar navigation={this.props.navigation}
@@ -93,6 +95,7 @@ export class UnionPrice extends Component {
                 _onSearchPress={this._onSearchPress}
                 searchResult={this.state.searchResult}
                 searchText={this.state.searchText}
+                placeText={strings.placeholderText}
             />
         );
     }
@@ -143,9 +146,14 @@ export class UnionPrice extends Component {
                 style={styles.listItemStyle}
                 subtitleStyle={styles.subtitleText}
                 rightTitleStyle={styles.rightTitle}
+                onPress={()=>{this.navigateToDetail(price)}}
             />
         );
     };
+
+    navigateToDetail=(price)=> {
+        this.props.navigation.push("commodityDetail",{price:price});
+    }
 
     _onVolumeIconPress = () => {
     };
@@ -154,6 +162,7 @@ export class UnionPrice extends Component {
     };
 
     _onMicrophonePress = () => {
+        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count));
     };
 
     _onBackIconPress = () => {

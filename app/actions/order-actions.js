@@ -76,3 +76,23 @@ export function resetOrderResponse() {
     type: actions.RESET_ORDER_RESPONSE,
   }
 }
+
+export function cancelOrder (orderId) {
+    return {
+        type: actions.CANCEL_ORDER,
+        orderId: orderId
+    };
+}
+
+export function cancelCustomerOrderSuccess() {
+    return {
+        type: actions.CANCEL_ORDER_SUCCESS,
+    };
+}
+
+export function cancelCustomerOrderFail(error) {
+    return {
+        type: actions.CANCEL_ORDER_FAIL,
+        error: error,
+    };
+}

@@ -6,12 +6,13 @@ import React, {Component} from "react";
 import {Image, StatusBar, StyleSheet, Text, View} from "react-native";
 import {connect} from "react-redux";
 import {TopToolBar} from '../components/TopToolBar';
-import {BottomToolBar, ACTION_BACK, ACTION_DISCOUNT} from '../components/BottomToolBar';
+import {BottomToolBar, ACTION_BACK, ACTION_DISCOUNT,ACTION_LOGOUT} from '../components/BottomToolBar';
 import * as authActions from "../actions/auth-actions";
 import constants from '../resources/constants';
 import Button from "../components/Button";
 
 export class RootPage extends Component {
+
 
     constructor(props) {
         super(props);
@@ -31,21 +32,21 @@ export class RootPage extends Component {
             <TopToolBar title = "首页" navigation = {this.props.navigation}
                         _onLeftIconPress={this._onVolumeIconPress}
                         _onRightIconPress={this._onHelpIconPress}/>
-                <View style={styles.buttonWrapper}><Button title={'逛店/选择我的超市'} onPress={()=>navigator.push('UnionStack')}/></View>
+                <View style={styles.buttonWrapper}><Button title={'逛店/选择我的超市'} iconName={'isv'} onPress={()=>navigator.push('UnionStack')}/></View>
                 {this.props.unionId == null || this.props.unionId == undefined?
 
-                        <View style={styles.buttonWrapper}><Button title={'购物'} onPress={() => {alert("请选择联盟再进行购物")}}/></View>
+                        <View style={styles.buttonWrapper}><Button title={'购物'} iconName={'shoppingcart'} onPress={() => {alert("请选择联盟再进行购物")}}/></View>
 
                     :
 
-                        <View style={styles.buttonWrapper}><Button title={'购物'} onPress={() => navigator.push('ShoppingStack')}/></View>
+                        <View style={styles.buttonWrapper}><Button title={'购物'} iconName={'shoppingcart'} onPress={() => navigator.push('ShoppingStack')}/></View>
 
                 }
             {this.props.unionId == null || this.props.unionId == undefined?
 
-                <View style={styles.buttonWrapper}><Button title={'下订单/我的订单'} onPress={()=>{alert("请选择联盟")}}/></View>
+                <View style={styles.buttonWrapper}><Button title={'下订单/我的订单'} iconName={'pay-circle-o1'} onPress={()=>{alert("请选择联盟")}}/></View>
                 :
-                <View style={styles.buttonWrapper}><Button title={'下订单/我的订单'} onPress={()=>navigator.push('OrderStack')}/></View>
+                <View style={styles.buttonWrapper}><Button title={'下订单/我的订单'} iconName={'pay-circle-o1'} onPress={()=>navigator.push('OrderStack')}/></View>
 
             }
 
@@ -53,7 +54,11 @@ export class RootPage extends Component {
 
 
 
-            <BottomToolBar navigation = {this.props.navigation}/>
+            <BottomToolBar
+                navigation = {this.props.navigation}
+                rightAction = {ACTION_LOGOUT}
+                _onRightIconPress = {this._onLogOutIconPress}
+            />
         </View>
     );
   }
@@ -62,6 +67,9 @@ export class RootPage extends Component {
 
     _onVolumeIconPress =() =>{};
     _onHelpIconPress =() =>{};
+    _onLogOutIconPress=()=>{this.props.dispatch(authActions.logout(1,this.props.username,this.props.password));
+        this.props.navigation.navigate('AuthStack');
+    }
 
 };
 

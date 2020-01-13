@@ -40,7 +40,9 @@ import * as orderActions from "../../actions/order-actions";
 import * as authActions from "../../actions/auth-actions";
 import IntroDivider from "../../components/IntroDivider";
 
-const orderState = constants.ORDER_STATE;
+const orderStateSubmit = constants.ORDER_STATE_SUBMIT;
+const orderStateConfirm = constants.ORDER_STATE_CONFIRM;
+const orderStateFinished = constants.ORDER_STATE_FINISHED;
 
 export class OrderHistory extends Component {
 
@@ -53,7 +55,7 @@ export class OrderHistory extends Component {
   }
 
     componentDidMount() {
-        this.props.dispatch(orderActions.getOrderListOfDate(null,orderState));
+        this.props.dispatch(orderActions.getOrderListOfDate(null,orderStateSubmit));
         // this.setState({orderDate:this.getmyDate()});
     }
 
@@ -82,12 +84,16 @@ export class OrderHistory extends Component {
 
   switchToUnDone(){
       this.setState({doneState:1})
-      this.props.dispatch(orderActions.getOrderListOfDate(null,orderState));
+      this.props.dispatch(orderActions.getOrderListOfDate(null,orderStateSubmit));
+  }
+  switchToConfirm(){
+      this.setState({doneState:2})
+      this.props.dispatch(orderActions.getOrderListOfDate(null,orderStateConfirm));
   }
 
     switchToDone(){
         this.setState({doneState:0})
-        this.props.dispatch(orderActions.getOrderListOfDate(this.state.orderDate,null));
+        this.props.dispatch(orderActions.getOrderListOfDate(this.state.orderDate,orderStateFinished));
     }
 
   render() {
@@ -104,26 +110,31 @@ export class OrderHistory extends Component {
                           _onRightIconPress={this._onHelpIconPress}/>
               <ScrollView>
               <View style={{width:SCREEN_WIDTH,flexDirection:"row",backgroundColor:'#eee'}}>
-                  <CheckBox containerStyle={{width:SCREEN_WIDTH*0.46,height:SCREEN_HEIGHT*0.05,alignItems:"center"}}
-                            checkedIcon={<View><View><Text style={{color:"#2874F0"}}>未完成订单</Text></View><View style={styles.bottom}/></View>}
-                            uncheckedIcon={<View><Text>未完成订单</Text></View>}
+                  <CheckBox containerStyle={styles.check}
+                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}}>已提交订单</Text></View><View style={styles.bottom}/></View>}
+                            uncheckedIcon={<View><Text>已提交订单</Text></View>}
                             checked={this.state.doneState === 1}
                             onPress={() =>this.switchToUnDone() }
                   />
                   <View style={{borderWidth:0.5}}/>
-                  <CheckBox containerStyle={{width:SCREEN_WIDTH*0.46,height:SCREEN_HEIGHT*0.05,alignItems:"center"}}
-                            checkedIcon={<View><View><Text style={{color:"#2874F0"}}>全部订单</Text></View><View style={styles.bottom}/></View>}
-                            uncheckedIcon={<View><Text>全部订单</Text></View>}
+                  <CheckBox containerStyle={styles.check}
+                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}}>已确认订单</Text></View><View style={styles.bottom}/></View>}
+                            uncheckedIcon={<View><Text>已确认订单</Text></View>}
+                            checked={this.state.doneState === 2}
+                            onPress={() =>this.switchToConfirm()}
+                  />
+                  <View style={{borderWidth:0.5}}/>
+                  <CheckBox containerStyle={styles.check}
+                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}}>已完成订单</Text></View><View style={styles.bottom}/></View>}
+                            uncheckedIcon={<View><Text>已完成订单</Text></View>}
                             checked={this.state.doneState === 0}
                             onPress={() =>this.switchToDone()}
                   />
+
               </View>
                   {
-                      this.state.doneState==1?
-                          <View style={styles.scrollViewContanier}>
-                              {orderListView}
-                          </View>
-                          :
+                      this.state.doneState==0?
+
                           <View style={styles.scrollViewContanier}>
                               <InputWithCalendar
                                   title={strings.orderDate}
@@ -134,6 +145,11 @@ export class OrderHistory extends Component {
                                   }}/>
                               {orderListView}
                           </View>
+                          :
+                          <View style={styles.scrollViewContanier}>
+                              {orderListView}
+                          </View>
+
 
                   }
               {/*<View style={styles.scrollViewContanier}>*/}
@@ -162,14 +178,47 @@ export class OrderHistory extends Component {
           <View style={styles.containerStyle}>
               <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
                   <Text style={styles.contentText}>订单状态：</Text>
-              {order.orderState==1?
-                    <Text  style={styles.contentText}>已被商家{order.nickName}接单</Text>
-              :
-                    <Text  style={styles.contentText}>未接单</Text>
-              }
+                  {this.renderState(order.orderState,order.nickName)}
+              {/*{order.orderState==1?*/}
+                    {/*<Text  style={styles.contentText}>已被商家{order.nickName}接单</Text>*/}
+              {/*:*/}
+                    {/*<Text  style={styles.contentText}>未接单</Text>*/}
+              {/*}*/}
               </View>
+          </View>;
+      let button=
+          <View>
+              {
+                  this.state.doneState==1?
+                  <View style={{height:SCREEN_HEIGHT*0.05,width:SCREEN_WIDTH*0.9,justifyContent:"center",alignItems:"flex-end",marginTop:10}}>
+                      <TouchableOpacity
+                          onPress={()=>this.cancelButton(order.orderId)}
+                      >
+                          <View style={styles.button}>
+                              <Text style={{color:"white"}}>取消订单</Text>
+                          </View>
+                      </TouchableOpacity>
+                  </View>
+                  :
+                  null
+              }
           </View>
-      return ([divider,orderView,itemView,state]);
+      return ([divider,orderView,itemView,state,button]);
+  }
+
+  renderState(orderState,nickName){
+      if(orderState==0){
+          const state=<Text  style={styles.contentText}>未接单</Text>;
+          return state;
+      }
+      if(orderState==1){
+          const submitState=<Text  style={styles.contentText}>已被商家{nickName}接单</Text>;
+          return submitState;
+      }
+      if(orderState==2){
+          const finishState=<Text  style={styles.contentText}>已结束</Text>;
+          return finishState;
+      }
   }
 
     _renderBasicInfo(order){
@@ -218,6 +267,10 @@ export class OrderHistory extends Component {
   _onHelpIconPress =() =>{};
 
   _onBackIconPress=() =>this.props.navigation.pop();
+
+    cancelButton(orderId){
+        this.props.dispatch(orderActions.cancelOrder(orderId))
+    }
 };
 
 const styles = StyleSheet.create({
@@ -245,6 +298,13 @@ const styles = StyleSheet.create({
         // textAlign:'left',
 
     },
+    check:{
+        width:SCREEN_WIDTH*0.28,
+        height:SCREEN_HEIGHT*0.05,
+        alignItems:"center",
+        // borderWidth:1,
+        // borderColor:"red",
+    },
     basicInfoContainer:{
         flex:1,
         width: SCREEN_WIDTH,
@@ -262,10 +322,23 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     bottom:{
-        backgroundColor:"#2874F0",
+        backgroundColor:colors.primaryColor,
         height:SCREEN_HEIGHT*0.008,
         marginTop:SCREEN_HEIGHT*0.01,
         // width:SCREEN_WIDTH*0.46,
+    },
+    button:{
+        // borderWidth:1,
+        // borderColor:"white",
+        borderRadius:SCREEN_WIDTH*0.02,
+        width:SCREEN_WIDTH*0.25,
+        // position:"absolute",
+        // right:10,
+        // top:10,
+        alignItems:"center",
+        height:SCREEN_HEIGHT*0.05,
+        justifyContent:"center",
+        backgroundColor:colors.primaryColor,
     }
 });
 

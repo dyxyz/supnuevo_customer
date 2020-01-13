@@ -6,6 +6,16 @@
 import constants from "../resources/constants";
 import {post} from '../utils/httpUtils'
 
+
+export function getCustomerHelp (helpType) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/help/getSupnuevoCustomerHelpListByHelpType';
+    const body = {
+        helpType:helpType,
+    };
+
+    return post(url ,body);
+}
+
 // 登录
 export function webLogin (username, password) {
   const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/auth/webLogin';

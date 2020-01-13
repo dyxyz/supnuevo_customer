@@ -20,6 +20,7 @@ const ICON_TYPE = 1;
 
 const ACTION_HOME={name:'md-home', type: ICON_TYPE};
 const ACTION_BACK={name:'md-arrow-back', type: ICON_TYPE};
+const ACTION_LOGOUT={name:'md-log-out', type: ICON_TYPE};
 const ACTION_PRICE={name:'价格表', type: TEXT_TYPE};
 const ACTION_DISCOUNT={name:'折扣', type: TEXT_TYPE};
 const ACTION_RULE={name:'规则', type: TEXT_TYPE};
@@ -72,7 +73,7 @@ class BottomToolBar extends Component{
       case TEXT_TYPE:
         return (<Text style={styles.textStyle}>{action.name}</Text>);
       case ICON_TYPE:
-        return ( <Ionicons name={action.name} size={25} color="#fff"/>);
+        return ( <Ionicons name={action.name} size={30} color="#fff"/>);
     }
   }
 
@@ -107,6 +108,7 @@ var styles = StyleSheet.create({
 const bottomToolBar ={
   get BottomToolBar() {return BottomToolBar},
   get ACTION_HOME() {return ACTION_HOME},
+  get ACTION_LOGOUT() {return ACTION_LOGOUT},
   get ACTION_BACK() {return ACTION_BACK},
   get ACTION_PRICE(){return ACTION_PRICE},
   get ACTION_DISCOUNT(){return ACTION_DISCOUNT},

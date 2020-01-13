@@ -68,8 +68,26 @@ function* submitSupnuevoCustomerOrder (action) {
   }
 }
 
+// 取消订单
+function* cancelCustomerOrder (action) {
+    const {orderId} = action;
+    try {
+        const response = yield call(Api.cancelCustomerOrder, orderId);
+        if (response.re === 1) {
+            yield put(orderActions.cancelCustomerOrderSuccess(strings.submitOrderSuccess));
+            yield put(orderActions.getOrderListOfDate(null,0));
+        }
+
+        else {
+            yield put(orderActions.cancelCustomerOrderFail(strings.submitOrderFail));
+        }
+    } catch (error) {
+        yield put(orderActions.cancelCustomerOrderFail(error))
+    }
+}
 export default [
   takeEvery(actions.GET_PREV_ORDER, getSupnuevoCustomerOrderPrevInfo),
   takeEvery(actions.GET_ORDER_LSIT, getSupnuevoCustomerOrderListOfDate),
   takeEvery(actions.SUBMIT_ORDER_INFO, submitSupnuevoCustomerOrder),
+  takeEvery(actions.CANCEL_ORDER, cancelCustomerOrder),
 ]

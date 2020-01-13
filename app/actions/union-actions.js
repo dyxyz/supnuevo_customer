@@ -104,11 +104,12 @@ export function getUnionPriceList(unionId, start, count,cartId) {
   };
 }
 
-export function getUnionPriceListLucene(unionId, userInput, start ,count) {
+export function getUnionPriceListLucene(unionId, userInput,cartId, start ,count) {
   return {
     type: actions.GET_PRICE_LIST_LUCENE,
     unionId: unionId,
     userInput: userInput,
+    cartId:cartId,
     start: start,
     count: count,
   };

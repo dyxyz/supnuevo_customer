@@ -42,6 +42,13 @@ export default function orderReducer(state, action = {}) {
       return state.withMutations(state => state
           .set('dataResponse', constants.INITIAL)
           .set('dataError', ''));
+      case actions.CANCEL_ORDER_SUCCESS:
+          return state.withMutations(state => state
+              .set('dataResponse', constants.CANCEL_ORDER_SUCCESS));
+      case actions.CANCEL_ORDER_FAIL:
+          return state.withMutations(state => state
+              .set('dataResponse', constants.CANCEL_ORDER_FAIL)
+              .set('dataError', action.error));
     default:
       return state
   }

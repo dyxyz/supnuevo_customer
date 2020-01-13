@@ -70,24 +70,24 @@ export class OrderRule extends Component {
 
               <View style={styles.scrollViewWrapper}>
                   <View >
-                    <Text style={[styles.ruleText,{fontSize:25}]}>{regulation.unionName}</Text>
+                    <Text style={[styles.ruleText,{fontSize:25,lineHeight:28}]}>{regulation.unionName}</Text>
                   </View>
 
                   <View style={styles.regulation}>
                       <ScrollView>
                           <View>
-                              <Text style={styles.ruleText}>
+                              <Text style={styles.ruleText} allowFontScaling={false}>
                                   本店最低购买量为实际购买金额不小于{regulation.orderMinLimit}peso;
                               </Text>
                           </View>
                           <View>
-                              <Text style={styles.ruleText}>
+                              <Text style={styles.ruleText} allowFontScaling={false}>
                                   折扣商品不大于总购买量的{regulation.discountScale}%;
                               </Text>
                           </View>
 
-                          <View style={{marginBottom:20,marginTop:25,height:SCREEN_HEIGHT*0.5}}>
-                              <Text style={styles.ruleText}>
+                          <View style={{marginBottom:20,marginTop:25}}>
+                              <Text style={styles.ruleText} allowFontScaling={false}>
                                   {regulation.regulation}
                               </Text>
                           </View>
@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
         textAlign:'center',
         fontSize:20,
         margin:25,
+        lineHeight:24,
     },
     regulation:{
         height:SCREEN_HEIGHT*0.6,

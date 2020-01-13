@@ -5,20 +5,23 @@
 import React, {Component} from "react";
 
 import { createStackNavigator} from 'react-navigation';
+import loggedHelp from './LoggedHelp';
 import RootPage from './RootPage';
 import UnionStack from './union/UnionStack';
 import ShoppingStack from './shopping/ShppingStack';
 import OrderStack from './order/OrderStack';
 
 const Routes = {
+    UnionStack: {screen: UnionStack},
+  loggedHelp:{screen: loggedHelp},
   RootPage: {screen: RootPage},
-  UnionStack: {screen: UnionStack},
+
   ShoppingStack: {screen: ShoppingStack},
   OrderStack: {screen: OrderStack},
 };
 
 const RootStack = createStackNavigator(Routes, {
-  initialRouteName: 'RootPage',
+  initialRouteName: 'loggedHelp',
   headerMode: 'screen',
   defaultNavigationOptions: {
     header:null

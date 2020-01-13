@@ -51,6 +51,10 @@ const initialState = new Immutable.Map({
     cartId: '',
     dataError: '',
     dataResponse: constants.INITIAL,
+    help:null,
+    registerHelp:null,
+    loggedHelp:null,
+    helpError:null,
   }),
   union: Immutable.Map({
     union: null,

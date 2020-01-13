@@ -59,11 +59,12 @@ export function getSupnuevoBuyerUnionPriceList(unionId, start, count,cartId) {
 }
 
 // 搜索引擎获取价格表
-export function getSupnuevoBuyerUnionPriceListLucene(unionId, userInput, start, count) {
+export function getSupnuevoBuyerUnionPriceListLucene(unionId, userInput,cartId, start, count) {
   const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/union/getSupnuevoBuyerUnionPriceListLucene';
   const body = {
     unionId: unionId,
     userInput: userInput,
+    cartId:cartId,
     start: start,
     count: count,
   };

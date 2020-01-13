@@ -85,7 +85,9 @@ export class UnionMemberList extends Component {
                   style={styles.listView}
                   automaticallyAdjustContentInsets={false}
                   dataSource={ds.cloneWithRows(merchants)}
-                  renderRow={this._renderItem}/>
+                  renderRow={this._renderItem}
+                  enableEmptySections={true}
+              />
           </View>
       );
   }

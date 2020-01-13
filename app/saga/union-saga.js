@@ -141,10 +141,10 @@ function* getUnionPriceList (action) {
 
 // 搜索引擎
 function* getUnionPriceListLucene (action) {
-  const {unionId, userInput} = action;
+  const {unionId, userInput,cartId} = action;
   try {
     yield put(rootActions.setLoading(true));
-    const response = yield call(Api.getSupnuevoBuyerUnionPriceListLucene, unionId, userInput);
+    const response = yield call(Api.getSupnuevoBuyerUnionPriceListLucene, unionId, userInput,cartId);
     if (response.re == 1) {
       const priceList = response.data;
       yield put(unionActions.getUnionPriceListLuceneSuccess(priceList));

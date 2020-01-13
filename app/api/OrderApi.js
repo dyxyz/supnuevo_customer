@@ -49,3 +49,12 @@ export function getSupnuevoCustomerOrderListOfDate(orderDate,orderState) {
 
   return post(url ,body);
 }
+
+export function cancelCustomerOrder(orderId) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/cancelCustomerOrder';
+    const body = {
+        orderId: orderId,
+    };
+
+    return post(url ,body);
+}

@@ -58,7 +58,8 @@ export class Register extends Component {
             showCenterToast(registerError);
         } else if (isRegisterSuccess) {
             showCenterToast(strings.register_success);
-            this.props.navigation.pop();
+            this.props.navigation.navigate('registerHelp')
+            // this.props.navigation.pop();
             if (this.props.navigation.state.params.callback) {
                 this.props.navigation.state.params.callback(username,password);
             }
@@ -201,7 +202,7 @@ const registerStyles = {
         flexDirection:'row',
         height:45,
         width:300,
-        backgroundColor:colors.primaryColor,
+        backgroundColor:colors.baseBlueLight,
         margin:10,
         marginTop:5,
         padding:10,

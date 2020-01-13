@@ -5,7 +5,8 @@ export default {
 
   // Primary Color
   primaryColorDark: '#1f7c9d',
-  primaryColor: '#387ef5',
+  // primaryColor: '#387ef5',
+  primaryColor:'rgb(238, 134, 51)',
   primaryColorLight:'#8bb3f4',
   primaryGrayLight: '#bbb',
   primaryGray: '#9e9ca3',

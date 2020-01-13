@@ -196,7 +196,7 @@ const loginStyles = StyleSheet.create({
         flexDirection:'row',
         height:45,
         width:300,
-        backgroundColor:colors.primaryColor,
+        backgroundColor:colors.baseBlueLight,
         margin:10,
         marginTop:5,
         padding:10,

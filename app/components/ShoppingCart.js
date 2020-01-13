@@ -46,20 +46,37 @@ export default class ShoppingCart extends React.PureComponent {
       // const image = item.imageUrl && item.imageUrl!==undefined?{uri:strings.head+item.imageUrl}:require('../assets/img/img_logo.png')
       cartItemList.push
       (
-          <SwipeableView key={i} swipeableStyle={styles.picStyle}
-                         onDownSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_DECLINE, item, i)}
-                         onUpSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_ADD, item, i)}
-                         onLeftSwipe={()=>{}}
-                         onRightSwipe={()=>{}}
-          >
-            <Badge value={item.amount} status="error" containerStyle={{ position: 'absolute', top: 1, right: 1 }}/>
-              {
-                  item.imageUrl !=null && item.imageUrl!=undefined?
-                <Image resizeMode="contain" style={{width: 100, height: 80,}} source={{uri:strings.head+item.imageUrl}}/>
-                      :
-                <Text>{item.nombre}</Text>
-              }
-          </SwipeableView>
+
+            <View style={{width: SCREEN_WIDTH*0.24, height: SCREEN_HEIGHT*0.15,alignItems:"center",justifyContent:"center",marginLeft:10}}>
+              <Badge value={item.amount} status="error" containerStyle={{ position: 'absolute', top: 1, right: 1 }}/>
+
+
+              <SwipeableView key={i} swipeableStyle={styles.picStyle}
+                             onDownSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_DECLINE, item, i)}
+                             onUpSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_ADD, item, i)}
+                             onMorePress={()=>this.props.navigateToDetail(item)}
+                             onLeftSwipe={()=>{}}
+                             onRightSwipe={()=>{}}
+              >
+
+                <TouchableOpacity
+                    onPress={()=>this.props.navigateToDetail(item)}
+                >
+                  {
+                      item.imageUrl !=null && item.imageUrl!=undefined?
+                    <Image resizeMode="contain" style={{width:SCREEN_WIDTH*0.15, height: SCREEN_HEIGHT*0.10,}} source={{uri:strings.head+item.imageUrl}}/>
+                          :
+                    <Text>{item.nombre}</Text>
+                  }
+
+                </TouchableOpacity>
+
+              </SwipeableView>
+
+
+            </View>
+
+
       );
     });
     return cartItemList;
@@ -69,7 +86,7 @@ export default class ShoppingCart extends React.PureComponent {
 
 var styles = StyleSheet.create({
   container:{
-    height:140,
+    height:SCREEN_HEIGHT*0.18,
     width:SCREEN_WIDTH,
   },
   IconContainerStyle:{
@@ -87,8 +104,8 @@ var styles = StyleSheet.create({
     fontSize:18
   },
   picStyle: {
-    width: SCREEN_WIDTH*0.2,
-    height: SCREEN_HEIGHT*0.15,
+    width: SCREEN_WIDTH*0.18,
+    height: SCREEN_HEIGHT*0.12,
     margin:10,
     justifyContent: 'center',
     alignItems: 'center',

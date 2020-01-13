@@ -16,7 +16,8 @@ import {
     SafeAreaView,
     StyleSheet,
     ScrollView,
-    ListView
+    ListView,
+    Alert,
 } from "react-native";
 import {connect} from "react-redux";
 import {TopToolBar} from "../../components/TopToolBar";
@@ -36,6 +37,7 @@ import strings from "../../resources/strings";
 import {SpinnerWrapper} from "../../components/SpinnerLoading";
 import NetworkingError from "../union/UnionPrice";
 import RefreshListView from "../../components/RefreshListView";
+
 
 const count = constants.PRICE_LIST_PAGE;
 
@@ -93,7 +95,7 @@ export class ShoppingList extends Component {
     onHeaderRefresh = () => {
         if(this.state.isSearchStatus)return;
 
-        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count));
+        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
         this.setState({start: 1});
     };
 
@@ -101,7 +103,7 @@ export class ShoppingList extends Component {
         if(this.state.isSearchStatus)return;
 
         let curStart = this.state.start + 1;
-        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, this.state.searchText, curStart, count));
+        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, curStart, count, this.props.cartId));
         this.setState({start: curStart});
     };
 
@@ -132,6 +134,7 @@ export class ShoppingList extends Component {
             <ShoppingCart
                 cartInfo={cartInfo}
                 _onUpdateCartCommodity={(type, item, i)=>this._onUpdateCartCommodity(type, item, i)}
+                navigateToDetail={(price)=>this.navigateToDetail(price)}
             />
         );
     }
@@ -208,6 +211,7 @@ export class ShoppingList extends Component {
                 subtitleStyle={styles.subtitleText}
                 rightTitleStyle={styles.rightTitle}
                 onPress={() => this._onPriceListCommodityPress(price,index)}
+                onLongPress={()=>{this.navigateToDetail(price)}}
             />
         );
     }
@@ -216,7 +220,9 @@ export class ShoppingList extends Component {
 
     _onHelpIconPress =() =>{};
 
-    _onMicrophonePress = ()=>{};
+    _onMicrophonePress = ()=>{
+        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
+    };
 
     _onUpdateCartCommodity = (type, item, i) => {
         this.props.dispatch(shoppingActions.updateCartInfo(this._transFromPriceToCartInfo(item, type), this.props.unionId));
@@ -235,7 +241,7 @@ export class ShoppingList extends Component {
 
     _onSearchPress = () => {
         this.setState({isSearchStatus: true});
-        this.props.dispatch(unionActions.getUnionPriceListLucene(this.props.unionId, this.state.searchText));
+        this.props.dispatch(unionActions.getUnionPriceListLucene(this.props.unionId, this.state.searchText,this.props.cartId));
     };
 
     _onPriceListCommodityPress = (price, index) => {
@@ -252,6 +258,10 @@ export class ShoppingList extends Component {
         }
         const carInfo = {itemId: price.itemId, commodityId: price.commodityId, amount: amount,cartId:this.props.cartId};
         return carInfo;
+    }
+
+    navigateToDetail=(price)=> {
+        this.props.navigation.push("commodityDetail",{price:price});
     }
 
 };

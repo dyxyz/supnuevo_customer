@@ -4,6 +4,42 @@
 
 import * as actions from "../actions/action-types";
 
+
+export function getCustomerHelp(helpType) {
+    return {
+        type: actions.GET_CUSTOMER_HELP,
+        helpType:helpType,
+    }
+}
+
+export function getRegisterHelpSuccess(registerHelp) {
+    return {
+        type: actions.GET_REGISTER_HELP_SUCCESS,
+        registerHelp:registerHelp,
+    }
+}
+
+export function getLoggedHelpSuccess(loggedHelp) {
+    return {
+        type: actions.GET_LOGGED_HELP_SUCCESS,
+        loggedHelp:loggedHelp,
+    }
+}
+
+export function getCustomerHelpSuccess(help) {
+    return {
+        type: actions.GET_CUSTOMER_HELP_SUCCESS,
+        help:help,
+    }
+}
+
+export function getCustomerHelpFail(error) {
+    return {
+        type: actions.GET_CUSTOMER_HELP_FAIL,
+        error:error,
+    }
+}
+
 // login
 export function login(username, password) {
   return {

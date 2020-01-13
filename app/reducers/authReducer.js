@@ -7,6 +7,18 @@ import constants from "../resources/constants";
 
 export default function authReducer(state, action = {}) {
   switch (action.type) {
+      case actions.GET_CUSTOMER_HELP_SUCCESS:
+          return state.withMutations(state => state
+              .set('help', action.help));
+      case actions.GET_REGISTER_HELP_SUCCESS:
+          return state.withMutations(state => state
+              .set('registerHelp', action.registerHelp));
+      case actions.GET_LOGGED_HELP_SUCCESS:
+          return state.withMutations(state => state
+              .set('loggedHelp', action.loggedHelp));
+      case actions.GET_CUSTOMER_HELP_FAIL:
+          return state.withMutations(state => state
+              .set('helpError', action.error));
     case actions.LOGIN_ERROR:
       return state.withMutations(state => state
           .set('isLoggedIn', false)

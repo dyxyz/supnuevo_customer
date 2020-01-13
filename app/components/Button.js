@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Image, StyleSheet, TextInput, ViewPropTypes, Text, TouchableOpacity} from 'react-native';
+import IconA from 'react-native-vector-icons/AntDesign';
 import PropTypes from 'prop-types';
 import colors from '../resources/colors';
 import {SCREEN_WIDTH} from "../utils/tools";
@@ -7,6 +8,7 @@ import {SCREEN_WIDTH} from "../utils/tools";
 export default class Button extends React.PureComponent {
   static propTypes = {
     title: PropTypes.string,
+    iconName: PropTypes.string,
   };
 
   render() {
@@ -16,7 +18,8 @@ export default class Button extends React.PureComponent {
     return (
         <View style={styles.container}>
           <TouchableOpacity style={styles.buttonStyle} onPress={this._onPress}>
-            <Text style={styles.textStyle}>{title}</Text>
+            <Text style={styles.textStyle} allowFontScaling={false}>{title}</Text>
+            <IconA style={{marginLeft:8}} name={this.props.iconName} color="white" size={25}/>
           </TouchableOpacity>
         </View>
     );
@@ -35,9 +38,10 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   buttonStyle:{
+    flexDirection:"row",
     borderRadius:5,
     backgroundColor:colors.primaryColor,
-    width: 200,
+    width: SCREEN_WIDTH*0.5,
     height:40,
     justifyContent:'center',
     alignItems:'center',

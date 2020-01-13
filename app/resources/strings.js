@@ -15,6 +15,7 @@ module.exports = new LocalizedStrings({
     commit: "提交",
 
     // auth
+    getCustomerHelpFail:"获取用户帮助失败",
     app_title: "Supnuevo Union",
     login_btn: "登录",
     login_validate_msg: "请将登录信息填写完整",
@@ -94,6 +95,7 @@ module.exports = new LocalizedStrings({
     getUnionPriceListFail: "获取价格表失败",
     getUnionPriceListLuceneFail: "搜索失败",
     getUnionRegulationFail:"获取规则失败",
+    placeholderText:"在价格表中查询商品",
 
     //shopping
     getCartInfoFail: "获取购物车信息失败",
@@ -107,6 +109,7 @@ module.exports = new LocalizedStrings({
     discountFee: "折扣减免总计",
     totalFeeFianl: "实际付款总计",
     orderNum: "订单编号",
+    cancelOrderFail: "取消订单失败",
 
     //imagehead
     head:"https://supnuevo.s3.sa-east-1.amazonaws.com/",

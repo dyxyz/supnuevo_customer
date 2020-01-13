@@ -15,6 +15,7 @@ import {
 } from "../../utils/tools";
 import {connect} from "react-redux";
 import {TopToolBar} from "../../components/TopToolBar";
+import IconA from "react-native-vector-icons/AntDesign"
 import {ACTION_BACK, BottomToolBar,ACTION_HISTORY,ACTION_RULE} from "../../components/BottomToolBar";
 import {InformationItem,TYPE_TEXT} from "../../components/InformationItem";
 import {Button, CheckBox} from "react-native-elements";
@@ -27,6 +28,7 @@ import * as orderActions from "../../actions/order-actions";
 import * as authActions from "../../actions/auth-actions";
 import {transFromOrderItemToArray, transFromDiscountItemToArray, toDecimal2} from '../../utils/tools';
 import Modal from "react-native-modalbox";
+import DatePicker from "react-native-datepicker";
 import {InputWithClearButton, InputWithActionSheet, InputWithCalendar} from '../../components/multiFuncTextInput/index'
 // import {SCREEN_WIDTH, SCREEN_HEIGHT} from "../../utils/tools";
 
@@ -42,6 +44,7 @@ export class OrderCommit extends Component {
             deliveryInfo: {receiverName:'',receiverPhone:'',receiverAddr:'',deliveryType:constants.COMMON_DELIVERY},
             deliveryAddType: constants.ADDR_TYPE,
             deliveryTextInput: "",
+            datetime:'',
         };
     }
 
@@ -109,6 +112,9 @@ export class OrderCommit extends Component {
                         {this._renderCommitButton()}
                     </View>
                 </ScrollView>
+
+
+
                 {this._renderModal()}
                 <BottomToolBar navigation = {this.props.navigation}
                                leftAction={ACTION_HISTORY}
@@ -119,6 +125,8 @@ export class OrderCommit extends Component {
             </View>
         );
     }
+
+
 
     _renderBasicInfo(){
         const customerInfo = this.props.auth.get("customerInfo");
@@ -151,6 +159,32 @@ export class OrderCommit extends Component {
                             <OrderDropdownCell defaultValue={strings.receiverAddr_input} dataList={receiverAddrList} onDropDownSelect={this._onReceiverAddrSelect} onButtonPress={this._onReceiverAddrPress}/>
                             <OrderDropdownCell defaultValue={strings.receiverPhone_input} dataList={receiverPhoneList} onDropDownSelect={this._onReceiverPhoneSelect} onButtonPress={this._onReceiverPhonePress}/>
                             <OrderDropdownCell defaultValue={strings.receiverName_input} dataList={receiverNameList} onDropDownSelect={this._onReceiverNameSelect} onButtonPress={this._onReceiverNamePress}/>
+                            <DatePicker
+                                style={styles.dataTime}
+                                date={this.state.datetime}
+                                mode="datetime"
+                                format="YYYY-MM-DD HH:mm"
+                                confirmBtnText="确定"
+                                cancelBtnText="取消"
+                                placeholder={"选择配送时间"}
+                                customStyles={{
+                                    placeholderText:{
+                                        color:'#646464',
+                                    },
+                                    dateInput: {
+                                        borderWidth:0,
+                                        alignItems:"flex-start",
+                                        marginLeft:5,
+                                    },
+                                    dateIcon:{
+                                        marginRight:5,
+                                    }
+                                }}
+                                placeholderTextColor={"black"}
+                                showIcon={true}
+                                iconComponent={<IconA name={'right'} size={20}/>}
+                                onDateChange={(datetime) => {this.setState({datetime: datetime});}}
+                            />
                         </View>
                         :
                         <View style={{alignItems:"center"}}>
@@ -162,6 +196,32 @@ export class OrderCommit extends Component {
                                 <View style={{flex:1}}><Text style={styles.contentText}>{strings.deliverAddress}</Text></View>
                                 <View style={{flex:2,alignItems:"flex-end"}}><Text style={styles.contentText}>{merchant?merchant.direccion:''}</Text></View>
                             </View>
+                            <DatePicker
+                                style={[styles.dataTime,{marginLeft:0}]}
+                                date={this.state.datetime}
+                                mode="datetime"
+                                format="YYYY-MM-DD HH:mm"
+                                confirmBtnText="确定"
+                                cancelBtnText="取消"
+                                placeholder={"选择取货时间"}
+                                customStyles={{
+                                    placeholderText:{
+                                        color:'#646464',
+                                    },
+                                    dateInput: {
+                                        borderWidth:0,
+                                        alignItems:"flex-start",
+                                        marginLeft:5,
+                                    },
+                                    dateIcon:{
+                                        marginRight:5,
+                                    }
+                                }}
+                                placeholderTextColor={"black"}
+                                showIcon={true}
+                                iconComponent={<IconA name={'right'} size={20}/>}
+                                onDateChange={(datetime) => {this.setState({datetime: datetime});}}
+                            />
                         </View>
                 }
             </View>
@@ -361,6 +421,16 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderColor:'#eee'
     },
+    dataTime:{
+        width:SCREEN_WIDTH-60,
+        // alignItems:'center',
+        // flexDirection:'row',
+        height:40,
+        borderColor:'#cdcdcd',
+        borderWidth:0.5,
+        marginLeft:10,
+        marginBottom:10,
+    },
     deliverInfoCard:{
         width:SCREEN_WIDTH-40,
         flex:1,
@@ -368,6 +438,7 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderRadius:10,
         marginTop: 30,
+        // alignItems:"center",
     },
     tableInfoCard:{
         width:SCREEN_WIDTH-40,
