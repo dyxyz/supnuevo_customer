@@ -15,11 +15,11 @@ export default {
   SPORTS_HOT_BASE_URL: 'http://114.215.99.2',
 
   // SUPNUEVO_TEST_BASE_URL: 'http://211.87.224.41:8080/supnuevo',
-  SUPNUEVO_TEST_BASE_URL:'http://142.4.194.0', //远程测试服务器
-  // SUPNUEVO_TEST_BASE_URL:'211.87.225.196',
-  // SUPNUEVO_TEST_BASE_URL: 'http://union.supnuevo.com.ar', //正式服务器
+  // SUPNUEVO_TEST_BASE_URL:'http://142.4.194.0', //远程测试服务器
+  SUPNUEVO_TEST_BASE_URL: 'http://union.supnuevo.com.ar', //正式服务器
   SUPNUEVO_VENTAS_TEST_BASE_URL: 'http://127.0.0.1:8080/supnuevo_ventas',
   SPORTS_HOT_TEST_BASE_URL: 'http://localhost:8080/badmintonhot',
+  // SUPNUEVO_TEST_BASE_URL:'211.87.225.196',
 
   // STACK
   Title_UnionList: "逛店",

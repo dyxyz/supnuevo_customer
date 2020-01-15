@@ -41,10 +41,10 @@ export class OrderCommit extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            deliveryInfo: {receiverName:'',receiverPhone:'',receiverAddr:'',deliveryType:constants.COMMON_DELIVERY},
+            deliveryInfo: {receiverName:'',receiverPhone:'',receiverAddr:'',deliveryType:constants.COMMON_DELIVERY,datetime:this.getMyDate()},
             deliveryAddType: constants.ADDR_TYPE,
             deliveryTextInput: "",
-            datetime:'',
+
         };
     }
 
@@ -144,6 +144,19 @@ export class OrderCommit extends Component {
         );
     }
 
+    getMyDate() {
+        var date = new Date();
+
+        var year = date.getFullYear().toString();
+        var month = (date.getMonth()+1).toString();
+        var day = date.getDate().toString();
+        var hour =  date.getHours().toString();
+        var minute = date.getMinutes().toString();
+
+        return year+'-'+month+'-'+day+'-'+' '+hour+':'+minute;
+    };
+
+
     _renderDeliverInfo(){
         var {deliveryType} = this.state.deliveryInfo;
         const merchant = this.props.union.get("merchant");
@@ -161,8 +174,9 @@ export class OrderCommit extends Component {
                             <OrderDropdownCell defaultValue={strings.receiverName_input} dataList={receiverNameList} onDropDownSelect={this._onReceiverNameSelect} onButtonPress={this._onReceiverNamePress}/>
                             <DatePicker
                                 style={styles.dataTime}
-                                date={this.state.datetime}
+                                date={this.state.deliveryInfo.datetime}
                                 mode="datetime"
+                                minDate={this.getMyDate()}
                                 format="YYYY-MM-DD HH:mm"
                                 confirmBtnText="确定"
                                 cancelBtnText="取消"
@@ -182,8 +196,8 @@ export class OrderCommit extends Component {
                                 }}
                                 placeholderTextColor={"black"}
                                 showIcon={true}
-                                iconComponent={<IconA name={'right'} size={20}/>}
-                                onDateChange={(datetime) => {this.setState({datetime: datetime});}}
+                                iconComponent={<View style={{flexDirection:"row",alignItems:"center"}}><Text>请选择取货时间</Text><IconA name={'right'} size={20}/></View>}
+                                onDateChange={(datetime) => {this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{datetime: datetime})})}}
                             />
                         </View>
                         :
@@ -198,8 +212,9 @@ export class OrderCommit extends Component {
                             </View>
                             <DatePicker
                                 style={[styles.dataTime,{marginLeft:0}]}
-                                date={this.state.datetime}
+                                date={this.state.deliveryInfo.datetime}
                                 mode="datetime"
+                                minDate={this.getMyDate()}
                                 format="YYYY-MM-DD HH:mm"
                                 confirmBtnText="确定"
                                 cancelBtnText="取消"
@@ -219,8 +234,8 @@ export class OrderCommit extends Component {
                                 }}
                                 placeholderTextColor={"black"}
                                 showIcon={true}
-                                iconComponent={<IconA name={'right'} size={20}/>}
-                                onDateChange={(datetime) => {this.setState({datetime: datetime});}}
+                                iconComponent={<View style={{flexDirection:"row",alignItems:"center"}}><Text>请选择取货时间</Text><IconA name={'right'} size={20}/></View>}
+                                onDateChange={(datetime) => {this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{datetime: datetime})})}}
                             />
                         </View>
                 }
@@ -376,7 +391,7 @@ export class OrderCommit extends Component {
         if(this.checkInfoComplete()!=false) {
             this.props.dispatch(orderActions.submitOrder(this.state.deliveryInfo));
             this.props.dispatch(authActions.login(this.props.username, this.props.password));
-            this.props.dispatch(orderActions.getOrderPrevInfoSuccess(null, null, null, null, null));
+            this.props.dispatch(orderActions.getOrderPrevInfoSuccess(null, null, null, null, null,this.getMyDate()));
         }
     };
 

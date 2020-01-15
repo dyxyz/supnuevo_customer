@@ -230,6 +230,7 @@ export class OrderHistory extends Component {
                         <InformationItem key = {1} type = {TYPE_TEXT} title = {strings.customerMobilePhone} content = {this.props.mobilePhone}/>
                         <InformationItem key = {2} type = {TYPE_TEXT} title = {strings.deliverMobilePhone} content = {order.nomroDetelePhono}/>
                         <InformationItem key = {3} type = {TYPE_TEXT} title = {strings.deliverAddress} content = {order.direccion}/>
+                        <InformationItem key = {4} type = {TYPE_TEXT} title = {strings.expectDeliverTime} content = {order.wiseSaleTime}/>
                     </View>
                     :
                     <View style={styles.basicInfoContainer}>
@@ -238,6 +239,7 @@ export class OrderHistory extends Component {
                         <InformationItem key = {2} type = {TYPE_TEXT} title = {strings.pickMobilePhone} content = {order.receiverPhone}/>
                         <InformationItem key = {3} type = {TYPE_TEXT} title = {strings.pickName} content = {order.receiverName}/>
                         <InformationItem key = {4} type = {TYPE_TEXT} title = {strings.pickAddress} content = {order.receiverAddr}/>
+                        <InformationItem key = {5} type = {TYPE_TEXT} title = {strings.expectFetchTime} content = {order.wiseSaleTime}/>
                     </View>
         );
   }

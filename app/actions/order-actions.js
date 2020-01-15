@@ -31,7 +31,7 @@ export function getOrderPrevInfo () {
   };
 }
 
-export function getOrderPrevInfoSuccess(orderItemList, discountItemList, totalFee, discountFee, totalFeeFinal) {
+export function getOrderPrevInfoSuccess(orderItemList, discountItemList, totalFee, discountFee, totalFeeFinal,datetime) {
   return {
     type: actions.GET_PREV_ORDER_SUCCESS,
     orderItemList: orderItemList,
@@ -39,6 +39,7 @@ export function getOrderPrevInfoSuccess(orderItemList, discountItemList, totalFe
     totalFee: totalFee,
     discountFee: discountFee,
     totalFeeFinal: totalFeeFinal,
+    datetime:datetime,
   };
 }
 

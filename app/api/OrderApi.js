@@ -16,6 +16,7 @@ export function submitSupnuevoCustomerOrder(deliveryInfo) {
           receiverName: deliveryInfo.receiverName,
           receiverPhone: deliveryInfo.receiverPhone,
           submitMode: "1",
+          wiseSaleTime:deliveryInfo.datetime,
       }
   }
   else{
@@ -25,6 +26,7 @@ export function submitSupnuevoCustomerOrder(deliveryInfo) {
           receiverName:null,
           receiverPhone:null,
           submitMode:"1",
+          wiseSaleTime:deliveryInfo.datetime,
       }
   }
 

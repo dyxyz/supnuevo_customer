@@ -87,6 +87,8 @@ module.exports = new LocalizedStrings({
     pickName:"接货人姓名",
     pickMobilePhone:"接货人电话",
     pickAddress:"送货地址",
+    expectDeliverTime:"期望送货时间",
+    expectFetchTime:"期望自提时间",
 
     // union
     getUnionListFail: "获取联盟列表失败",
