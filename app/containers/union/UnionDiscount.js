@@ -58,7 +58,7 @@ export class UnionDiscount extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = "折扣" navigation = {this.props.navigation}
+              <TopToolBar title = {this.props.username+'-'+"折扣"} navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               {datasError?
@@ -147,6 +147,7 @@ const mapStateToProps = (state) => ({
     root: state.get('root'),
     union: state.get('union'),
     unionId: state.get('union').get("union").unionId,
+    username:state.get('auth').get('username'),
 });
 
 export default connect(mapStateToProps)(UnionDiscount)

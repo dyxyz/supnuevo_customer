@@ -25,7 +25,7 @@ export class loggedHelp extends Component {
         return(
             <View style={styles.container}>
                 <View>
-                    <TopToolBar title = "帮助" navigation = {this.props.navigation}
+                    <TopToolBar title = {this.props.username+'-'+"帮助"} navigation = {this.props.navigation}
                                 _onLeftIconPress={this._onVolumeIconPress}
                                 _onRightIconPress={this._onHelpIconPress}
                     />
@@ -113,6 +113,7 @@ const mapStateToProps = (state) => ({
     root: state.get('root'),
     union: state.get('union'),
     help:state.get('auth').get('help'),
+    username:state.get('auth').get('username'),
 });
 
 export default connect(mapStateToProps)(loggedHelp)

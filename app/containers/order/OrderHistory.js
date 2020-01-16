@@ -105,7 +105,7 @@ export class OrderHistory extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = "历史订单" navigation = {this.props.navigation}
+              <TopToolBar title = {this.props.username+'-'+"历史订单"} navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               <ScrollView>
@@ -349,6 +349,7 @@ const mapStateToProps = (state) => ({
     mobilePhone:state.get('auth').get('mobilePhone'),
     root: state.get('root'),
     order: state.get('order'),
+    username:state.get('auth').get('username'),
 });
 
 export default connect(mapStateToProps)(OrderHistory)

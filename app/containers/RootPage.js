@@ -29,7 +29,7 @@ export class RootPage extends Component {
 
     return (
         <View style={styles.container}>
-            <TopToolBar title = "首页" navigation = {this.props.navigation}
+            <TopToolBar title = {this.props.username+'-'+"首页"} navigation = {this.props.navigation}
                         _onLeftIconPress={this._onVolumeIconPress}
                         _onRightIconPress={this._onHelpIconPress}/>
                 <View style={styles.buttonWrapper}><Button title={'逛店/选择我的超市'} iconName={'isv'} onPress={()=>navigator.push('UnionStack')}/></View>

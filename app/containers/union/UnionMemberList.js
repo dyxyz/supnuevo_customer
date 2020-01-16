@@ -58,7 +58,7 @@ export class UnionMemberList extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = {union.unionName} navigation = {this.props.navigation}
+              <TopToolBar title = {this.props.username+'-'+union.unionName} navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               {this._renderMap(edges, merchants)}

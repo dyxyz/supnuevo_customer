@@ -121,6 +121,7 @@ const mapStateToProps = (state) => ({
     root: state.get('root'),
     union: state.get('union'),
     help:state.get('auth').get('help'),
+    username:state.get('auth').get('username'),
 });
 
 export default connect(mapStateToProps)(registerHelp)

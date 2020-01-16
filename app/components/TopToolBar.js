@@ -50,7 +50,7 @@ class TopToolBar extends Component{
               <Ionicons name={ACTION_VOLUME} size={25} color="#fff"/>
             </TouchableOpacity>
 
-            <View style={styles.titleContainerStyle}><Text style={styles.textStyle}>{title}</Text></View>
+            <View style={styles.titleContainerStyle}><Text style={styles.textStyle}>supy-{title}</Text></View>
 
             <TouchableOpacity style={styles.IconContainerStyle} onPress={this.props._onRightIconPress}>
               <Ionicons name={ACTION_HELP} size={25} color="#fff"/>

@@ -100,7 +100,7 @@ export class OrderCommit extends Component {
 
         return (
             <View style={styles.container}>
-                <TopToolBar title = "订单" navigation = {this.props.navigation}
+                <TopToolBar title = {this.props.username+'-'+"订单"} navigation = {this.props.navigation}
                             _onLeftIconPress={this._onVolumeIconPress}
                             _onRightIconPress={this._onHelpIconPress}/>
                 <ScrollView style={styles.scrollView}>

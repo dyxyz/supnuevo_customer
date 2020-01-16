@@ -25,7 +25,7 @@ export class commodityDetail extends Component{
         const imageuri =strings.head+ detail.imageUrl;
         return(
             <View style={styles.container}>
-                <TopToolBar title = "商品详情" navigation = {this.props.navigation}
+                <TopToolBar title = {this.props.username+'-'+"商品详情"} navigation = {this.props.navigation}
                             _onLeftIconPress={this._onVolumeIconPress}
                             _onRightIconPress={this._onHelpIconPress}
                 />
@@ -98,6 +98,7 @@ const mapStateToProps = (state) => ({
     auth: state.get('auth'),
     root: state.get('root'),
     union: state.get('union'),
+    username:state.get('auth').get('username'),
 });
 
 export default connect(mapStateToProps)(commodityDetail)

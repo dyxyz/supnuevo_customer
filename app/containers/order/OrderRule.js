@@ -54,7 +54,7 @@ export class OrderRule extends Component {
       const regulation = this.props.union.get("regulation");
       return (
           <View style={styles.container}>
-              <TopToolBar title = "本店规则" navigation = {this.props.navigation}
+              <TopToolBar title = {this.props.username+'-'+"本店规则"} navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               {this._renderRulePage(regulation)}
@@ -145,6 +145,7 @@ const mapStateToProps = (state) => ({
     root: state.get('root'),
     union: state.get("union"),
     unionId: state.get("union").get("union").unionId,
+    username:state.get('auth').get('username'),
 });
 
 export default connect(mapStateToProps)(OrderRule)

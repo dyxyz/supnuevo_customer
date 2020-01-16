@@ -56,7 +56,7 @@ export class UnionList extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = {constants.Title_UnionList}
+              <TopToolBar title = {this.props.username+'-'+constants.Title_UnionList}
                           navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
@@ -134,6 +134,7 @@ const mapStateToProps = (state) => ({
     auth: state.get('auth'),
     root: state.get('root'),
     union: state.get('union'),
+    username:state.get('auth').get('username'),
 });
 
 export default connect(mapStateToProps)(UnionList)

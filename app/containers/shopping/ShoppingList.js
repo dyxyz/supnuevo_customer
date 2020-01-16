@@ -115,7 +115,7 @@ export class ShoppingList extends Component {
 
         return (
             <View style={styles.container}>
-                <TopToolBar title = {"购物-"+regulation.unionName} navigation = {this.props.navigation}
+                <TopToolBar title = {this.props.username+'-'+regulation.unionName} navigation = {this.props.navigation}
                             _onLeftIconPress={this._onVolumeIconPress}
                             _onRightIconPress={this._onHelpIconPress}/>
                 <IntroDivider intro={"您的购物车共有"+cartNumber+"件商品"} />
