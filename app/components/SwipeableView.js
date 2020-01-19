@@ -11,6 +11,7 @@ var _moveTop = 0;
 export default class SwipeableView extends React.PureComponent {
   static propTypes = {
     swipeableStyle: PropTypes.object || null,
+    swipeRow: PropTypes.string || null,
     onDownSwipe: PropTypes.function || null,
     onUpSwipe: PropTypes.function || null,
     onMorePress: PropTypes.function || null,
@@ -53,11 +54,16 @@ export default class SwipeableView extends React.PureComponent {
   }
 
   _handleSwipeEvent(){
-    if(_moveLeft < constants.RE_SWIPE_DISTANCE && this.props.onLeftSwipe)this.props.onLeftSwipe();
-    if(_moveLeft > constants.SWIPE_DISTANCE && this.props.onRightSwipe)this.props.onRightSwipe();
+    if(_moveLeft < constants.RE_ROW_SWIPE_DISTANCE && this.props.onLeftSwipe)this.props.onLeftSwipe();
+    if(_moveLeft > constants.ROW_SWIPE_DISTANCE && this.props.onRightSwipe)this.props.onRightSwipe();
     if(_moveTop < constants.RE_SWIPE_DISTANCE && this.props.onUpSwipe)this.props.onUpSwipe();
     if(_moveTop > constants.SWIPE_DISTANCE && this.props.onDownSwipe)this.props.onDownSwipe();
-    if(Math.abs(_moveTop)<constants.SWIPE_DISTANCE)this.props.onMorePress();
+    if(this.props.swipeRow=="col") {
+        if (Math.abs(_moveTop) < constants.SWIPE_DISTANCE) this.props.onMorePress();
+    }
+    else{
+        if(Math.abs(_moveLeft)<constants.ROW_SWIPE_DISTANCE)this.props.onMorePress();
+    }
   }
 
   componentWillMount(evt, gestureState){

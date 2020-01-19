@@ -52,8 +52,9 @@ export default class ShoppingCart extends React.PureComponent {
 
 
               <SwipeableView key={i} swipeableStyle={styles.picStyle}
-                             onDownSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_DECLINE, item, i)}
-                             onUpSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_ADD, item, i)}
+                             swipeRow={"col"}
+                             onDownSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_DECLINE, item)}
+                             onUpSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_ADD, item)}
                              onMorePress={()=>this.props.navigateToDetail(item)}
                              onLeftSwipe={()=>{}}
                              onRightSwipe={()=>{}}

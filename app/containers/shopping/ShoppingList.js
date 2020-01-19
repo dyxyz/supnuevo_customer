@@ -37,6 +37,12 @@ import strings from "../../resources/strings";
 import {SpinnerWrapper} from "../../components/SpinnerLoading";
 import NetworkingError from "../union/UnionPrice";
 import RefreshListView from "../../components/RefreshListView";
+import SwipeableView from "../../components/SwipeableView";
+import {SwipeRow,SwipeListView} from 'react-native-swipe-list-view';
+var _SwipeRow: SwipeRow;
+
+var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
 
 
 const count = constants.PRICE_LIST_PAGE;
@@ -51,6 +57,7 @@ export class ShoppingList extends Component {
             searchResult: [],
             selectedPrice: null,
             isSearchStatus: false,
+            listHeight: 0,
         };
     }
 
@@ -188,33 +195,85 @@ export class ShoppingList extends Component {
     renderCell = ({item, index}) => {
         const priceList = this.props.union.get('priceList');
         const price = priceList[index];
-
         return (
-            <ListItem
-                title={price.nombre}
-                subtitle={price.codigo}
-                // rightTitle={
-                //
-                // }
-                rightElement={
-                    <View>
-                        {
-                            price.amount !=null && price.amount!=undefined?
-                                <Badge value={price.amount} status="error" containerStyle={{ position: 'absolute', top: -SCREEN_HEIGHT*0.05, right: -SCREEN_WIDTH*0.02 }}/>
-                                :
-                                null
-                        }
-                        <Text>{price.price}</Text>
-                    </View>}
+            <TouchableOpacity onPress={()=>{this.navigateToDetail(price)}}>
+                <View style={styles.listItemStyle}>
 
-                style={styles.listItemStyle}
-                subtitleStyle={styles.subtitleText}
-                rightTitleStyle={styles.rightTitle}
-                onPress={() => this._onPriceListCommodityPress(price,index)}
-                onLongPress={()=>{this.navigateToDetail(price)}}
-            />
+
+                    <View style={{width: SCREEN_WIDTH*0.85, flexDirection:"row",height: SCREEN_HEIGHT*0.1,alignItems:"center",justifyContent:"center",marginTop:10}}>
+
+
+                        <SwipeRow
+                            ref={(SwipeRow) => { _SwipeRow = SwipeRow; }}
+                            automaticallyAdjustContentInsets={false}
+                            swipeToOpenPercent={100}
+                            scrollToEnd={true}
+                            onRowOpen={(rowKey, rowMap) => {
+                                if (rowKey > 0) {
+                                    this._onUpdateCartCommodity(constants.CART_ADD, price,rowKey)
+                                }
+                                else if (rowKey < 0) {
+                                    this._onUpdateCartCommodity(constants.CART_DECLINE, price,rowKey)
+                                }
+                            }}
+                            // onSwipeValueChange={this.onAuxRowDidClose.bind(this)}
+                            leftOpenValue={0.5}
+                            rightOpenValue={-0.5}
+                        >
+
+                            <View style={styles.rowBack}>
+                                        <TouchableOpacity onPress={() => {
+                                            this._onUpdateCartCommodity(constants.CART_ADD, price)
+                                        }}><Text style={{color:"white"}}>+1</Text></TouchableOpacity>
+                                        <TouchableOpacity onPress={() => {
+                                            this._onUpdateCartCommodity(constants.CART_DECLINE, price)
+                                        }}><Text  style={{color:"white"}}>-1</Text></TouchableOpacity>
+                            </View>
+
+                                <View>
+                                    <TouchableOpacity
+                                        onPress={()=>{this.navigateToDetail(price)}}
+                                        style={{width: SCREEN_WIDTH*0.85, flexDirection:"row",height: SCREEN_HEIGHT*0.1,alignItems:"center",justifyContent:"space-between"}}
+                                    >
+                                    <View style={{marginLeft:10}}>
+                                        <Text>{price.nombre}</Text>
+                                        <Text style={styles.subtitleText}>{price.codigo}</Text>
+                                    </View>
+                                    <View style={{marginRight:10,justifyContent:"center"}}>
+
+                                        <Text>{price.price}</Text>
+                                    </View>
+                                    </TouchableOpacity>
+                                </View>
+
+
+
+                        </SwipeRow>
+                        <View>
+                            {
+                                price.amount !=null && price.amount!=undefined?
+                                    <Badge value={price.amount} status="error" containerStyle={{ position: 'absolute', top: -SCREEN_HEIGHT*0.07, right: -SCREEN_WIDTH*0.012 }}/>
+                                    :
+                                    null
+                            }
+                        </View>
+
+
+                    </View>
+                </View>
+
+
+
+
+
+            </TouchableOpacity>
         );
-    }
+    };
+
+
+
+
+
 
     _onVolumeIconPress =() =>{};
 
@@ -224,8 +283,15 @@ export class ShoppingList extends Component {
         this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
     };
 
-    _onUpdateCartCommodity = (type, item, i) => {
-        this.props.dispatch(shoppingActions.updateCartInfo(this._transFromPriceToCartInfo(item, type), this.props.unionId));
+    _onUpdateCartCommodity = (type, item,rowKey) => {
+        if(item.amount==0 || item.amount==undefined || item.amount==null){
+            if(rowKey>0) {
+                this._onPriceListCommodityPress(item);
+            }
+        }
+        else {
+            this.props.dispatch(shoppingActions.updateCartInfo(this._transFromPriceToCartInfo(item, type), this.props.unionId));
+        }
         this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
     }
 
@@ -244,7 +310,7 @@ export class ShoppingList extends Component {
         this.props.dispatch(unionActions.getUnionPriceListLucene(this.props.unionId, this.state.searchText,this.props.cartId));
     };
 
-    _onPriceListCommodityPress = (price, index) => {
+    _onPriceListCommodityPress = (price) => {
         this.props.dispatch(shoppingActions.updateCartInfo(this._transFromPriceToCartInfo(price, constants.CART_CREATE), this.props.unionId));
         this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
     }
@@ -281,12 +347,14 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     listItemStyle:{
-        marginTop:10,
+        marginTop:20,
         flex:1,
         width:SCREEN_WIDTH*0.9,
         borderWidth: 1,
         borderColor: colors.saperatorLine,
         borderRadius:SCREEN_WIDTH*0.02,
+        alignItems:"center",
+        justifyContent:"center",
     },
     image:{
         width:90,
@@ -296,7 +364,13 @@ const styles = StyleSheet.create({
         fontSize:16,
         color: colors.brightRed,
         marginTop:10,
-    }
+    },
+    rowBack: {
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
 });
 
 const mapStateToProps = (state) => ({
