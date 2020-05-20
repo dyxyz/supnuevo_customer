@@ -85,9 +85,28 @@ function* cancelCustomerOrder (action) {
         yield put(orderActions.cancelCustomerOrderFail(error))
     }
 }
+
+// 回退订单到购物车
+function* recallOrderToCar (action) {
+    const {orderId,cartId} = action;
+    try {
+        const response = yield call(Api.recallCar, orderId,cartId);
+        if (response.re === 1) {
+
+            yield put(orderActions.getOrderListOfDate(null,0));
+        }
+
+        else {
+            yield put(orderActions.recallCarFail(strings.submitOrderFail));
+        }
+    } catch (error) {
+        yield put(orderActions.recallCarFail(strings.submitOrderFail))
+    }
+}
 export default [
   takeEvery(actions.GET_PREV_ORDER, getSupnuevoCustomerOrderPrevInfo),
   takeEvery(actions.GET_ORDER_LSIT, getSupnuevoCustomerOrderListOfDate),
   takeEvery(actions.SUBMIT_ORDER_INFO, submitSupnuevoCustomerOrder),
   takeEvery(actions.CANCEL_ORDER, cancelCustomerOrder),
+  takeEvery(actions.RECALL_CAR, recallOrderToCar),
 ]

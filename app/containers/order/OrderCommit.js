@@ -14,7 +14,7 @@ import {
     showCenterToast
 } from "../../utils/tools";
 import {connect} from "react-redux";
-import {TopToolBar} from "../../components/TopToolBar";
+import {ACTION_SKIP, TopToolBar,ACTION_SPACE} from "../../components/TopToolBar";
 import IconA from "react-native-vector-icons/AntDesign"
 import {ACTION_BACK, BottomToolBar,ACTION_HISTORY,ACTION_RULE} from "../../components/BottomToolBar";
 import {InformationItem,TYPE_TEXT} from "../../components/InformationItem";
@@ -30,6 +30,7 @@ import {transFromOrderItemToArray, transFromDiscountItemToArray, toDecimal2} fro
 import Modal from "react-native-modalbox";
 import DatePicker from "react-native-datepicker";
 import {InputWithClearButton, InputWithActionSheet, InputWithCalendar} from '../../components/multiFuncTextInput/index'
+import * as shoppingActions from "../../actions/shopping-actions";
 // import {SCREEN_WIDTH, SCREEN_HEIGHT} from "../../utils/tools";
 
 let receiverNameList = [];
@@ -64,7 +65,7 @@ export class OrderCommit extends Component {
             this.props.dispatch(orderActions.resetOrderResponse());
         }else if (orderResponse === constants.INITIAL && nextOrderResponse === constants.GET_PREV_ORDER_FAIL){
             if(this.props.cartInfo.length==0){
-                showCenterToast("您的购物车为空，请先选购商品");
+                showCenterToast(strings.empty_car);
             }
             else {
                 showCenterToast(strings.getPrevOrderFail);
@@ -100,9 +101,14 @@ export class OrderCommit extends Component {
 
         return (
             <View style={styles.container}>
-                <TopToolBar title = {this.props.username+'-'+"订单"} navigation = {this.props.navigation}
-                            _onLeftIconPress={this._onVolumeIconPress}
-                            _onRightIconPress={this._onHelpIconPress}/>
+                <TopToolBar title = {this.props.username+'-'+strings.order} navigation = {this.props.navigation}
+                            _onLeftIconPress={this._onSkipCarPress}
+                            leftAction = {ACTION_SKIP}
+                            flag={1}
+                            _onRightIconPress={this._onHelpIconPress}
+                            rightAction={ACTION_SPACE}
+                />
+
                 <ScrollView style={styles.scrollView}>
                     <View style={styles.scrollViewContanier}>
                         {this._renderBasicInfo()}
@@ -137,7 +143,7 @@ export class OrderCommit extends Component {
         return(
             <View style={styles.basicInfoContainer}>
                 <InformationItem key = {0} type = {TYPE_TEXT} title = {strings.customerMobilePhone} content = {this.props.mobilePhone}/>
-                <InformationItem key = {1} type = {TYPE_TEXT} title = "当前购物联盟" content = {union.unionName}/>
+                <InformationItem key = {1} type = {TYPE_TEXT} title = {strings.now_union} content = {union.unionName}/>
                 {/*<InformationItem key = {1} type = {TYPE_TEXT} title = {strings.deliverMobilePhone} content = {merchant?merchant.cuit:''}/>*/}
                 {/*<InformationItem key = {2} type = {TYPE_TEXT} title = {strings.deliverAddress} content = {merchant?merchant.direccion:''}/>*/}
             </View>
@@ -162,9 +168,9 @@ export class OrderCommit extends Component {
         const merchant = this.props.union.get("merchant");
         return(
             <View style={styles.deliverInfoCard}>
-                <View style={{width:SCREEN_WIDTH-40,flexDirection:"row"}}>
-                    <CheckBox containerStyle={{width:SCREEN_WIDTH*0.4,borderWidth:1}} title={strings.common_delivery}  checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checked={deliveryType === constants.COMMON_DELIVERY} onPress={() => this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{deliveryType: constants.COMMON_DELIVERY})})}/>
-                    <CheckBox containerStyle={{width:SCREEN_WIDTH*0.4,borderWidth:1}} title={strings.self_delivery}  checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checked={deliveryType === constants.SELF_DELIVERY} onPress={() =>this.checkMerchant()  }/>
+                <View style={{width:SCREEN_WIDTH-40,flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
+                    <CheckBox containerStyle={{width:SCREEN_WIDTH*0.38,borderWidth:1,fontSize:6}} title={strings.common_delivery}  checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checked={deliveryType === constants.COMMON_DELIVERY} onPress={() => this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{deliveryType: constants.COMMON_DELIVERY})})}/>
+                    <CheckBox containerStyle={{width:SCREEN_WIDTH*0.38,borderWidth:1,fontSize:6}} title={strings.self_delivery}  checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checked={deliveryType === constants.SELF_DELIVERY} onPress={() =>this.checkMerchant()  }/>
                 </View>
                 {
                     deliveryType == constants.COMMON_DELIVERY?
@@ -177,13 +183,14 @@ export class OrderCommit extends Component {
                                 date={this.state.deliveryInfo.datetime}
                                 mode="datetime"
                                 minDate={this.getMyDate()}
-                                format="YYYY-MM-DD HH:mm"
-                                confirmBtnText="确定"
-                                cancelBtnText="取消"
-                                placeholder={"选择配送时间"}
+                                format="DD-MM HH:mm"
+                                confirmBtnText={strings.confirm}
+                                cancelBtnText={strings.cancel}
+                                placeholder={strings.common_time}
                                 customStyles={{
                                     placeholderText:{
                                         color:'#646464',
+                                        fontSize:12
                                     },
                                     dateInput: {
                                         borderWidth:0,
@@ -196,32 +203,33 @@ export class OrderCommit extends Component {
                                 }}
                                 placeholderTextColor={"black"}
                                 showIcon={true}
-                                iconComponent={<View style={{flexDirection:"row",alignItems:"center"}}><Text>请选择取货时间</Text><IconA name={'right'} size={20}/></View>}
+                                iconComponent={<View style={{flexDirection:"row",alignItems:"center"}}><Text style={{color:'black',fontSize:12}} allowFontScaling={false}>{strings.common_time}</Text><IconA name={'right'} size={20}/></View>}
                                 onDateChange={(datetime) => {this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{datetime: datetime})})}}
                             />
                         </View>
                         :
                         <View style={{alignItems:"center"}}>
                             <View style={styles.self}>
-                                <View style={{flex:1}}><Text style={styles.contentText}>{strings.deliverMobilePhone}</Text></View>
-                                <View style={{flex:2,alignItems:"flex-end"}}><Text style={styles.contentText}>{merchant?merchant.cuit:''}</Text></View>
+                                <View style={{flex:1}}><Text style={styles.contentText} allowFontScaling={false}>{strings.deliverMobilePhone}</Text></View>
+                                <View style={{flex:2,alignItems:"flex-end"}}><Text style={styles.contentText} allowFontScaling={false}>{merchant?merchant.cuit:''}</Text></View>
                             </View>
                             <View style={[styles.self,{marginBottom:10}]}>
-                                <View style={{flex:1}}><Text style={styles.contentText}>{strings.deliverAddress}</Text></View>
-                                <View style={{flex:2,alignItems:"flex-end"}}><Text style={styles.contentText}>{merchant?merchant.direccion:''}</Text></View>
+                                <View style={{flex:1}}><Text style={styles.contentText} allowFontScaling={false}>{strings.deliverAddress}</Text></View>
+                                <View style={{flex:2,alignItems:"flex-end"}}><Text style={styles.contentText} allowFontScaling={false}>{merchant?merchant.direccion:''}</Text></View>
                             </View>
                             <DatePicker
                                 style={[styles.dataTime,{marginLeft:0}]}
                                 date={this.state.deliveryInfo.datetime}
                                 mode="datetime"
                                 minDate={this.getMyDate()}
-                                format="YYYY-MM-DD HH:mm"
-                                confirmBtnText="确定"
-                                cancelBtnText="取消"
-                                placeholder={"选择取货时间"}
+                                format="DD-MM HH:mm"
+                                confirmBtnText={strings.confirm}
+                                cancelBtnText={strings.cancel}
+                                placeholder={strings.common_time}
                                 customStyles={{
                                     placeholderText:{
                                         color:'#646464',
+                                        fontSize:12
                                     },
                                     dateInput: {
                                         borderWidth:0,
@@ -234,7 +242,7 @@ export class OrderCommit extends Component {
                                 }}
                                 placeholderTextColor={"black"}
                                 showIcon={true}
-                                iconComponent={<View style={{flexDirection:"row",alignItems:"center"}}><Text>请选择取货时间</Text><IconA name={'right'} size={20}/></View>}
+                                iconComponent={<View style={{flexDirection:"row",alignItems:"center"}}><Text style={{color:'black',fontSize:12}} allowFontScaling={false}>{strings.self_time}</Text><IconA name={'right'} size={20}/></View>}
                                 onDateChange={(datetime) => {this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{datetime: datetime})})}}
                             />
                         </View>
@@ -247,19 +255,19 @@ export class OrderCommit extends Component {
         var {deliveryType,receiverName,receiverPhone,receiverAddr} = this.state.deliveryInfo;
         if(deliveryType==0){
             if(this.props.cartInfo.length==0){
-                Alert.alert("您的购物车为空，请先选购商品");
+                Alert.alert(strings.empty_car);
                 return false;
             }
             if(receiverAddr==null || receiverAddr==undefined || receiverAddr==""){
-                Alert.alert("请输入送货地址");
+                Alert.alert(strings.receiverAddr_input);
                 return false;
             }
             if(receiverPhone==null || receiverPhone==undefined || receiverPhone==""){
-                Alert.alert("请输入接货人电话");
+                Alert.alert(strings.receiverPhone_input);
                 return false;
             }
             if(receiverName==null || receiverName==undefined || receiverName==""){
-                Alert.alert("请输入接货人姓名");
+                Alert.alert(strings.receiverName_input);
                 return false;
             }
 
@@ -267,7 +275,7 @@ export class OrderCommit extends Component {
         }
         else{
             if(this.props.cartInfo.length==0){
-                Alert.alert("您的购物车为空，请先选购商品");
+                Alert.alert(strings.empty_car);
                 return false;
             }
         }
@@ -292,7 +300,7 @@ export class OrderCommit extends Component {
             this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{deliveryType: constants.SELF_DELIVERY})})
         }
         else{
-            alert("自提货物需要先选择提货超市")
+            alert(strings.no_shop)
         }
     }
 
@@ -303,7 +311,7 @@ export class OrderCommit extends Component {
 
         return(
             <View style={styles.tableInfoCard}>
-                <TableView title={strings.cartInfo} headerList={constants.cartHeaderList} dataList={orderItemArray} renderAux={()=>this._renderCartAux(totalFee)}/>
+                <TableView title={strings.cartInfo} headerList={strings.cartHeaderList} dataList={orderItemArray} renderAux={()=>this._renderCartAux(totalFee)}/>
             </View>
         );
     }
@@ -311,7 +319,7 @@ export class OrderCommit extends Component {
     _renderCartAux(totalFee){
         return(
             <View style={styles.auxContainerStyle}>
-                <Text style={styles.auxTextStyle}>Total: {toDecimal2(totalFee)}</Text>
+                <Text style={styles.auxTextStyle} allowFontScaling={false}>Total: {toDecimal2(totalFee)}</Text>
             </View>
         );
     }
@@ -323,7 +331,7 @@ export class OrderCommit extends Component {
 
         return(
             <View style={styles.tableInfoCard}>
-                <TableView title={strings.discountInfo} headerList={constants.discountHeaderList} dataList={discountItemArray} renderAux={()=>this._renderDiscountAux(discountFee, totalFeeFinal)}/>
+                <TableView title={strings.discountInfo} headerList={strings.discountHeaderList} dataList={discountItemArray} renderAux={()=>this._renderDiscountAux(discountFee, totalFeeFinal)}/>
             </View>
         );
     }
@@ -331,8 +339,8 @@ export class OrderCommit extends Component {
     _renderDiscountAux(discountFee, totalFeeFianl){
         return(
             <View style={styles.auxContainerStyle}>
-                <Text style={styles.auxTextStyle}>{strings.discountFee}: {toDecimal2(discountFee)}</Text>
-                <Text style={[styles.auxTextStyle,{marginTop:10}]}>{strings.totalFeeFianl}: {toDecimal2(totalFeeFianl)}</Text>
+                <Text style={styles.auxTextStyle} allowFontScaling={false}>{strings.discountFee}: {toDecimal2(discountFee)}</Text>
+                <Text style={[styles.auxTextStyle,{marginTop:10}]} allowFontScaling={false}>{strings.totalFeeFianl}: {toDecimal2(totalFeeFianl)}</Text>
             </View>
         )
     }
@@ -395,7 +403,7 @@ export class OrderCommit extends Component {
         }
     };
 
-
+    _onSkipCarPress=() =>{this.props.navigation.push("ShoppingList")};
 
     _onHistoryIconPress =() =>{this.props.navigation.push("OrderHistory");};
 
@@ -445,9 +453,10 @@ const styles = StyleSheet.create({
         borderWidth:0.5,
         marginLeft:10,
         marginBottom:10,
+        fontSize:12,
     },
     deliverInfoCard:{
-        width:SCREEN_WIDTH-40,
+        width:SCREEN_WIDTH*0.9,
         flex:1,
         borderColor:colors.primaryGray,
         borderWidth:1,
@@ -456,7 +465,7 @@ const styles = StyleSheet.create({
         // alignItems:"center",
     },
     tableInfoCard:{
-        width:SCREEN_WIDTH-40,
+        width:SCREEN_WIDTH*0.9,
         flex:1,
         borderColor:colors.primaryGray,
         borderWidth:1,
@@ -464,7 +473,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     contentText: {
-        fontSize:16,
+        fontSize:14,
         color:'#555',
         // justifyContent:'flex-end',
         // textAlign:'left',
@@ -516,6 +525,7 @@ const mapStateToProps = (state) => ({
     shopping: state.get('shopping'),
     cartInfo:state.get('shopping').get('cartInfo'),
     customerInfo: state.get("auth").get("customerInfo"),
+    cartId: state.get("auth").get("cartId"),
 });
 
 export default connect(mapStateToProps)(OrderCommit)

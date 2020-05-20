@@ -10,6 +10,7 @@ import UnionMemberList from './UnionMemberList';
 import UnionDiscount from './UnionDiscount';
 import UnionPrice from './UnionPrice';
 import commodityDetail from "../CommodityDetail";
+import UnionState from "./UnionState";
 
 const Routes = {
     UnionList: {screen: UnionList},
@@ -17,6 +18,7 @@ const Routes = {
     UnionDiscount: {screen: UnionDiscount},
     UnionPrice:{screen:UnionPrice},
     commodityDetail:{screen:commodityDetail},
+    UnionState:{screen:UnionState},
 
 };
 

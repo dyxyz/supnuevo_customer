@@ -55,6 +55,22 @@ export function updateCartInfoFail(error) {
   };
 }
 
+export function clearCartInfo(cartId,unionId) {
+    return {
+        type: actions.CLEAR_CAR,
+        cartId:cartId,
+        unionId:unionId,
+    };
+}
+
+
+export function clearCartInfoFail(error) {
+    return {
+        type: actions.CLEAR_CAR_FAIL,
+        error: error,
+    };
+}
+
 export function resetShoppingResponse() {
   return{
     type: actions.RESET_SHOPPING_RESPONSE,

@@ -28,3 +28,13 @@ export function updateCustomerCartCommodity (itemId, commodityId, amount, unionI
 
   return post(url ,body);
 }
+
+// 清空购物车
+export function clearShoppingCar (cartId) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/clearEmptyCustomerShoppingCart';
+    const body = {
+        cartId: cartId,
+    };
+
+    return post(url ,body);
+}

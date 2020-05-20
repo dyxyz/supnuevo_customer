@@ -52,10 +52,22 @@ export function getSupnuevoCustomerOrderListOfDate(orderDate,orderState) {
   return post(url ,body);
 }
 
+// 取消订单
 export function cancelCustomerOrder(orderId) {
     const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/cancelCustomerOrder';
     const body = {
         orderId: orderId,
+    };
+
+    return post(url ,body);
+}
+
+// 回退订单到购物车
+export function recallCar(orderId,cartId) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/customerOrderItemSendToCart';
+    const body = {
+        orderId: orderId,
+        cartId: cartId,
     };
 
     return post(url ,body);

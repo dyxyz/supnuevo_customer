@@ -49,6 +49,7 @@ function* getUnionMemberList (action) {
     if (response.re == 1) {
       const merchants = response.data;
       const edges = response.data.edgeList;
+      console.log(merchants);
       yield put(authActions.login(username,password));
       yield put(unionActions.getUnionMemberListSuccess(merchants, edges));
     } else {

@@ -22,7 +22,7 @@ class InformationItem extends React.PureComponent {
     return (
         <View style={styles.containerStyle}>
           <View style={styles.titleWrapperStyle}>
-            <Text style={styles.titleTextStyle}>{title}</Text>
+            <Text style={styles.titleTextStyle} allowFontScaling={false}>{title}</Text>
           </View>
           <View style={styles.contentWrapperStyle}>
             {this._renderInformation(type, content)}
@@ -33,7 +33,7 @@ class InformationItem extends React.PureComponent {
 
     _renderInformation = (type, content) => {
       switch (type) {
-        case TYPE_TEXT: return (<Text style={styles.contentTextStyle}>{content}</Text>);
+        case TYPE_TEXT: return (<Text style={styles.contentTextStyle} allowFontScaling={false}>{content}</Text>);
         case TYPE_AVATAR: return (<Image resizeMode="stretch" style={styles.avatarStyle} source={{uri: content}}/>);
         default: break;
       }
@@ -51,16 +51,18 @@ var styles = StyleSheet.create({
     borderColor:'#eee'
   },
   titleWrapperStyle: {
-    flex:1,
+    flex:3.5,
     flexDirection:'row',
-    alignItems:'center'
+    alignItems:'center',
+
   },
   contentWrapperStyle: {
-    flex:3,
+    flex:2,
     flexDirection:'row',
     alignItems:'center',
     justifyContent:'flex-end',
     paddingVertical: 8,
+
   },
   titleTextStyle: {
     color:'#555',

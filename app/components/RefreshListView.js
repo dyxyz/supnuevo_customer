@@ -127,7 +127,7 @@ class RefreshListView extends PureComponent<Props, State> {
           >
             {footerFailureComponent || (
               <View style={styles.footerContainer}>
-                <Text style={styles.footerText}>{footerFailureText}</Text>
+                <Text style={styles.footerText} allowFontScaling={false}>{footerFailureText}</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -139,7 +139,7 @@ class RefreshListView extends PureComponent<Props, State> {
           <View>
             {footerEmptyDataComponent || (
               <View style={styles.footerContainer}>
-                <Text style={styles.footerText}>{footerEmptyDataText}</Text>
+                <Text style={styles.footerText} allowFontScaling={false}>{footerEmptyDataText}</Text>
               </View>
             )}
           </View>
@@ -150,7 +150,7 @@ class RefreshListView extends PureComponent<Props, State> {
         footer = footerRefreshingComponent || (
           <View style={styles.footerContainer}>
             <ActivityIndicator color="#888888" size="small" />
-            <Text style={[styles.footerText, { marginLeft: 7 }]}>{footerRefreshingText}</Text>
+            <Text style={[styles.footerText, { marginLeft: 7 }]} allowFontScaling={false}>{footerRefreshingText}</Text>
           </View>
         );
         break;
@@ -158,7 +158,7 @@ class RefreshListView extends PureComponent<Props, State> {
       case RefreshState.NoMoreData: {
         footer = footerNoMoreDataComponent || (
           <View style={styles.footerContainer}>
-            <Text style={styles.footerText}>{footerNoMoreDataText}</Text>
+            <Text style={styles.footerText} allowFontScaling={false}>{footerNoMoreDataText}</Text>
           </View>
         );
         break;

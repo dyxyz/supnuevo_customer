@@ -56,7 +56,7 @@ export class UnionList extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = {this.props.username+'-'+constants.Title_UnionList}
+              <TopToolBar title = {this.props.username+'-'+strings.window_shopping}
                           navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>

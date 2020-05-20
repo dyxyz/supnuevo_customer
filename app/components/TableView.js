@@ -29,7 +29,7 @@ export default class TableView extends React.PureComponent {
   _renderTitle(title){
     return (
         <View style={styles.titleWrapperStyle}>
-        <Text style={styles.titleStyle}>{title}</Text>
+        <Text style={styles.titleStyle} allowFontScaling={false}>{title}</Text>
         </View>
     );
   }
@@ -55,7 +55,7 @@ export default class TableView extends React.PureComponent {
       if(dataRow && dataRow.length>0){
         dataRow.map((dataRowItem,i)=>{
           dataRowList.push(
-            <View key={i} style={styles.tableItemStyle}><Text style={styles.headerItemTextStyle}>{dataRowItem}</Text></View>
+            <View key={i} style={styles.tableItemStyle}><Text style={styles.headerItemTextStyle} allowFontScaling={false}>{dataRowItem}</Text></View>
           );
         });
         dataListView.push(

@@ -56,8 +56,8 @@
         for(var i = 0; i<merchants.length; i++){
             var merchant = merchants[i];
             var merchant_point = new Microsoft.Maps.Location(merchant.latitude,merchant.longitude);
-            var merchant_pin = new Microsoft.Maps.Pushpin(merchant_point,{title:merchant.nickName});
-            merchant_pin.metadata = {title:merchant.nickName}
+            var merchant_pin = new Microsoft.Maps.Pushpin(merchant_point,{title:merchant.shopName});
+            merchant_pin.metadata = {title:merchant.shopName}
             Microsoft.Maps.Events.addHandler(merchant_pin, 'click', _showAndPostPinInfo);
             map.entities.push(merchant_pin);
         }

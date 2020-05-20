@@ -4,6 +4,7 @@ import {View,Text,ScrollView,StyleSheet,TouchableOpacity} from 'react-native';
 import * as authActions from "../actions/auth-actions";
 import {SCREEN_HEIGHT, SCREEN_WIDTH} from "../utils/tools";
 import constants from "../resources/constants";
+import strings from "../resources/strings";
 import colors from "../resources/colors";
 import {connect} from "react-redux";
 
@@ -25,7 +26,7 @@ export class loggedHelp extends Component {
         return(
             <View style={styles.container}>
                 <View>
-                    <TopToolBar title = {this.props.username+'-'+"帮助"} navigation = {this.props.navigation}
+                    <TopToolBar title = {this.props.username+'-'+strings.help} navigation = {this.props.navigation}
                                 _onLeftIconPress={this._onVolumeIconPress}
                                 _onRightIconPress={this._onHelpIconPress}
                     />
@@ -38,10 +39,10 @@ export class loggedHelp extends Component {
                         onPress={()=>this.props.navigation.navigate('RootPage')}
                     >
                         <View style={{alignItems:"center"}}>
-                            <View style={{width:SCREEN_WIDTH*0.4,marginTop:SCREEN_HEIGHT*0.1,backgroundColor:colors.primaryColor,height:SCREEN_HEIGHT*0.05,
+                            <View style={{width:SCREEN_WIDTH*0.4,marginTop:SCREEN_HEIGHT*0.05,backgroundColor:colors.primaryColor,height:SCREEN_HEIGHT*0.05,
                                 justifyContent:"center",alignItems:"center",borderRadius:SCREEN_WIDTH*0.02}}
                             >
-                                <Text style={{fontSize:16,color:"white",letterSpacing:8}} allowFontScaling={false}>跳过帮助</Text>
+                                <Text style={{fontSize:16,color:"white",letterSpacing:0}} allowFontScaling={false}>{strings.skip_help}</Text>
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -60,10 +61,10 @@ export class loggedHelp extends Component {
         loggedHelp.map((helpItem,i)=>{
             helpListView.push(
                 [
-                    <View key={i} style={{width:SCREEN_WIDTH,alignItems:"center",height:SCREEN_HEIGHT*0.5,marginTop:SCREEN_HEIGHT*0.1}}>
-                        <View style={{width:SCREEN_WIDTH*0.6,height:SCREEN_HEIGHT*0.5,backgroundColor:"rgb(220,228,242)",borderRadius:SCREEN_WIDTH*0.05}}>
+                    <View key={i} style={{width:SCREEN_WIDTH,alignItems:"center",height:SCREEN_HEIGHT*0.6,marginTop:SCREEN_HEIGHT*0.05}}>
+                        <View style={{width:SCREEN_WIDTH*0.65,height:SCREEN_HEIGHT*0.6,backgroundColor:"rgb(220,228,242)",borderRadius:SCREEN_WIDTH*0.05}}>
                             <ScrollView style={{marginTop:10}}>
-                                <Text style={{fontSize:20,padding:20,letterSpacing:3,lineHeight:20}} allowFontScaling={false}>{helpItem.content}</Text>
+                                <Text style={{fontSize:20,padding:20,letterSpacing:3,lineHeight:20}} allowFontScaling={false}>{helpItem.enContent}</Text>
                             </ScrollView>
                         </View>
                     </View>,

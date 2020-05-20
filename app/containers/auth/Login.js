@@ -65,8 +65,8 @@ export class Login extends Component {
                 <ImageBackground source={backgroundImg} style={loginStyles.imageBackgroundStyle}>
                 <View style={loginStyles.headerStyle}>
                     <View style ={loginStyles.logoWrapperStyle}>
-                    <Text style={loginStyles.titleStyle} >Supnuevo</Text>
-                    <Text style={loginStyles.titleStyle} >Union</Text>
+                    <Text style={loginStyles.titleStyle} allowFontScaling={false}>Supnuevo</Text>
+                    <Text style={loginStyles.titleStyle} allowFontScaling={false}>Union</Text>
                     </View>
                 </View>
 
@@ -74,7 +74,7 @@ export class Login extends Component {
                     {/*输入用户名*/}
                     <FloatingTextInput
                         iconName = {'user-o'}
-                        placeText = {'请输入用户名'}
+                        placeText = {strings.username_input}
                         textInput = {this.state.loginForm.username}
                         isPassword = {false}
                         onChangeText = {(username)=>{
@@ -84,7 +84,7 @@ export class Login extends Component {
                     {/*输入密码*/}
                     <FloatingTextInput
                         iconName = {'lock'}
-                        placeText = {'请输入密码'}
+                        placeText = {strings.password_input}
                         textInput = {this.state.loginForm.password}
                         isPassword = {true}
                         onChangeText = {(password)=>{
@@ -96,7 +96,7 @@ export class Login extends Component {
                         style={loginStyles.loginButtonStyle}
                         onPress={this.onLoginPress}>
                         <View style={loginStyles.buttonTextWrapperStyle}>
-                            <Text style={loginStyles.buttonTextStyle}>{strings.login_btn}</Text>
+                            <Text style={loginStyles.buttonTextStyle} allowFontScaling={false}>{strings.login_btn}</Text>
                         </View>
                     </TouchableOpacity>
                     {/*注册按钮*/}
@@ -104,12 +104,12 @@ export class Login extends Component {
                         style={loginStyles.registerButtonStyle}
                         onPress={this.onRegisterPress}>
                         <View style={loginStyles.buttonTextWrapperStyle}>
-                            <Text style={loginStyles.buttonTextStyle}>{strings.register_btn}</Text>
+                            <Text style={loginStyles.buttonTextStyle} allowFontScaling={false}>{strings.register_btn}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
                     {/*登录加载*/}
-                    <SpinnerWrapper loading={loading} title={'登录中,请稍候...'}/>
+                    <SpinnerWrapper loading={loading} title={strings.wait_login}/>
                 </ImageBackground>
             </View>
         );

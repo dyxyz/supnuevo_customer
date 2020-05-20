@@ -75,8 +75,8 @@ export class Register extends Component {
                 <ImageBackground source={backgroundImg} style={registerStyles.imageBackgroundStyle}>
                     <View style={registerStyles.headerStyle}>
                         <View style ={registerStyles.logoWrapperStyle}>
-                            <Text style={registerStyles.titleStyle} >Supnuevo</Text>
-                            <Text style={registerStyles.titleStyle} >Union</Text>
+                            <Text style={registerStyles.titleStyle} allowFontScaling={false}>Supnuevo</Text>
+                            <Text style={registerStyles.titleStyle} allowFontScaling={false}>Union</Text>
                         </View>
                     </View>
 
@@ -84,7 +84,7 @@ export class Register extends Component {
                     {/*输入用户名*/}
                     <FloatingTextInput
                         iconName = {'user-o'}
-                        placeText = {'请输入用户名'}
+                        placeText = {strings.username_input}
                         textInput = {this.state.registerForm.username}
                         isPassword = {false}
                         onChangeText = {(username)=>{
@@ -94,7 +94,7 @@ export class Register extends Component {
                     {/*输入手机号*/}
                     <FloatingTextInput
                         iconName = {'phone'}
-                        placeText = {'请输入手机号'}
+                        placeText = {strings.tel_input}
                         textInput = {this.state.registerForm.telephone}
                         isPassword = {false}
                         onChangeText = {(telephone)=>{
@@ -104,7 +104,7 @@ export class Register extends Component {
                     {/*输入密码*/}
                     <FloatingTextInput
                         iconName = {'lock'}
-                        placeText = {'请输入密码'}
+                        placeText = {strings.password_input}
                         textInput = {this.state.registerForm.password}
                         isPassword = {true}
                         onChangeText = {(password)=>{
@@ -116,7 +116,7 @@ export class Register extends Component {
                         style={registerStyles.registerButtonStyle}
                         onPress={this.onRegisterPress}>
                         <View style={registerStyles.buttonTextWrapperStyle}>
-                            <Text style={registerStyles.buttonTextStyle}>{strings.register_btn}</Text>
+                            <Text style={registerStyles.buttonTextStyle} allowFontScaling={false}>{strings.register_btn}</Text>
                         </View>
                     </TouchableOpacity>
 
@@ -125,12 +125,12 @@ export class Register extends Component {
                         style={registerStyles.backButtonStyle}
                         onPress={this.onBackPress}>
                         <View style={registerStyles.buttonTextWrapperStyle}>
-                            <Text style={registerStyles.buttonTextStyle}>{strings.back}</Text>
+                            <Text style={registerStyles.buttonTextStyle} allowFontScaling={false}>{strings.back}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
                     {/*注册加载*/}
-                    <SpinnerWrapper loading={loading} title={'注册中,请稍候...'}/>
+                    <SpinnerWrapper loading={loading} title={strings.wait_register}/>
                 </ImageBackground>
             </View>
         );

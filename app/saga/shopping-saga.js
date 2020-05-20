@@ -22,6 +22,7 @@ function* getCustomerCartCommodityInfo (action) {
       const cartInfo = response.data.itemList;
       yield put(authActions.setCustomerCart(cartId));
       yield put(shoppingActions.getCartInfoSuccess(cartInfo));
+      console.log(cartInfo.length)
     } else {
       yield put(shoppingActions.getCartInfoFail(strings.getCartInfoFail));
     }
@@ -39,6 +40,7 @@ function* updateCustomerCartCommodity (action) {
       const cartInfoItem = response.data;
       yield put(shoppingActions.updateCartInfoSuccess(cartInfoItem));
       yield put(unionActions.getUnionPriceList(unionId, 0, count,cartInfo.cartId));
+      console.log(cartInfo)
     } else {
       yield put(shoppingActions.updateCartInfoFail(strings.updateCartInfoFail));
     }
@@ -47,7 +49,25 @@ function* updateCustomerCartCommodity (action) {
   }
 }
 
+// 清空购车
+function* clearShoppingCar (action) {
+    const {cartId,unionId} = action;
+    try {
+        const response = yield call(Api.clearShoppingCar, cartId);
+        if (response.re === 1) {
+            console.log(response)
+            yield put(shoppingActions.getCartInfo(cartId,unionId));
+            yield put(unionActions.getUnionPriceList(unionId, 0, count,cartId));
+        } else {
+            yield put(shoppingActions.clearCartInfoFail(strings.clearCarFail));
+        }
+    } catch (error) {
+        yield put(shoppingActions.clearCartInfoFail(error))
+    }
+}
+
 export default [
   takeEvery(actions.GET_CART_INFO, getCustomerCartCommodityInfo),
   takeEvery(actions.UPDATE_CART_INFO, updateCustomerCartCommodity),
+  takeEvery(actions.CLEAR_CAR, clearShoppingCar),
 ]

@@ -54,7 +54,7 @@ export class OrderRule extends Component {
       const regulation = this.props.union.get("regulation");
       return (
           <View style={styles.container}>
-              <TopToolBar title = {this.props.username+'-'+"本店规则"} navigation = {this.props.navigation}
+              <TopToolBar title = {this.props.username+'-'+strings.store_rule} navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               {this._renderRulePage(regulation)}
@@ -70,21 +70,21 @@ export class OrderRule extends Component {
 
               <View style={styles.scrollViewWrapper}>
                   <View >
-                    <Text style={[styles.ruleText,{fontSize:25,lineHeight:28}]}>{regulation.unionName}</Text>
+                    <Text style={[styles.ruleText,{fontSize:25,lineHeight:28}]} allowFontScaling={false}>{regulation.unionName}</Text>
                   </View>
 
                   <View style={styles.regulation}>
                       <ScrollView>
-                          <View>
-                              <Text style={styles.ruleText} allowFontScaling={false}>
-                                  本店最低购买量为实际购买金额不小于{regulation.orderMinLimit}peso;
-                              </Text>
-                          </View>
-                          <View>
-                              <Text style={styles.ruleText} allowFontScaling={false}>
-                                  折扣商品不大于总购买量的{regulation.discountScale}%;
-                              </Text>
-                          </View>
+                          {/*<View>*/}
+                              {/*<Text style={styles.ruleText} allowFontScaling={false}>*/}
+                                  {/*本店最低购买量为实际购买金额不小于{regulation.orderMinLimit}peso;*/}
+                              {/*</Text>*/}
+                          {/*</View>*/}
+                          {/*<View>*/}
+                              {/*<Text style={styles.ruleText} allowFontScaling={false}>*/}
+                                  {/*折扣商品不大于总购买量的{regulation.discountScale}%;*/}
+                              {/*</Text>*/}
+                          {/*</View>*/}
 
                           <View style={{marginBottom:20,marginTop:25}}>
                               <Text style={styles.ruleText} allowFontScaling={false}>

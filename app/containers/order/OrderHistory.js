@@ -16,11 +16,11 @@ import {
     SafeAreaView,
     StyleSheet,
     ScrollView,
-    ListView
+    ListView, Alert
 } from "react-native";
 import {connect} from "react-redux";
-import {TopToolBar} from "../../components/TopToolBar";
-import {BottomToolBar, ACTION_BACK} from "../../components/BottomToolBar";
+import {TopToolBar,ACTION_SKIP} from "../../components/TopToolBar";
+import {BottomToolBar, ACTION_BACK, ACTION_ORDER} from "../../components/BottomToolBar";
 import {
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
@@ -39,6 +39,8 @@ import {InformationItem, TYPE_TEXT} from "../../components/InformationItem";
 import * as orderActions from "../../actions/order-actions";
 import * as authActions from "../../actions/auth-actions";
 import IntroDivider from "../../components/IntroDivider";
+import * as shoppingActions from "../../actions/shopping-actions";
+import ShoppingList from "../shopping/ShoppingList";
 
 const orderStateSubmit = constants.ORDER_STATE_SUBMIT;
 const orderStateConfirm = constants.ORDER_STATE_CONFIRM;
@@ -57,6 +59,8 @@ export class OrderHistory extends Component {
     componentDidMount() {
         this.props.dispatch(orderActions.getOrderListOfDate(null,orderStateSubmit));
         // this.setState({orderDate:this.getmyDate()});
+        this.props.dispatch(shoppingActions.getCartInfo(this.props.cartId,this.props.auth.get("unionId")));
+
     }
 
     componentWillReceiveProps(nextProps) {
@@ -105,28 +109,30 @@ export class OrderHistory extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = {this.props.username+'-'+"历史订单"} navigation = {this.props.navigation}
-                          _onLeftIconPress={this._onVolumeIconPress}
+              <TopToolBar title = {this.props.username+'-'+strings.order_history} navigation = {this.props.navigation}
+                          _onLeftIconPress={this._onCarPress}
+                          leftAction = {ACTION_SKIP}
+                          flag={1}
                           _onRightIconPress={this._onHelpIconPress}/>
               <ScrollView>
               <View style={{width:SCREEN_WIDTH,flexDirection:"row",backgroundColor:'#eee'}}>
                   <CheckBox containerStyle={styles.check}
-                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}}>已提交订单</Text></View><View style={styles.bottom}/></View>}
-                            uncheckedIcon={<View><Text>已提交订单</Text></View>}
+                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}} allowFontScaling={false}>{strings.order_submit}</Text></View><View style={styles.bottom}/></View>}
+                            uncheckedIcon={<View><Text allowFontScaling={false}>{strings.order_submit}</Text></View>}
                             checked={this.state.doneState === 1}
                             onPress={() =>this.switchToUnDone() }
                   />
                   <View style={{borderWidth:0.5}}/>
                   <CheckBox containerStyle={styles.check}
-                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}}>已确认订单</Text></View><View style={styles.bottom}/></View>}
-                            uncheckedIcon={<View><Text>已确认订单</Text></View>}
+                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}} allowFontScaling={false}>{strings.order_confirm}</Text></View><View style={styles.bottom}/></View>}
+                            uncheckedIcon={<View><Text allowFontScaling={false}>{strings.order_confirm}</Text></View>}
                             checked={this.state.doneState === 2}
                             onPress={() =>this.switchToConfirm()}
                   />
                   <View style={{borderWidth:0.5}}/>
                   <CheckBox containerStyle={styles.check}
-                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}}>已完成订单</Text></View><View style={styles.bottom}/></View>}
-                            uncheckedIcon={<View><Text>已完成订单</Text></View>}
+                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}} allowFontScaling={false}>{strings.order_finished}</Text></View><View style={styles.bottom}/></View>}
+                            uncheckedIcon={<View><Text allowFontScaling={false}>{strings.order_finished}</Text></View>}
                             checked={this.state.doneState === 0}
                             onPress={() =>this.switchToDone()}
                   />
@@ -177,7 +183,7 @@ export class OrderHistory extends Component {
       let state =
           <View style={styles.containerStyle}>
               <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
-                  <Text style={styles.contentText}>订单状态：</Text>
+                  <Text style={styles.contentText} allowFontScaling={false}>{strings.order_state}：</Text>
                   {this.renderState(order.orderState,order.nickName)}
               {/*{order.orderState==1?*/}
                     {/*<Text  style={styles.contentText}>已被商家{order.nickName}接单</Text>*/}
@@ -190,12 +196,19 @@ export class OrderHistory extends Component {
           <View>
               {
                   this.state.doneState==1?
-                  <View style={{height:SCREEN_HEIGHT*0.05,width:SCREEN_WIDTH*0.9,justifyContent:"center",alignItems:"flex-end",marginTop:10}}>
+                  <View style={{height:SCREEN_HEIGHT*0.05,width:SCREEN_WIDTH*0.9,flexDirection:'row',justifyContent:"space-between",alignItems:"center",marginTop:10}}>
+                      <TouchableOpacity
+                          onPress={()=>this.recallCar(order.orderId)}
+                      >
+                          <View style={styles.button}>
+                              <Text style={{color:"white"}} allowFontScaling={false}>{strings.reback_order}</Text>
+                          </View>
+                      </TouchableOpacity>
                       <TouchableOpacity
                           onPress={()=>this.cancelButton(order.orderId)}
                       >
                           <View style={styles.button}>
-                              <Text style={{color:"white"}}>取消订单</Text>
+                              <Text style={{color:"white"}} allowFontScaling={false}>{strings.cancel_order}</Text>
                           </View>
                       </TouchableOpacity>
                   </View>
@@ -208,15 +221,15 @@ export class OrderHistory extends Component {
 
   renderState(orderState,nickName){
       if(orderState==0){
-          const state=<Text  style={styles.contentText}>未接单</Text>;
+          const state=<Text  style={styles.contentText} allowFontScaling={false}>{strings.not_deal}</Text>;
           return state;
       }
       if(orderState==1){
-          const submitState=<Text  style={styles.contentText}>已被商家{nickName}接单</Text>;
+          const submitState=<Text  style={styles.contentText} allowFontScaling={false}>{strings.have_dealed_for}' '{nickName}' '{strings.have_dealed_fore}</Text>;
           return submitState;
       }
       if(orderState==2){
-          const finishState=<Text  style={styles.contentText}>已结束</Text>;
+          const finishState=<Text  style={styles.contentText} allowFontScaling={false}>{strings.have_finished}</Text>;
           return finishState;
       }
   }
@@ -259,10 +272,12 @@ export class OrderHistory extends Component {
         return(
             itemList && itemList.length>0?
             <View style={styles.tableInfoCard}>
-                <TableView title={strings.orderInfo} headerList={constants.cartHeaderList} dataList={itemArray} renderAux={null}/>
+                <TableView title={strings.orderInfo} headerList={strings.cartHeaderList} dataList={itemArray} renderAux={null}/>
             </View>:null
         );
     }
+
+    _onCarPress=() =>{this.props.navigation.push("ShoppingList")};
 
   _onVolumeIconPress =() =>{};
 
@@ -272,6 +287,15 @@ export class OrderHistory extends Component {
 
     cancelButton(orderId){
         this.props.dispatch(orderActions.cancelOrder(orderId))
+    }
+
+    recallCar(orderId){
+        console.log(this.props.cartInfo.length)
+        if(this.props.cartInfo.length!=0){
+            Alert.alert(strings.recallCarFail);
+            return;
+        }
+        this.props.dispatch(orderActions.recallCar(orderId,this.props.cartId))
     }
 };
 
@@ -333,7 +357,7 @@ const styles = StyleSheet.create({
         // borderWidth:1,
         // borderColor:"white",
         borderRadius:SCREEN_WIDTH*0.02,
-        width:SCREEN_WIDTH*0.25,
+        width:SCREEN_WIDTH*0.4,
         // position:"absolute",
         // right:10,
         // top:10,
@@ -350,6 +374,8 @@ const mapStateToProps = (state) => ({
     root: state.get('root'),
     order: state.get('order'),
     username:state.get('auth').get('username'),
+    cartId: state.get("auth").get("cartId"),
+    cartInfo: state.get('shopping').get("cartInfo"),
 });
 
 export default connect(mapStateToProps)(OrderHistory)

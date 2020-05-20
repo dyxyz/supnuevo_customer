@@ -85,6 +85,21 @@ export function cancelOrder (orderId) {
     };
 }
 
+export function recallCar (orderId,cartId) {
+    return {
+        type: actions.RECALL_CAR,
+        orderId: orderId,
+        cartId:cartId,
+    };
+}
+
+export function recallCarFail(error) {
+    return {
+        type: actions.RECALL_CAR_FAIL,
+        error: error,
+    };
+}
+
 export function cancelCustomerOrderSuccess() {
     return {
         type: actions.CANCEL_ORDER_SUCCESS,

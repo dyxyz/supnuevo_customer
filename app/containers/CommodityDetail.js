@@ -2,7 +2,7 @@ import React,{Component} from 'react';
 import {View,Text,ScrollView,StyleSheet,TouchableOpacity,Platform,Image} from 'react-native';
 
 import * as authActions from "../actions/auth-actions";
-import {SCREEN_HEIGHT, SCREEN_WIDTH} from "../utils/tools";
+import {getHeaderHeight, SCREEN_HEIGHT, SCREEN_WIDTH} from "../utils/tools";
 import constants from "../resources/constants";
 import colors from "../resources/colors";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -25,13 +25,13 @@ export class commodityDetail extends Component{
         const imageuri =strings.head+ detail.imageUrl;
         return(
             <View style={styles.container}>
-                <TopToolBar title = {this.props.username+'-'+"商品详情"} navigation = {this.props.navigation}
+                <TopToolBar title = {this.props.username+'-'+strings.goods_detail} navigation = {this.props.navigation}
                             _onLeftIconPress={this._onVolumeIconPress}
                             _onRightIconPress={this._onHelpIconPress}
                 />
 
-                <View style={{alignItems:"center"}}>
-                    <View style={{marginTop:SCREEN_HEIGHT*0.1}}>
+                <ScrollView style={{marginBottom: getHeaderHeight()}}>
+                    <View style={{marginTop:SCREEN_HEIGHT*0.1,alignItems:'center'}}>
                         {
                             detail.imageUrl==null || detail.imageUrl==undefined ?
                                 <Icon name="photo" size={SCREEN_HEIGHT*0.3} color='rgb(112,112,112)'/>
@@ -45,18 +45,18 @@ export class commodityDetail extends Component{
                         }
                     </View>
                     <View style={[styles.detail,{marginTop:SCREEN_HEIGHT*0.1}]}>
-                        <Text style={styles.textStyle}>商品条码：{detail.codigo}</Text>
+                        <Text style={styles.textStyle} allowFontScaling={false}>{strings.goods_codigo}：{detail.codigo}</Text>
                     </View>
                     <View style={styles.detail}>
-                        <Text style={styles.textStyle}>商品简称：{detail.nombre}</Text>
+                        <Text style={styles.textStyle} allowFontScaling={false}>{strings.goods_sim}：{detail.nombre}</Text>
                     </View>
                     <View style={styles.detail}>
-                        <Text style={styles.textStyle}>商品全称：{detail.commodityName}</Text>
+                        <Text style={styles.textStyle} allowFontScaling={false}>{strings.goods_name}：{detail.commodityName}</Text>
                     </View>
                     <View style={styles.detail}>
-                        <Text style={styles.textStyle}>商品价格：{detail.price}</Text>
+                        <Text style={styles.textStyle} allowFontScaling={false}>{strings.goods_price}：{detail.price}</Text>
                     </View>
-                </View>
+                </ScrollView>
                 <BottomToolBar navigation={this.props.navigation}
                                leftAction={ACTION_BACK}
                                _onLeftIconPress={this._onBackIconPress}

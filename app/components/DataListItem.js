@@ -31,7 +31,7 @@ class DataListItem extends Component {
             <TouchableOpacity
                 style={DataListItemStyles.swipeRowDeleteButton}
                 onPress={this.props.onDeleteBtnPress}>
-              <Text style={DataListItemStyles.swipeRowText}>
+              <Text style={DataListItemStyles.swipeRowText} allowFontScaling={false}>
                 {strings.delete_btn}
               </Text>
             </TouchableOpacity>
@@ -45,8 +45,8 @@ class DataListItem extends Component {
                        style={DataListItemStyles.mainPicture}
                        source={url == null?require('../assets/img/img_logo.png'):{uri:url}}/>
               <View style={DataListItemStyles.mainTextWrapper}>
-                <Text style={DataListItemStyles.mainTitleText}>{title}</Text>
-                <Text style={DataListItemStyles.mainBriefText} numberOfLines={2}>{brief}</Text>
+                <Text style={DataListItemStyles.mainTitleText} allowFontScaling={false}>{title}</Text>
+                <Text style={DataListItemStyles.mainBriefText} numberOfLines={2} allowFontScaling={false}>{brief}</Text>
               </View>
             </TouchableOpacity>
         </SwipeRow>

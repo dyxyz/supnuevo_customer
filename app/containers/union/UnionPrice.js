@@ -82,7 +82,7 @@ export class UnionPrice extends Component {
                 <BottomToolBar navigation={this.props.navigation}
                                leftAction={ACTION_BACK}
                                _onLeftIconPress={this._onBackIconPress}/>
-                <SpinnerWrapper loading={loading} title={'搜索中,请稍候...'}/>
+                <SpinnerWrapper loading={loading} title={strings.searching}/>
             </View>
         );
     }

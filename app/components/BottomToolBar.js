@@ -13,18 +13,23 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import colors from '../resources/colors';
+import strings from '../resources/strings';
 import {getHeaderHeight, getTabBarHeight, SCREEN_WIDTH} from '../utils/tools';
 
 const TEXT_TYPE = 0;
 const ICON_TYPE = 1;
 
-const ACTION_HOME={name:'md-home', type: ICON_TYPE};
-const ACTION_BACK={name:'md-arrow-back', type: ICON_TYPE};
-const ACTION_LOGOUT={name:'md-log-out', type: ICON_TYPE};
-const ACTION_PRICE={name:'价格表', type: TEXT_TYPE};
-const ACTION_DISCOUNT={name:'折扣', type: TEXT_TYPE};
-const ACTION_RULE={name:'规则', type: TEXT_TYPE};
-const ACTION_HISTORY={name:'历史', type: TEXT_TYPE};
+// const ACTION_HOME={name:'md-home', type: ICON_TYPE};
+// const ACTION_BACK={name:'md-arrow-back', type: ICON_TYPE};
+// const ACTION_LOGOUT={name:'md-log-out', type: ICON_TYPE};
+const ACTION_HOME={name:strings.first_page, type: TEXT_TYPE};
+const ACTION_BACK={name:strings.back, type: TEXT_TYPE};
+const ACTION_LOGOUT={name:strings.log_out, type: TEXT_TYPE};
+const ACTION_PRICE={name:strings.price_list, type: TEXT_TYPE};
+const ACTION_DISCOUNT={name:strings.discount, type: TEXT_TYPE};
+const ACTION_RULE={name:strings.rule, type: TEXT_TYPE};
+const ACTION_HISTORY={name:strings.history, type: TEXT_TYPE};
+const ACTION_ORDER={name:strings.skip_to_order, type: TEXT_TYPE};
 
 class BottomToolBar extends Component{
 
@@ -71,7 +76,7 @@ class BottomToolBar extends Component{
     if(action)
     switch (action.type) {
       case TEXT_TYPE:
-        return (<Text style={styles.textStyle}>{action.name}</Text>);
+        return (<Text style={styles.textStyle} allowFontScaling={false}>{action.name}</Text>);
       case ICON_TYPE:
         return ( <Ionicons name={action.name} size={30} color="#fff"/>);
     }
@@ -90,7 +95,7 @@ var styles = StyleSheet.create({
     bottom:0,
   },
   IconContainerStyle:{
-    width: 60,
+    width: 85,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
@@ -101,7 +106,7 @@ var styles = StyleSheet.create({
   },
   textStyle:{
     color:'#fff',
-    fontSize:18
+    fontSize:14
   }
 })
 
@@ -114,6 +119,7 @@ const bottomToolBar ={
   get ACTION_DISCOUNT(){return ACTION_DISCOUNT},
   get ACTION_RULE(){return ACTION_RULE},
   get ACTION_HISTORY(){return ACTION_HISTORY},
+  get ACTION_ORDER(){return ACTION_ORDER},
 }
 
 module.exports=bottomToolBar

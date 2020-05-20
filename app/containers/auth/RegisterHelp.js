@@ -5,6 +5,7 @@ import * as authActions from "../../actions/auth-actions";
 import {SCREEN_HEIGHT, SCREEN_WIDTH} from "../../utils/tools";
 import constants from "../../resources/constants";
 import colors from "../../resources/colors";
+import strings from '../../resources/strings';
 import {connect} from "react-redux";
 
 import {TopToolBar} from "../../components/TopToolBar";
@@ -28,7 +29,7 @@ export class registerHelp extends Component {
         return(
             <View style={styles.container}>
                 <View>
-                    <TopToolBar title = "帮助" navigation = {this.props.navigation}
+                    <TopToolBar title = {strings.commit} navigation = {this.props.navigation}
                                 _onLeftIconPress={this._onVolumeIconPress}
                                 _onRightIconPress={this._onHelpIconPress}
                     />
@@ -44,7 +45,7 @@ export class registerHelp extends Component {
                             <View style={{width:SCREEN_WIDTH*0.4,marginTop:SCREEN_HEIGHT*0.1,backgroundColor:colors.primaryColor,height:SCREEN_HEIGHT*0.05,
                                 justifyContent:"center",alignItems:"center",borderRadius:SCREEN_WIDTH*0.02}}
                             >
-                                <Text style={{fontSize:16,color:"white",letterSpacing:8}} allowFontScaling={false}>退出</Text>
+                                <Text style={{fontSize:16,color:"white",letterSpacing:8}} allowFontScaling={false}>{strings.out}</Text>
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -66,7 +67,7 @@ export class registerHelp extends Component {
                     <View key={i} style={{width:SCREEN_WIDTH,alignItems:"center",height:SCREEN_HEIGHT*0.5,marginTop:SCREEN_HEIGHT*0.1}}>
                         <View style={{width:SCREEN_WIDTH*0.6,height:SCREEN_HEIGHT*0.5,backgroundColor:"rgb(220,228,242)",borderRadius:SCREEN_WIDTH*0.05}}>
                             <ScrollView style={{marginTop: 10}} showsVerticalScrollIndicator={false}>
-                                <Text style={styles.registerStyle} allowFontScaling={false}>{helpItem.content}</Text>
+                                <Text style={styles.registerStyle} allowFontScaling={false}>{helpItem.enContent}</Text>
                             </ScrollView>
                         </View>
                     </View>,

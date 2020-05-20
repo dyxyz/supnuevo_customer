@@ -41,13 +41,13 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     borderRadius:5,
     backgroundColor:colors.primaryColor,
-    width: SCREEN_WIDTH*0.5,
+    width: SCREEN_WIDTH*0.7,
     height:40,
     justifyContent:'center',
     alignItems:'center',
   },
   textStyle: {
     color:'#fff',
-    fontSize:18
+    fontSize:15
   },
 });

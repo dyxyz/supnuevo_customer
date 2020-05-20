@@ -13,7 +13,7 @@ import {
     Text,
 } from "react-native";
 import {connect} from "react-redux";
-import {TopToolBar} from "../../components/TopToolBar";
+import {ACTION_HELP, TopToolBar} from "../../components/TopToolBar";
 import {ACTION_DISCOUNT, ACTION_PRICE, BottomToolBar} from "../../components/BottomToolBar";
 import unionMembers from "../../test/unionMembers";
 import {Avatar, Icon, ListItem} from "react-native-elements";
@@ -24,6 +24,7 @@ import * as unionActions from "../../actions/union-actions";
 import * as authActions from "../../actions/auth-actions";
 import constants from "../../resources/constants";
 import strings from "../../resources/strings";
+import {UnionState} from "./UnionState";
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 export class UnionMemberList extends Component {
@@ -36,6 +37,7 @@ export class UnionMemberList extends Component {
     componentDidMount() {
       const union = this.props.union.get("union");
       this.props.dispatch(unionActions.getUnionMemberList(union.unionId,this.props.username,this.props.password));
+      console.log(this.props.union.get("merchants"))
     }
 
     componentWillReceiveProps(nextProps) {
@@ -59,6 +61,7 @@ export class UnionMemberList extends Component {
       return (
           <View style={styles.container}>
               <TopToolBar title = {this.props.username+'-'+union.unionName} navigation = {this.props.navigation}
+                          rightAction={ACTION_HELP}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               {this._renderMap(edges, merchants)}
@@ -99,14 +102,14 @@ export class UnionMemberList extends Component {
             <ListItem
                 leftElement={<Image source={image} style={styles.image} resizeMode={"contain"}/>}
                 rightIcon={rowData.merchantId === merchantId?<Icon name='md-checkmark' type='ionicon' color={colors.primaryColor}/>:null}
-                title={rowData.nubre}
+
                 subtitle={
                     <View>
                         <View style={{paddingTop: 5, flexDirection: 'row'}}>
-                            <Text style={styles.renderText}>商户名：{rowData.nickName}</Text>
+                            <Text style={styles.renderText} allowFontScaling={false}>{strings.store_name}：{rowData.shopName}</Text>
                         </View>
                         <View style={{paddingTop: 5, flexDirection: 'row'}}>
-                            <Text style={styles.renderText}>商户地址：{rowData.direccion}</Text>
+                            <Text style={styles.renderText} allowFontScaling={false}>{strings.store_addr}：{rowData.direccion}</Text>
                         </View>
                     </View>
                 }
@@ -119,7 +122,7 @@ export class UnionMemberList extends Component {
 
   _onVolumeIconPress =() =>{};
 
-  _onHelpIconPress =() =>{};
+  _onHelpIconPress =() =>{this.props.navigation.navigate('UnionState')};
 
   _onDiscountPress =() =>{this.props.navigation.push("UnionDiscount")};
 

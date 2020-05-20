@@ -56,7 +56,7 @@ export default class DropdownCell extends Component {
                 onDropdownWillHide={this.dropdown_willHide.bind(this)}
             >
                 <View style={styles.dropdown_viewcell}>
-                    <Text style={styles.textstyle}>{dropDownName}</Text>
+                    <Text style={styles.textstyle} allowFontScaling={false}>{dropDownName}</Text>
                     {
                         isDropDown==true?
                             <FontAwesome name={'angle-down'} size={20} color={colors.primaryGray} style={styles.dropdown_image}/>:
@@ -73,7 +73,7 @@ export default class DropdownCell extends Component {
         return (
             <TouchableOpacity >
                 <View style={[styles.dropdown_row]}>
-                    <Text style={[styles.dropdown_row_text, highlighted && {color: 'mediumaquamarine'}]}>
+                    <Text style={[styles.dropdown_row_text, highlighted && {color: 'mediumaquamarine'}]} allowFontScaling={false}>
                         {rowData}
                     </Text>
                 </View>

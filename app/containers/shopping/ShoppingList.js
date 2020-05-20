@@ -20,8 +20,8 @@ import {
     Alert,
 } from "react-native";
 import {connect} from "react-redux";
-import {TopToolBar} from "../../components/TopToolBar";
-import {BottomToolBar} from "../../components/BottomToolBar";
+import {ACTION_HELP, TopToolBar} from "../../components/TopToolBar";
+import {ACTION_DISCOUNT, BottomToolBar,ACTION_ORDER} from "../../components/BottomToolBar";
 import {Avatar, Badge, ListItem} from "react-native-elements";
 import colors from "../../resources/colors";
 import {getHeaderHeight, replaceMember, SCREEN_WIDTH,SCREEN_HEIGHT, showCenterToast} from "../../utils/tools";
@@ -123,14 +123,18 @@ export class ShoppingList extends Component {
         return (
             <View style={styles.container}>
                 <TopToolBar title = {this.props.username+'-'+regulation.unionName} navigation = {this.props.navigation}
+                            rightAction={ACTION_HELP}
                             _onLeftIconPress={this._onVolumeIconPress}
                             _onRightIconPress={this._onHelpIconPress}/>
-                <IntroDivider intro={"您的购物车共有"+cartNumber+"件商品"} />
+                <IntroDivider intro={strings.car_forth+' '+cartNumber+' '+strings.car_fore} _onClearPress={this._clearCar} flag={'1'} />
                 {this._renderShoppingCart(cartInfo)}
                 {this._renderSearchBar()}
                 {this._renderPriceList()}
-                <BottomToolBar navigation = {this.props.navigation}/>
-                <SpinnerWrapper loading={loading} title={'搜索中,请稍候...'}/>
+                <BottomToolBar navigation = {this.props.navigation}
+                               leftAction = {ACTION_ORDER}
+                               _onLeftIconPress = {this._onSkipPress}
+                />
+                <SpinnerWrapper loading={loading} title={strings.searching}/>
             </View>
         );
     }
@@ -224,10 +228,10 @@ export class ShoppingList extends Component {
                             <View style={styles.rowBack}>
                                         <TouchableOpacity onPress={() => {
                                             this._onUpdateCartCommodity(constants.CART_ADD, price)
-                                        }}><Text style={{color:"white"}}>+1</Text></TouchableOpacity>
+                                        }}><Text style={{color:"white"}} allowFontScaling={false}>+1</Text></TouchableOpacity>
                                         <TouchableOpacity onPress={() => {
                                             this._onUpdateCartCommodity(constants.CART_DECLINE, price)
-                                        }}><Text  style={{color:"white"}}>-1</Text></TouchableOpacity>
+                                        }}><Text  style={{color:"white"}} allowFontScaling={false}>-1</Text></TouchableOpacity>
                             </View>
 
                                 <View>
@@ -236,12 +240,12 @@ export class ShoppingList extends Component {
                                         style={{width: SCREEN_WIDTH*0.85, flexDirection:"row",height: SCREEN_HEIGHT*0.1,alignItems:"center",justifyContent:"space-between"}}
                                     >
                                     <View style={{marginLeft:10}}>
-                                        <Text>{price.nombre}</Text>
-                                        <Text style={styles.subtitleText}>{price.codigo}</Text>
+                                        <Text allowFontScaling={false}>{price.nombre}</Text>
+                                        <Text style={styles.subtitleText} allowFontScaling={false}>{price.codigo}</Text>
                                     </View>
                                     <View style={{marginRight:10,justifyContent:"center"}}>
 
-                                        <Text>{price.price}</Text>
+                                        <Text allowFontScaling={false}>{price.price}</Text>
                                     </View>
                                     </TouchableOpacity>
                                 </View>
@@ -273,11 +277,11 @@ export class ShoppingList extends Component {
 
 
 
-
+    _onSkipPress=() =>{this.props.navigation.push("OrderCommit")};
 
     _onVolumeIconPress =() =>{};
 
-    _onHelpIconPress =() =>{};
+    _onHelpIconPress =() =>{this.props.navigation.navigate('ShoppingState')};
 
     _onMicrophonePress = ()=>{
         this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
@@ -302,6 +306,10 @@ export class ShoppingList extends Component {
             return;
         }
     };
+
+    _clearCar=()=>{
+        this.props.dispatch(shoppingActions.clearCartInfo(this.props.cartId,this.props.unionId));
+    }
 
     _clearSearchInput = () => this.setState({searchText: ''})
 

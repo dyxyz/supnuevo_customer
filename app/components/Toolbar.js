@@ -104,7 +104,7 @@ class Toolbar extends Component{
                                     this.props.onPress(i)
                                 }, 1000)
                               }}>
-              <Text style={[styles.popoverText,{color:'#444'}]}>{action.value}</Text>
+              <Text style={[styles.popoverText,{color:'#444'}] } allowFontScaling={false}>{action.value}</Text>
             </TouchableOpacity>
         )
       }
@@ -133,7 +133,7 @@ class Toolbar extends Component{
                   <View style={{width: 60}}/>
             }
             <View style={{flex:1,justifyContent:'flex-start',alignItems: 'center',flexDirection:'row'}}>
-              <Text style={{color:'#fff',fontSize:18}}>
+              <Text style={{color:'#fff',fontSize:18}} allowFontScaling={false}>
                 {title}
               </Text>
             </View>

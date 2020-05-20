@@ -12,6 +12,7 @@ import {
     Platform,
     SafeAreaView,
     StyleSheet,
+    Modal
 } from "react-native";
 import {connect} from "react-redux";
 import {TopToolBar} from "../../components/TopToolBar";
@@ -58,7 +59,7 @@ export class UnionDiscount extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = {this.props.username+'-'+"折扣"} navigation = {this.props.navigation}
+              <TopToolBar title = {this.props.username+'-'+strings.discount} navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               {datasError?

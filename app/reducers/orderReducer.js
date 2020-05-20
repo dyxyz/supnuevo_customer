@@ -4,6 +4,7 @@
 
 import * as actions from "../actions/action-types";
 import constants from "../resources/constants";
+import strings from "../resources/strings";
 
 export default function orderReducer(state, action = {}) {
   switch (action.type) {
@@ -49,6 +50,10 @@ export default function orderReducer(state, action = {}) {
           return state.withMutations(state => state
               .set('dataResponse', constants.CANCEL_ORDER_FAIL)
               .set('dataError', action.error));
+      case actions.RECALL_CAR_FAIL:
+          return state.withMutations(state => state
+              .set('dataResponse', strings.recallCarFail)
+              .set('dataError', strings.recallCarFail));
     default:
       return state
   }
