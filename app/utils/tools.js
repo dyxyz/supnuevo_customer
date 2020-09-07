@@ -206,6 +206,20 @@ export function  updateCartInfo(cartInfo, cartInfoItem){
   return updateCartInfo;
 }
 
+export function  updatePriceList(priceList, priceListItem){
+    var idx = -1;
+    var updatePriceList;
+    priceList.map((item,i)=>{
+        if(item.commodityId === priceListItem.commodityId){
+            idx = i;
+        }
+    });
+    priceList.splice(idx,1,priceListItem);
+    updatePriceList = priceList;
+
+    return updatePriceList;
+}
+
 export function getNow() {
   var date = new Date();
 
@@ -228,18 +242,18 @@ export function showBottomToast(message){
 
 export function transFromOrderItemToArray(orderItem) {
   var array = [];
-  array.push(orderItem.nombre);
+  array.push(orderItem.commodityName);
   array.push(orderItem.amount);
-  array.push(toDecimal2(orderItem.price));
-  array.push(toDecimal2(orderItem.total));
+  array.push(orderItem.price);
+  array.push(orderItem.total);
   return array;
 }
 
 export function transFromDiscountItemToArray(discountItem) {
   var array = [];
-  array.push(discountItem.nombre);
-  array.push(discountItem.amount);
-  array.push(toDecimal2(discountItem.discount));
+  array.push(discountItem.commodityName);
+  array.push(Math.abs(discountItem.discount));
+  array.push(discountItem.discountPrompt);
   return array;
 }
 
@@ -248,14 +262,14 @@ export function toDecimal2(x) {
   if (isNaN(f)) {
     return false;
   }
-  var f = Math.round(x*100)/100;
+  var f = Math.round(x*1000)/1000;
   var s = f.toString();
   var rs = s.indexOf('.');
   if (rs < 0) {
     rs = s.length;
     s += '.';
   }
-  while (s.length <= rs + 2) {
+  while (s.length <= rs + 3) {
     s += '0';
   }
   return s;

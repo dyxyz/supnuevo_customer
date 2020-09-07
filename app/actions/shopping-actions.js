@@ -12,10 +12,11 @@ export function getCartInfo(cartId,unionId) {
   };
 }
 
-export function getCartInfoSuccess(cartInfo) {
+export function getCartInfoSuccess(cartInfo,goodsNumber) {
   return {
     type: actions.GET_CART_INFO_SUCCESS,
     cartInfo: cartInfo,
+    goodsNumber:goodsNumber,
   };
 }
 
@@ -26,6 +27,26 @@ export function getCartInfoFail(error) {
   };
 }
 
+export function getCommodityClass(unionId) {
+    return {
+        type: actions.GET_COMMODITY_CLASS,
+        unionId:unionId,
+    };
+}
+
+export function getCommodityClassSuccess(classList) {
+    return {
+        type: actions.GET_COMMODITY_CLASS_SUCCESS,
+        classList:classList,
+    };
+}
+
+export function getCommodityClassFail() {
+    return {
+        type: actions.GET_COMMODITY_CLASS_FAIL,
+    };
+}
+
 export function setCartInfo(cartInfo) {
   return {
     type: actions.SET_CART_INFO,
@@ -33,11 +54,14 @@ export function setCartInfo(cartInfo) {
   };
 }
 
-export function updateCartInfo(cartInfo, unionId) {
+export function updateCartInfo(cartInfo, unionId,searchText,detail,taxId) {
   return {
     type: actions.UPDATE_CART_INFO,
     cartInfo:cartInfo,
-    unionId: unionId
+    unionId: unionId,
+    searchText:searchText,
+    detail:detail,
+    taxId:taxId
   };
 }
 

@@ -9,13 +9,22 @@ export default function authReducer(state, action = {}) {
   switch (action.type) {
       case actions.GET_CUSTOMER_HELP_SUCCESS:
           return state.withMutations(state => state
-              .set('help', action.help));
-      case actions.GET_REGISTER_HELP_SUCCESS:
+              .set('helpSeg', action.helpSeg));
+      case actions.GET_ROOT_HELP_SUCCESS:
           return state.withMutations(state => state
-              .set('registerHelp', action.registerHelp));
-      case actions.GET_LOGGED_HELP_SUCCESS:
+              .set('rootHelpSeg', action.helpSeg));
+      case actions.GET_UNION_HELP_SUCCESS:
           return state.withMutations(state => state
-              .set('loggedHelp', action.loggedHelp));
+              .set('unionHelpSeg', action.helpSeg));
+      case actions.GET_SHOPPING_HELP_SUCCESS:
+          return state.withMutations(state => state
+              .set('shoppingHelpSeg', action.helpSeg));
+      case actions.GET_ORDER_HELP_SUCCESS:
+          return state.withMutations(state => state
+              .set('orderHelpSeg', action.helpSeg));
+      case actions.GET_HISTORY_HELP_SUCCESS:
+          return state.withMutations(state => state
+              .set('historyHelpSeg', action.helpSeg));
       case actions.GET_CUSTOMER_HELP_FAIL:
           return state.withMutations(state => state
               .set('helpError', action.error));
@@ -34,6 +43,8 @@ export default function authReducer(state, action = {}) {
           .set('unionId', action.customerInfo.unionId)
           .set('merchantId',action.customerInfo.merchantId)
           .set('cartId',action.customerInfo.cartId)
+          .set('phoneChecked',action.phoneChecked)
+          .set('isAgree',action.isAgree)
           .set('customerInfo',action.customerInfo));
     case actions.REGISTER_ERROR:
       return state.withMutations(state => state
@@ -85,11 +96,35 @@ export default function authReducer(state, action = {}) {
     case actions.RESET_AUTH:
       return state.withMutations(state => state
           .set('isLoggedIn', false)
+          .set('isNewDevice', false)
           .set('loginError','')
           .set('registerState',false)
           .set('sessionId', '')
           .set('username', '')
           .set('password', ''));
+      case actions.NEW_DEVICE:
+          return state.withMutations(state => state
+              .set('isNewDevice', true));
+      case actions.RESET_DEVICE_STATUS:
+          return state.withMutations(state => state
+              .set('isNewDevice', false));
+      case actions.SET_CHECKED_SUCCESS:
+          return state.withMutations(state => state
+              .set('mobilePhone',action.verifyTel)
+              .set('phoneChecked',1));
+      case actions.SET_AGREE_SUCCESS:
+          return state.withMutations(state => state
+              .set('isAgree',1));
+      case actions.SET_DISAGREE_SUCCESS:
+          return state.withMutations(state => state
+              .set('isAgree',0));
+      case actions.SET_UNION:
+          return state.withMutations(state => state
+              .set('cartId',action.cartId)
+              .set('unionId',action.unionId));
+      case actions.SET_DEFAULT_INFO:
+          return state.withMutations(state => state
+              .set('customerInfo',Object.assign(state.get('customerInfo'),{defaultReceiverName: action.deliveryInfo.receiverName,defaultReceiverAddr: action.deliveryInfo.receiverAddr,defaultReceiverPhone: action.deliveryInfo.receiverPhone})));
     default:
       return state
   }

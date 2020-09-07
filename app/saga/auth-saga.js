@@ -9,28 +9,42 @@ import * as unionActions from "../actions/union-actions";
 import * as authActions from "../actions/auth-actions";
 import * as rootActions from "../actions/root-actions";
 import strings from '../resources/strings';
+import DeviceInfo from 'react-native-device-info';
+import { getUniqueId, getManufacturer ,getDeviceId} from 'react-native-device-info';
+let deviceId = DeviceInfo.getUniqueId();
+import {Alert} from 'react-native';
 
 
 // 获取客户帮助信息
 function* getCustomerHelp (action) {
     try {
-        const helpType=action.helpType;
-        const response = yield call(Api.getCustomerHelp,helpType);
+        const helpNum=action.helpNum;
+        const response = yield call(Api.getCustomerHelp,helpNum);
+        // console.log(response)
         if (response.re == 1) {
-          if(helpType=='01') {
-              const help = response.data;
-              yield put(authActions.getCustomerHelpSuccess(help));
+            const helpSeg = response.data.helpSeg;
+
+          if(helpNum=='01') {
+              yield put(authActions.getCustomerHelpSuccess(helpSeg));
           }
-          else if(helpType=='02'){
-              const registerHelp = response.data;
-              yield put(authActions.getRegisterHelpSuccess(registerHelp));
+          else if(helpNum=='02'){
+              yield put(authActions.getRootHelpSuccess(helpSeg));
+          }
+          else if(helpNum=='03'){
+              yield put(authActions.getUnionHelpSuccess(helpSeg));
+          }
+          else if(helpNum=='04'){
+              yield put(authActions.getShoppingHelpSuccess(helpSeg));
+          }
+          else if(helpNum=='05'){
+              yield put(authActions.getOrderHelpSuccess(helpSeg));
           }
           else{
-              const loggedHelp = response.data;
-              yield put(authActions.getLoggedHelpSuccess(loggedHelp));
+              yield put(authActions.getHistoryHelpSuccess(helpSeg));
           }
         }
         else {
+            alert(strings.time_out);
             yield put(authActions.getCustomerHelpFail(strings.getCustomerHelpFail));
         }
     } catch (error) {
@@ -39,33 +53,75 @@ function* getCustomerHelp (action) {
 }
 
 function* login( action ) {
-  const {username,password} = action;
+    const {username,password} = action;
+    try {
+        yield put({type:actions.RESET_DEVICE_STATUS})
+        yield put(rootActions.setLoading(true));
+        const loginResponse = yield call(Api.webLogin, deviceId, 1);
+        if (loginResponse.errorMessageList && loginResponse.errorMessageList.length > 0) {
+            yield put(authActions.setLoginError(loginResponse.errorMessageList[1]));
+        } else {
+            const sessionId = loginResponse.sessionId;
+            const customerResponse = yield call(Api.getSupnuevoCustomerInfo, sessionId);
+            // console.log(customerResponse)
+            if(customerResponse.re === 1) {
+                const data = customerResponse.data;
+                const customerInfo = data.customerInfo;
+                const merchant = data.merchant;
+                const union = data.union;
+                const mobilePhone=data.mobilePhone;
+                const phoneChecked=data.phoneChecked;
+                const isAgree=data.isAgree;
 
-  try {
-    yield put(rootActions.setLoading(true));
-    const loginResponse = yield call(Api.webLogin, username, password);
-    if (loginResponse.errorMessageList && loginResponse.errorMessageList.length > 0) {
-      yield put(authActions.setLoginError(loginResponse.errorMessageList[1]));
-    } else {
-      const sessionId = loginResponse.sessionId;
-      const customerResponse = yield call(Api.getSupnuevoCustomerInfo, sessionId);
-      if(customerResponse.re === 1) {
-        const data = customerResponse.data;
-        const customerInfo = data.customerInfo;
-        const merchant = data.merchant;
-        const union = data.union;
-        const mobilePhone=data.mobilePhone;
-        yield put(authActions.setLoginSuccess(sessionId, username, password,mobilePhone, customerInfo));
-        yield put(unionActions.setDefaultUnionAndMerchant(union,merchant));
-      }
-      else
-        yield put(authActions.setLoginError(strings.customer_invalid));
+                yield put(authActions.setLoginSuccess(sessionId, username, password,mobilePhone, customerInfo,phoneChecked,isAgree));
+                yield put(unionActions.setDefaultUnionAndMerchant(union,merchant));
+            }
+            else{
+                alert(strings.time_out);
+                yield put(authActions.setLoginError(strings.customer_invalid));
+            }
+
+        }
+    } catch (error) {
+        yield put(authActions.setLoginError(error));
+    } finally {
+        yield put(rootActions.setLoading(false));
     }
-  } catch (error) {
-    yield put(authActions.setLoginError(error));
-  } finally {
-    yield put(rootActions.setLoading(false));
-  }
+}
+
+function* continueLogin( action ) {
+    const {username,password} = action;
+    try {
+        yield put({type:actions.RESET_DEVICE_STATUS})
+        yield put(rootActions.setLoading(true));
+        const loginResponse = yield call(Api.webLogin, deviceId, 1);
+        console.log(loginResponse)
+        if (loginResponse.errorMessageList && loginResponse.errorMessageList.length > 0) {
+            yield put(authActions.setLoginError(loginResponse.errorMessageList[1]));
+        } else {
+            const sessionId = loginResponse.sessionId;
+            const customerResponse = yield call(Api.getSupnuevoCustomerInfo, sessionId);
+            console.log(customerResponse)
+            if(customerResponse.re === 1) {
+                const data = customerResponse.data;
+                const customerInfo = data.customerInfo;
+                const merchant = data.merchant;
+                const union = data.union;
+                const mobilePhone=data.mobilePhone;
+                yield put(authActions.setLoginSuccess(sessionId, username, password,mobilePhone, customerInfo));
+                yield put(unionActions.setDefaultUnionAndMerchant(union,merchant));
+            }
+            else{
+                alert(strings.time_out);
+                yield put(authActions.setLoginError(strings.customer_invalid));
+            }
+
+        }
+    } catch (error) {
+        yield put(authActions.setLoginError(error));
+    } finally {
+        yield put(rootActions.setLoading(false));
+    }
 }
 
 function* register( action ) {
@@ -77,6 +133,7 @@ function* register( action ) {
     if (registerResponse.re === 1) {
       yield put(authActions.setRegisterSuccess(username, password));
     } else {
+        alert(strings.time_out);
       const error = registerResponse.data;
       yield put(authActions.setRegisterError(error && error !== undefined?error:strings.register_fail));
     }
@@ -96,12 +153,15 @@ function* setCustomerDefaultMerchant( action ) {
 
 function* addCustomerReceiverInfo( action ) {
   const {addType, addValue} = action;
+  console.log(addValue)
   try {
     const response = yield call(Api.addCustomerReceiverInfo, addType, addValue);
     if (response.re === 1) {
+      console.log(response)
       const customerInfo = response.data;
       yield put(authActions.addReceiverInfoSuccess(customerInfo));
     } else {
+        alert(strings.time_out);
       yield put(authActions.addReceiverInfoFail(strings.addCustomerReceiverInfoFail));
     }
   } catch (error) {
@@ -109,26 +169,71 @@ function* addCustomerReceiverInfo( action ) {
   }
 }
 
-function* logOut() {
-  try {
-    const response = yield call(Api.logOut);
-    if (response.errorMessageList && response.errorMessageList.length > 0) {
-      yield put(authActions.setLogoutError(response.errorMessageList[1]));
-    } else {
-      yield put(authActions.setLogoutSuccess());
+function* deleteCustomerReceiverInfo( action ) {
+    const {deleteType, deleteValue} = action;
+    console.log(deleteValue)
+    try {
+        const response = yield call(Api.deleteCustomerReceiverInfo, deleteType, deleteValue);
+        if (response.re === 1) {
+            console.log(response)
+            const customerInfo = response.data;
+            yield put(authActions.addReceiverInfoSuccess(customerInfo));
+        } else {
+            alert(strings.time_out);
+            yield put(authActions.addReceiverInfoFail(strings.deleteCustomerReceiverInfoFail));
+        }
+    } catch (error) {
+        yield put(authActions.addReceiverInfoFail(error));
     }
-  } catch (error) {
-    yield put(authActions.setLogoutError(error));
-  }
 }
+
+// function* logOut() {
+//   try {
+//     const response = yield call(Api.logOut);
+//     if (response.errorMessageList && response.errorMessageList.length > 0) {
+//       yield put(authActions.setLogoutError(response.errorMessageList[1]));
+//     } else {
+//       yield put(authActions.setLogoutSuccess());
+//     }
+//   } catch (error) {
+//     yield put(authActions.setLogoutError(error));
+//   }
+// }
+
+function* setCustomerIsAgree(action) {
+    const {isAgree} = action;
+    try {
+
+        const response = yield call(Api.setReadState, isAgree);
+        console.log(response)
+        if (response.re === 1) {
+            if(isAgree==1){
+                yield put({ type: actions.SET_AGREE_SUCCESS });
+            }
+            else{
+                yield put({ type: actions.SET_DISAGREE_SUCCESS });
+            }
+
+        }
+        else{
+            alert(strings.time_out);
+        }
+    } catch (error) {
+    }
+}
+
+
 
 export default [
   takeEvery(actions.GET_CUSTOMER_HELP,getCustomerHelp),
   takeEvery(actions.LOGIN_ACTION,login),
+  takeEvery(actions.CONTINUE_LOGIN,continueLogin),
   takeEvery(actions.REGISTER_ACTION,register),
   takeEvery(actions.SET_DEFAULT_MERCHANT,setCustomerDefaultMerchant),
   takeEvery(actions.ADD_RECEIVER_INFO,addCustomerReceiverInfo),
-  takeEvery(actions.LOGOUT_ACTION,logOut),
+  takeEvery(actions.DELETE_RECEIVER_INFO,deleteCustomerReceiverInfo),
+  // takeEvery(actions.LOGOUT_ACTION,logOut),
+  takeEvery(actions.SET_AGREE,setCustomerIsAgree),
 ]
 
 

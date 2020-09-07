@@ -5,7 +5,7 @@ import strings from '../../../resources/strings';
 import constants from './AIConstants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import IconE from 'react-native-vector-icons/Entypo';
-import {getHeaderHeight, SCREEN_WIDTH} from "../../../utils/tools";
+import {getHeaderHeight, SCREEN_WIDTH,getTabBarHeight} from "../../../utils/tools";
 
 export default class AISearchBar extends React.PureComponent {
 
@@ -18,7 +18,10 @@ export default class AISearchBar extends React.PureComponent {
 
     render() {
         return (
-            <KeyboardAvoidingView behavior="padding">
+            <KeyboardAvoidingView
+                behavior="padding"
+                keyboardVerticalOffset={getTabBarHeight}
+            >
             <View style={styles.searchContainer}>
                 <View style={styles.searchInputContainer}>
                     <TouchableOpacity style={styles.searchIcon} onPress={this.props._onMicrophonePress}>
@@ -26,7 +29,8 @@ export default class AISearchBar extends React.PureComponent {
                     </TouchableOpacity>
                     <View style={styles.inputContainerStyle}>
                         <TextInput
-                            ref={ref => this._searchInput = ref}
+                            // ref={ref => this._searchInput = ref}
+                            ref="_searchInput"
                             underlineColorAndroid="transparent"
                             style={styles.inputStyle}
                             value={this.props.searchText}
@@ -35,13 +39,18 @@ export default class AISearchBar extends React.PureComponent {
                             placeholder={this.props.placeText}
                         />
                     </View>
-                    <TouchableOpacity style={styles.searchIcon} onPress={this.props._onSearchPress}>
+                    <TouchableOpacity style={styles.searchIcon} onPress={()=>{this.buttonPress()}}>
                         <Ionicons name={'md-search'} size={25} color={colors.baseWhite}/>
                     </TouchableOpacity>
                 </View>
             </View>
             </KeyboardAvoidingView>
         );
+    }
+
+    buttonPress=()=>{
+        this.refs._searchInput.blur()
+        this.props._onSearchPress()
     }
 
 }
@@ -81,6 +90,7 @@ const styles = StyleSheet.create({
         height: 35,
         padding: 0,
         margin: 0,
+        backgroundColor:colors.baseWhite
     },
     searchInputLeftTxt: {
         fontSize: 16,

@@ -31,7 +31,7 @@ export default class Button extends React.PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    height:50,
+    height:'auto',
     width:SCREEN_WIDTH,
     justifyContent:'center',
     alignItems: 'center',

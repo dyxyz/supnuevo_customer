@@ -11,6 +11,10 @@ import UnionDiscount from './UnionDiscount';
 import UnionPrice from './UnionPrice';
 import commodityDetail from "../CommodityDetail";
 import UnionState from "./UnionState";
+import MemberInfo from "./MemberInfo";
+import CommodityClass from '../shopping/CommodityClass';
+import BigPicture from "../shopping/BigPicture";
+import RootPage from '../RootPage';
 
 const Routes = {
     UnionList: {screen: UnionList},
@@ -19,11 +23,14 @@ const Routes = {
     UnionPrice:{screen:UnionPrice},
     commodityDetail:{screen:commodityDetail},
     UnionState:{screen:UnionState},
-
+    CommodityClass:{screen:CommodityClass},
+    MemberInfo:{screen:MemberInfo},
+    RootPage:{screen:RootPage},
+    BigPicture: {screen: BigPicture},
 };
 
 const UnionStack = createStackNavigator(Routes, {
-    initialRouteName: 'UnionList',
+    initialRouteName: 'UnionMemberList',
     headerMode: 'screen',
     defaultNavigationOptions: {
     header:null

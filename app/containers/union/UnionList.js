@@ -37,6 +37,7 @@ export class UnionList extends Component {
 
   componentDidMount(){
       this.props.dispatch(unionActions.getUnionList());
+      this.props.dispatch(unionActions.getUnionAdvertisementList(1, 0, 5));
   }
 
     componentWillReceiveProps(nextProps) {
@@ -56,19 +57,26 @@ export class UnionList extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = {this.props.username+'-'+strings.window_shopping}
+              <TopToolBar title = {strings.first_page}
                           navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
+              <View style={{width:SCREEN_WIDTH,padding:10,alignItems:'center',borderBottomWidth:1,
+                  borderColor: colors.baseBlack,}}>
+                  <Text style={{fontSize:18,fontWeight:'bold'}}>{strings.click_union}</Text>
+              </View>
               {this._renderUnionList(unions)}
-              <BottomToolBar navigation = {this.props.navigation}/>
+              <BottomToolBar
+                  navigation = {this.props.navigation}
+                  isRoot={true}
+              />
+
           </View>
       );
   }
 
   _renderUnionList(unions){
       return(
-          unions && unions.length>0?
           <View style={styles.listViewWrapper}>
               <ListView
                   style={styles.listView}
@@ -77,18 +85,22 @@ export class UnionList extends Component {
                   renderRow={this._renderItem}
                   enableEmptySections={true}
               />
-          </View>:null
+          </View>
       );
   }
 
     _renderItem = (rowData,sectionId,rowId) => {
-      const image = rowData.imageUrl && rowData.imageUrl!==undefined?{uri:strings.head+rowData.imageUrl}:require('../../assets/img/img_logo.png');
+      var ts=new Date().getTime();
+      const image = rowData.imageUrl && rowData.imageUrl!==undefined?{uri:strings.head+rowData.imageUrl+"?"+ts}:require('../../assets/img/img_logo.png');
         return (
             <ListItem
                 leftElement={<Image source={image} style={styles.image} resizeMode={"contain"}/>}
                 title={rowData.unionName}
+                titleStyle={{marginBottom:8}}
+                subtitle={rowData.unionDes}
                 style={styles.listItemStyle}
-                chevron
+
+                // chevron
                 onPress={()=>this._onUnionPress(rowData)}/>
         );
     };
@@ -98,10 +110,14 @@ export class UnionList extends Component {
   _onHelpIconPress =() =>{};
 
   _onUnionPress =(union) =>{
-      const unionId = this.props.union.get("union").unionId;
+      const unionId = union.unionId;
       this.props.dispatch(unionActions.setDefaultUnionAndMerchant(union,null));
       this.props.dispatch(unionActions.getSupnuevoUnionCustomerShoppingCar(unionId));
-      this.props.navigation.push("UnionMemberList");
+      this.props.dispatch(unionActions.getUnionAdvertisementList(unionId, 0, 99));
+
+          this.props.navigation.push("RootPage");
+
+
   }
 
 };

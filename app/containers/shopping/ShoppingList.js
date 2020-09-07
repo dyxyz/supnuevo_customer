@@ -18,13 +18,17 @@ import {
     ScrollView,
     ListView,
     Alert,
+
 } from "react-native";
 import {connect} from "react-redux";
 import {ACTION_HELP, TopToolBar} from "../../components/TopToolBar";
-import {ACTION_DISCOUNT, BottomToolBar,ACTION_ORDER} from "../../components/BottomToolBar";
+import {ACTION_DISCOUNT, BottomToolBar, ACTION_ORDER, ACTION_RULE,ACTION_CLASS} from "../../components/BottomToolBar";
 import {Avatar, Badge, ListItem} from "react-native-elements";
 import colors from "../../resources/colors";
-import {getHeaderHeight, replaceMember, SCREEN_WIDTH,SCREEN_HEIGHT, showCenterToast} from "../../utils/tools";
+import {
+    getHeaderHeight, replaceMember, SCREEN_WIDTH, SCREEN_HEIGHT, showCenterToast,
+    getTabBarHeight
+} from "../../utils/tools";
 import ShoppingCart from "../../components/ShoppingCart";
 import {AISearchBar} from "../../components/AIServer";
 import IntroDivider from "../../components/IntroDivider";
@@ -34,12 +38,16 @@ import * as unionActions from '../../actions/union-actions';
 import * as rootActions from "../../actions/root-actions";
 import * as authActions from "../../actions/auth-actions";
 import strings from "../../resources/strings";
+import ImageViewer from 'react-native-image-zoom-viewer';
 import {SpinnerWrapper} from "../../components/SpinnerLoading";
 import NetworkingError from "../union/UnionPrice";
 import RefreshListView from "../../components/RefreshListView";
+import Modal from "react-native-modalbox";
 import SwipeableView from "../../components/SwipeableView";
 import {SwipeRow,SwipeListView} from 'react-native-swipe-list-view';
 var _SwipeRow: SwipeRow;
+import { BackAndroid } from 'react-native';
+import {BigPicture} from "./BigPicture";
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -53,19 +61,26 @@ export class ShoppingList extends Component {
         super(props);
         this.state = {
             start: 1,
-            searchText: '',
+            searchText:'',
             searchResult: [],
             selectedPrice: null,
             isSearchStatus: false,
             listHeight: 0,
+            backTop:0,
+            bigPictureVisible:false,
+            bigPictureUrl:null,
+            leftOpenValue:50,
+            rightOpenValue:-50,
+            // canLoad:0
+            // priceList:this.props.union.get('priceList'),
         };
     }
 
     componentDidMount() {
         this.props.dispatch(rootActions.setLoading(false));
         this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
-        this.props.dispatch(shoppingActions.getCartInfo(this.props.cartId,this.props.auth.get("unionId")));
-        this.props.dispatch(unionActions.getUnionRegulation(this.props.auth.get("unionId")));
+        this.props.dispatch(shoppingActions.getCartInfo(this.props.cartId,this.props.unionId));
+        this.props.dispatch(unionActions.getUnionRegulation(this.props.unionId));
         // this.props.dispatch(authActions.login(this.props.username, this.props.password));
     }
 
@@ -103,51 +118,96 @@ export class ShoppingList extends Component {
         if(this.state.isSearchStatus)return;
 
         this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
-        this.setState({start: 1});
+        // this.setState({start: 1});
     };
 
     onFooterRefresh = () => {
         if(this.state.isSearchStatus)return;
 
-        let curStart = this.state.start + 1;
-        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, curStart, count, this.props.cartId));
-        this.setState({start: curStart});
+        // let curStart = this.state.start + 1;
+        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, this.props.start, count, this.props.cartId));
+        // this.setState({start: curStart});
     };
 
     render() {
         const loading = this.props.root.get('loading');
         const {cartInfo} = this.props;
         const cartNumber = cartInfo && cartInfo.length>0?cartInfo.length:0;
+        var ts=new Date().getTime();
         const regulation = this.props.union.get("regulation");
 
         return (
             <View style={styles.container}>
-                <TopToolBar title = {this.props.username+'-'+regulation.unionName} navigation = {this.props.navigation}
+                <TopToolBar
+                    title = 'Carrito'
+                    navigation = {this.props.navigation}
                             rightAction={ACTION_HELP}
+                            leftAction={ACTION_DISCOUNT}
                             _onLeftIconPress={this._onVolumeIconPress}
                             _onRightIconPress={this._onHelpIconPress}/>
-                <IntroDivider intro={strings.car_forth+' '+cartNumber+' '+strings.car_fore} _onClearPress={this._clearCar} flag={'1'} />
-                {this._renderShoppingCart(cartInfo)}
-                {this._renderSearchBar()}
-                {this._renderPriceList()}
+                <View
+                    style={{marginBottom: Platform.OS=='ios'?8:getHeaderHeight(),flex:1}}
+                >
+                    <IntroDivider intro={strings.car_forth+' '+this.props.goodsNumber+' '+strings.car_fore} _onClearPress={this._clearCar} flag={'1'} />
+                    {this._renderShoppingCart(cartInfo)}
+                    {this._renderSearchBar()}
+                    {this._renderPriceList()}
+
+                </View>
+                <Modal
+                    // visible={this.state.bigPictureVisible}
+                    transparent={true}
+                    ref={"modal"}
+                >
+
+                    <ImageViewer
+                        imageUrls={[{url:strings.head+this.state.bigPictureUrl+"?"+ts,props:{}}]}
+                        // onClick={()=>this.setState({bigPictureVisible:false})}
+                        onClick={()=>{this.refs.modal.close()}}
+                    />
+
+                </Modal>
+                {/*<View style={{height:getTabBarHeight(),*/}
+                    {/*width:SCREEN_WIDTH,*/}
+                    {/*paddingTop:15,*/}
+                    {/*flexDirection:'row',*/}
+                    {/*justifyContent:'center',*/}
+                    {/*backgroundColor: colors.primaryColor,}}>*/}
+                    {/*<Text>111</Text>*/}
+                {/*</View>*/}
                 <BottomToolBar navigation = {this.props.navigation}
                                leftAction = {ACTION_ORDER}
                                _onLeftIconPress = {this._onSkipPress}
+                               rightAction={ACTION_CLASS}
+                               _onRightIconPress={this._onClassPress}
                 />
                 <SpinnerWrapper loading={loading} title={strings.searching}/>
             </View>
         );
     }
 
+
+
     _renderShoppingCart(cartInfo){
 
-        return(
-            <ShoppingCart
-                cartInfo={cartInfo}
-                _onUpdateCartCommodity={(type, item, i)=>this._onUpdateCartCommodity(type, item, i)}
-                navigateToDetail={(price)=>this.navigateToDetail(price)}
-            />
-        );
+
+            if(cartInfo.length==0){
+                return(
+                    <View style={{height:SCREEN_HEIGHT*0.24, width:SCREEN_WIDTH,justifyContent:'center',alignItems:'center'}}>
+                        <Text style={{textAlign:'center',fontWeight:'bold',fontSize:16}}>Para agregar deslizá hacia a la derecha. Para quitar hacia la izquierda.</Text>
+                    </View>
+                );
+            }
+            else{
+                return(
+                    <ShoppingCart
+                        cartInfo={cartInfo}
+                        _onUpdateCartCommodity={(type, item, i)=>this._onUpdateCartCommodity(type, item, i)}
+                        navigateToDetail={(price,index,priceList,isPrice)=>this.navigateToDetail(price,index,priceList,isPrice)}
+                    />
+                );
+            }
+
     }
 
     _renderSearchBar() {
@@ -174,12 +234,15 @@ export class ShoppingList extends Component {
                 <NetworkingError
                     retry={() => this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count))}/>
                 :
-                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null}
-                                      keyboardVerticalOffset={getHeaderHeight} style={styles.container}>
-                    <SafeAreaView style={styles.container}>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+                    keyboardVerticalOffset={getHeaderHeight}
+                    style={styles.container}>
+                    {/*<SafeAreaView style={styles.container}>*/}
                         <RefreshListView
                             data={priceList}
                             footerEmptyDataText={strings.noData}
+                            backTop={this.state.backTop}
                             footerFailureText={strings.loadError}
                             footerNoMoreDataText={strings.noMore}
                             footerRefreshingText={strings.loading}
@@ -191,20 +254,28 @@ export class ShoppingList extends Component {
                             renderItem={this.renderCell}
                             style={styles.listView}
                         />
-                    </SafeAreaView>
+                    {/*</SafeAreaView>*/}
                 </KeyboardAvoidingView>
         );
     }
 
     renderCell = ({item, index}) => {
-        const priceList = this.props.union.get('priceList');
+        // const priceList = this.props.priceList;
+        const {priceList} = this.props;
+        // console.log(priceList)
+        // const priceList=this.state.priceList
         const price = priceList[index];
+        // var ts=new Date().getTime();
+        // var imageurl ="https://supnuevo.s3.sa-east-1.amazonaws.com/"+ this.state.attachDataUrl+"?"+ts;
+        const image = price.imageUrl && price.imageUrl!==undefined?{uri:strings.head+price.imageUrl}:require('../../assets/img/img_logo.png');
         return (
-            <TouchableOpacity onPress={()=>{this.navigateToDetail(price)}}>
+            <TouchableOpacity
+                // onPress={()=>{this.navigateToDetail(price)}}
+            >
                 <View style={styles.listItemStyle}>
 
 
-                    <View style={{width: SCREEN_WIDTH*0.85, flexDirection:"row",height: SCREEN_HEIGHT*0.1,alignItems:"center",justifyContent:"center",marginTop:10}}>
+                    <View style={{width: SCREEN_WIDTH*0.85, flexDirection:"row",height: SCREEN_HEIGHT*0.12,alignItems:"center",justifyContent:"center",marginTop:10}}>
 
 
                         <SwipeRow
@@ -212,6 +283,9 @@ export class ShoppingList extends Component {
                             automaticallyAdjustContentInsets={false}
                             swipeToOpenPercent={100}
                             scrollToEnd={true}
+                            preview={this.props.cartInfo.length===0}
+                            previewOpenValue={50}
+                            // previewDuration={3000}
                             onRowOpen={(rowKey, rowMap) => {
                                 if (rowKey > 0) {
                                     this._onUpdateCartCommodity(constants.CART_ADD, price,rowKey)
@@ -228,24 +302,65 @@ export class ShoppingList extends Component {
                             <View style={styles.rowBack}>
                                         <TouchableOpacity onPress={() => {
                                             this._onUpdateCartCommodity(constants.CART_ADD, price)
-                                        }}><Text style={{color:"white"}} allowFontScaling={false}>+1</Text></TouchableOpacity>
+                                        }}>
+                                            {/*<View style={{width:30,backgroundColor:'red'}}>*/}
+                                            <Text style={{color:"red"}} allowFontScaling={false}>+1</Text>
+                                            {/*</View>*/}
+                                        </TouchableOpacity>
                                         <TouchableOpacity onPress={() => {
                                             this._onUpdateCartCommodity(constants.CART_DECLINE, price)
-                                        }}><Text  style={{color:"white"}} allowFontScaling={false}>-1</Text></TouchableOpacity>
+                                        }}><Text  style={{color:"red"}} allowFontScaling={false}>-1</Text></TouchableOpacity>
                             </View>
 
                                 <View>
                                     <TouchableOpacity
-                                        onPress={()=>{this.navigateToDetail(price)}}
-                                        style={{width: SCREEN_WIDTH*0.85, flexDirection:"row",height: SCREEN_HEIGHT*0.1,alignItems:"center",justifyContent:"space-between"}}
+                                        onPress={()=>{this.navigateToDetail(price,index,priceList,true)}}
+                                        style={{width: SCREEN_WIDTH*0.85, flexDirection:"row",height: SCREEN_HEIGHT*0.1,alignItems:"center",justifyContent:"space-between",backgroundColor:colors.baseWhite}}
                                     >
-                                    <View style={{marginLeft:10}}>
-                                        <Text allowFontScaling={false}>{price.nombre}</Text>
-                                        <Text style={styles.subtitleText} allowFontScaling={false}>{price.codigo}</Text>
-                                    </View>
-                                    <View style={{marginRight:10,justifyContent:"center"}}>
+                                    {price.commodityName==null || price.commodityName==undefined || price.commodityName==''?
+                                        <View style={{marginLeft:10,maxWidth:SCREEN_WIDTH*0.65}}>
+                                            <Text allowFontScaling={false}>{price.nombre}</Text>
+                                            <Text style={styles.priceText} allowFontScaling={false}>$ {price.price}</Text>
+                                            {/*<Text allowFontScaling={false}>{image}</Text>*/}
+                                            {/*<Text style={styles.subtitleText} allowFontScaling={false}>{price.codigo}</Text>*/}
+                                        </View>
+                                        :
+                                        <View style={{marginLeft:10,maxWidth:SCREEN_WIDTH*0.65}}>
+                                            <View>
+                                                <Text allowFontScaling={false}>{price.commodityName}</Text>
+                                            </View>
+                                            <View style={{flexDirection:'row'}}>
+                                                <View>
+                                                    <Text style={styles.priceText} allowFontScaling={false}>$ {price.price}</Text>
+                                                </View>
+                                                {price.advertisementUrl==undefined || price.advertisementUrl==null?
+                                                    null
+                                                    :
+                                                    <TouchableOpacity
+                                                        // onPress={()=>this.setState({bigPictureVisible:true,bigPictureUrl:price.advertisementUrl,backTop:0})}
+                                                        onPress={()=>{this.props.navigation.push("BigPicture",{bigPictureUrl:price.advertisementUrl});this.setState({backTop:0})}}
+                                                    >
+                                                        <View style={{marginLeft:25}}>
+                                                            <Text style={{fontSize:22,color:colors.baseCyan,fontStyle:'italic',fontWeight:'bold'}} allowFontScaling={false}>OFERTAS！</Text>
+                                                        </View>
+                                                    </TouchableOpacity>
 
-                                        <Text allowFontScaling={false}>{price.price}</Text>
+                                                }
+                                            </View>
+                                            {/*<Text allowFontScaling={false}>{image}</Text>*/}
+                                            {/*<Text style={styles.subtitleText} allowFontScaling={false}>{price.codigo}</Text>*/}
+                                        </View>
+                                    }
+
+                                    <View style={{marginRight:10,justifyContent:"center"}}>
+                                        <TouchableOpacity
+                                            // onPress={()=>this.setState({bigPictureVisible:true,bigPictureUrl:price.imageUrl})}
+                                            // onPress={()=>{this.refs.modal.open();this.setState({bigPictureUrl:price.imageUrl})}}
+                                            onPress={()=>{this.props.navigation.push("BigPicture",{bigPictureUrl:price.imageUrl});}}
+                                        >
+                                            <Image source={image} style={{width:60,height:60}} resizeMode={"contain"}/>
+                                        </TouchableOpacity>
+                                        {/*<Text allowFontScaling={false}>{price.price}</Text>*/}
                                     </View>
                                     </TouchableOpacity>
                                 </View>
@@ -255,8 +370,8 @@ export class ShoppingList extends Component {
                         </SwipeRow>
                         <View>
                             {
-                                price.amount !=null && price.amount!=undefined?
-                                    <Badge value={price.amount} status="error" containerStyle={{ position: 'absolute', top: -SCREEN_HEIGHT*0.07, right: -SCREEN_WIDTH*0.012 }}/>
+                                price.amount !=null && price.amount!=undefined && price.amount !=0?
+                                    <Badge value={price.amount} status="error" containerStyle={{ position: 'absolute', top: -SCREEN_HEIGHT*0.085, right: -SCREEN_WIDTH*0.013 }}/>
                                     :
                                     null
                             }
@@ -279,24 +394,33 @@ export class ShoppingList extends Component {
 
     _onSkipPress=() =>{this.props.navigation.push("OrderCommit")};
 
-    _onVolumeIconPress =() =>{};
+    _onClassPress=() =>{this.props.navigation.push("CommodityClass",{ refresh: () => {
+            this.setState({backTop:1});
+        }})};
+
+    _onVolumeIconPress =() =>{this.props.navigation.navigate('UnionDiscount')};
 
     _onHelpIconPress =() =>{this.props.navigation.navigate('ShoppingState')};
 
     _onMicrophonePress = ()=>{
+        this.setState({isSearchStatus: false,searchText:'',backTop:0});
         this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
     };
 
     _onUpdateCartCommodity = (type, item,rowKey) => {
+        this.setState({backTop:0})
+        console.log(item)
         if(item.amount==0 || item.amount==undefined || item.amount==null){
             if(rowKey>0) {
                 this._onPriceListCommodityPress(item);
             }
         }
         else {
-            this.props.dispatch(shoppingActions.updateCartInfo(this._transFromPriceToCartInfo(item, type), this.props.unionId));
+            this.props.dispatch(shoppingActions.updateCartInfo(this._transFromPriceToCartInfo(item, type), this.props.unionId,this.state.searchText,0,this.props.taxId));
         }
-        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
+        // this.setState({isSearchStatus: false});
+        // this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
+        // this.props.dispatch(unionActions.getUnionPriceListLucene(this.props.unionId, this.state.searchText,this.props.cartId));
     }
 
     _searchTextChange = (text) => {
@@ -314,13 +438,16 @@ export class ShoppingList extends Component {
     _clearSearchInput = () => this.setState({searchText: ''})
 
     _onSearchPress = () => {
-        this.setState({isSearchStatus: true});
+        this.setState({isSearchStatus: true,backTop:1});
+
         this.props.dispatch(unionActions.getUnionPriceListLucene(this.props.unionId, this.state.searchText,this.props.cartId));
+        console.log(this.props.union.get('refreshState'))
     };
 
     _onPriceListCommodityPress = (price) => {
-        this.props.dispatch(shoppingActions.updateCartInfo(this._transFromPriceToCartInfo(price, constants.CART_CREATE), this.props.unionId));
-        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
+        this.props.dispatch(shoppingActions.updateCartInfo(this._transFromPriceToCartInfo(price, constants.CART_CREATE), this.props.unionId,this.state.searchText,0));
+        // this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
+        // this.props.dispatch(unionActions.getUnionPriceListLucene(this.props.unionId, this.state.searchText,this.props.cartId));
     }
 
     _transFromPriceToCartInfo(price, type){
@@ -330,12 +457,25 @@ export class ShoppingList extends Component {
             case constants.CART_ADD:amount=price.amount+1;break;
             case constants.CART_DECLINE:amount=price.amount-1;break;
         }
-        const carInfo = {itemId: price.itemId, commodityId: price.commodityId, amount: amount,cartId:this.props.cartId};
+        const carInfo = {itemId: price.itemId, commodityId: price.commodityId, amount: amount,cartId:this.props.cartId,advertisementUrl:price.advertisementUrl};
         return carInfo;
     }
 
-    navigateToDetail=(price)=> {
-        this.props.navigation.push("commodityDetail",{price:price});
+    navigateToDetail=(price,index,priceList,isPrice)=> {
+        console.log(isPrice)
+        this.setState({backTop:0});
+        // this.setState({searchText: 'sousuo'})
+        // if(isPrice===true){
+        //
+        //     if(this.state.searchText==null){
+        //
+        //         console.log(111)
+        //     }
+        //
+        // }
+
+        this.props.navigation.push("commodityDetail",{price:price,index:index,priceList:priceList,searchText:this.state.searchText,isPrice:isPrice});
+
     }
 
 };
@@ -343,7 +483,7 @@ export class ShoppingList extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent:'center',
+        // justifyContent:'center',
         alignItems: 'center',
     },
     listViewWrapper:{
@@ -353,16 +493,25 @@ const styles = StyleSheet.create({
     listView:{
         flex:1,
         marginBottom: 40,
+        // borderWidth:2,
+        // borderColor:'blue'
     },
     listItemStyle:{
         marginTop:20,
         flex:1,
         width:SCREEN_WIDTH*0.9,
         borderWidth: 1,
+        backgroundColor:colors.baseWhite,
         borderColor: colors.saperatorLine,
         borderRadius:SCREEN_WIDTH*0.02,
         alignItems:"center",
         justifyContent:"center",
+        shadowColor:colors.baseBlack,
+        shadowOffset:{h:2,w:2},
+        shadowOpacity:0.7,
+        marginLeft:4,
+        marginRight:4,
+        elevation: 8,
     },
     image:{
         width:90,
@@ -379,6 +528,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    priceText:{
+        fontSize:20,
+        fontWeight:"700",
+        color:colors.brightRed,
+        // marginLeft:5
+    }
 });
 
 const mapStateToProps = (state) => ({
@@ -387,10 +542,15 @@ const mapStateToProps = (state) => ({
     password:state.get('auth').get('password'),
     root: state.get('root'),
     union: state.get("union"),
+    taxId: state.get('union').get('taxId'),
+    backTop: state.get('union').get('backTop'),
+    priceList: state.get('union').get('priceList'),
+    start: state.get('union').get('start'),
     unionId: state.get('auth').get("unionId"),
     cartId: state.get("auth").get("cartId"),
     shopping: state.get('shopping'),
     cartInfo: state.get('shopping').get("cartInfo"),
+    goodsNumber: state.get('shopping').get("goodsNumber"),
 });
 
 export default connect(mapStateToProps)(ShoppingList)

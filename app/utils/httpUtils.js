@@ -1,8 +1,9 @@
 /**
  * httpUtils.js
  */
-
-
+import DeviceInfo from 'react-native-device-info';
+import { getUniqueId, getManufacturer ,getDeviceId} from 'react-native-device-info';
+let deviceId = DeviceInfo.getUniqueId();
 /**
  * post
  *

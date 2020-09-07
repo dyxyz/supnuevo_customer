@@ -25,6 +25,7 @@ export default class Echarts extends React.Component {
           style={[style, {height, width, backgroundColor: 'transparent'}]}
           injectedJavaScript={renderChart({ height, option })}
           source={source ? source : Platform.OS === 'android' && !__DEV__ ? { uri:'file:///android_asset/tpl.html' } : require('./tpl.html')}
+          useWebKit={true}
           javaScriptEnabled={true}
           domStorageEnabled={true}
           scalesPageToFit={true}

@@ -17,9 +17,9 @@ export default class TableView extends React.PureComponent {
     const {title, headerList, dataList} = this.props;
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container,{backgroundColor:colors.baseWhite}]}>
           {this._renderTitle(title)}
-          {this._renderHeader(headerList)}
+          {/*{this._renderHeader(headerList)}*/}
           {this._renderInfoList(dataList)}
           {this.props.renderAux?this.props.renderAux():null}
         </View>
@@ -46,24 +46,79 @@ export default class TableView extends React.PureComponent {
     );
   }
 
-  _renderInfoList(dataList){
-    if(!dataList || dataList.length<=0) return;
-    var dataListView = [];
-    dataList.map((dataListItem,i)=>{
-      const dataRow = dataListItem;
-      var dataRowList = [];
-      if(dataRow && dataRow.length>0){
-        dataRow.map((dataRowItem,i)=>{
-          dataRowList.push(
-            <View key={i} style={styles.tableItemStyle}><Text style={styles.headerItemTextStyle} allowFontScaling={false}>{dataRowItem}</Text></View>
-          );
-        });
-        dataListView.push(
-            <View key={i} style={styles.tableWrapperStyle}>{dataRowList}</View>
-        );}});
+    _renderInfoList(dataList){
+        if(!dataList || dataList.length<=0) return;
+        var dataListView = [];
+        dataList.map((dataListItem,i)=>{
+            const dataRow = dataListItem;
+            var dataRowList = [];
+            if(dataRow && dataRow.length>0){
 
-    return dataListView;
-  }
+                    dataRowList.push(
+
+                            <View style={{flex:1,padding:6}}>
+                                {dataRow.length==4?
+                                    <View><Text style={styles.headerItemTextStyle} allowFontScaling={false}>{dataRow[0]}</Text></View>
+                                    :
+                                    <View><Text style={styles.headerItemTextStyle} allowFontScaling={false}>{dataRow[2]}</Text></View>
+                                }
+                                {dataRow.length==4?
+                                    <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginTop:8}}>
+                                        <Text style={styles.headerItemTextStyle} allowFontScaling={false}>{dataRow[1]} x {dataRow[2]}</Text>
+                                        <Text style={styles.headerItemTextStyle} allowFontScaling={false}>{dataRow[3]}</Text>
+                                    </View>
+                                    :
+                                    <View style={{flexDirection:'row',justifyContent:'flex-end',alignItems:'center',marginTop:8}}>
+                                        <Text style={styles.headerItemTextStyle} allowFontScaling={false}>{dataRow[1]}</Text>
+                                    </View>
+                                }
+
+                            </View>
+
+
+
+
+
+                    );
+                if(i==0){
+                    dataListView.push(
+
+                        <View key={i} style={[styles.tableWrapperStyle,{borderTopWidth:1,borderColor:'#888'}]}>{dataRowList}</View>
+
+
+                    );
+                }
+                else{
+                    dataListView.push(
+
+                        <View key={i} style={styles.tableWrapperStyle}>{dataRowList}</View>
+
+
+                    );
+                }
+                }});
+
+        return dataListView;
+    }
+
+  // _renderInfoList(dataList){
+  //   if(!dataList || dataList.length<=0) return;
+  //   var dataListView = [];
+  //   dataList.map((dataListItem,i)=>{
+  //     const dataRow = dataListItem;
+  //     var dataRowList = [];
+  //     if(dataRow && dataRow.length>0){
+  //       dataRow.map((dataRowItem,i)=>{
+  //         dataRowList.push(
+  //           <View key={i} style={styles.tableItemStyle}><Text style={styles.headerItemTextStyle} allowFontScaling={false}>{dataRowItem}</Text></View>
+  //         );
+  //       });
+  //       dataListView.push(
+  //           <View key={i} style={styles.tableWrapperStyle}>{dataRowList}</View>
+  //       );}});
+  //
+  //   return dataListView;
+  // }
 }
 
 const styles = StyleSheet.create({
@@ -103,4 +158,5 @@ const styles = StyleSheet.create({
     fontSize:14,
     color:'#888'
   },
+
 });

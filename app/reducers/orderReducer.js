@@ -16,6 +16,12 @@ export default function orderReducer(state, action = {}) {
           .set('discountItemList', action.discountItemList)
           .set('totalFee', action.totalFee)
           .set('discountFee', action.discountFee)
+          .set('totalDiscount', action.totalDiscount)
+          .set('isDiscountScale', action.isDiscountScale)
+          .set('isOrderMinLimit', action.isOrderMinLimit)
+          .set('noDiscountTotal', action.noDiscountTotal)
+          .set('orderDiscountFee', action.orderDiscountFee)
+          .set('orderDiscountScale', action.orderDiscountScale)
           .set('totalFeeFinal',action.totalFeeFinal));
     case actions.GET_PREV_ORDER_FAIL:
       return state.withMutations(state => state
@@ -43,6 +49,9 @@ export default function orderReducer(state, action = {}) {
       return state.withMutations(state => state
           .set('dataResponse', constants.INITIAL)
           .set('dataError', ''));
+      case actions.RESET_RECALL_STATE:
+          return state.withMutations(state => state
+              .set('recallState', null));
       case actions.CANCEL_ORDER_SUCCESS:
           return state.withMutations(state => state
               .set('dataResponse', constants.CANCEL_ORDER_SUCCESS));
@@ -50,10 +59,24 @@ export default function orderReducer(state, action = {}) {
           return state.withMutations(state => state
               .set('dataResponse', constants.CANCEL_ORDER_FAIL)
               .set('dataError', action.error));
+      case actions.RECALL_CAR_SUCCESS:
+          return state.withMutations(state => state
+              .set('dataResponse', constants.RECALL_CAR_SUCCESS)
+              .set('dataError', '')
+              .set('recallState', true));
       case actions.RECALL_CAR_FAIL:
           return state.withMutations(state => state
+              .set('recallState', false)
               .set('dataResponse', strings.recallCarFail)
               .set('dataError', strings.recallCarFail));
+      case actions.GET_HISTORY_CAR_SUCCESS:
+          return state.withMutations(state => state
+              .set('carList', action.carList));
+      case actions.GET_HISTORY_CAR_FAIL:
+          return state.withMutations(state => state
+              .set('dataResponse', strings.getHistoryCarFail)
+              .set('dataError', strings.getHistoryCarFail));
+
     default:
       return state
   }

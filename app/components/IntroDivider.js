@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, StyleSheet, TextInput, ViewPropTypes, Text,TouchableOpacity} from 'react-native';
+import {View, Image, StyleSheet, TextInput, ViewPropTypes, Text, TouchableOpacity, Alert} from 'react-native';
 import PropTypes from 'prop-types';
 import strings from '../resources/strings';
 import colors from '../resources/colors';
@@ -23,7 +23,21 @@ export default class IntroDivider extends React.PureComponent {
           </View>
             {
               flag=='1'?
-                  <TouchableOpacity onPress={this.props._onClearPress}>
+                  <TouchableOpacity
+                      // onPress={this.props._onClearPress}
+
+                      onPress={() => {
+                          Alert.alert(strings.alertTitle, strings.clear_car,
+                              [
+                                  {
+                                      text: strings.yes,
+                                      onPress: () => {this.props._onClearPress()}
+                                  },
+                                  {text: strings.no},
+                              ]
+                          );
+                      }}
+                  >
                       <View style={styles.clearCar}>
                           <Text style={{color:colors.baseWhite}} allowFontScaling={false}>{strings.clearCar}</Text>
                       </View>

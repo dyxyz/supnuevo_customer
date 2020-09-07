@@ -15,15 +15,23 @@ const count = constants.PRICE_LIST_PAGE;
 // 获取购物车列表
 function* getCustomerCartCommodityInfo (action) {
   const {cartId,unionId} = action;
+    var goodsNumber=0;
   try {
     const response = yield call(Api.getCustomerCartCommodityInfo, cartId,unionId);
     if (response.re === 1) {
+        // console.log(response.data)
       const cartId = response.data.cartId;
       const cartInfo = response.data.itemList;
+        cartInfo.map((item,i)=>{
+            goodsNumber=goodsNumber+item.amount;
+        });
       yield put(authActions.setCustomerCart(cartId));
-      yield put(shoppingActions.getCartInfoSuccess(cartInfo));
-      console.log(cartInfo.length)
+      yield put(shoppingActions.getCartInfoSuccess(cartInfo,goodsNumber));
+
+
+      // console.log(cartInfo.length)
     } else {
+        alert(strings.time_out);
       yield put(shoppingActions.getCartInfoFail(strings.getCartInfoFail));
     }
   } catch (error) {
@@ -31,17 +39,55 @@ function* getCustomerCartCommodityInfo (action) {
   }
 }
 
+// 获取商品种类列表
+function* getCommodityClass (action) {
+    const {unionId} = action;
+    try {
+        const response = yield call(Api.getCommodityClass,unionId);
+        if (response.re === 1) {
+            console.log(response)
+            const classList = response.data;
+            yield put(shoppingActions.getCommodityClassSuccess(classList));
+
+        } else {
+            alert(strings.time_out);
+            yield put(shoppingActions.getCommodityClassFail(strings.getCommodityClassFail));
+        }
+    } catch (error) {
+        yield put(shoppingActions.getCommodityClassFail(error));
+    }
+}
+
 // 更新购物车列表
 function* updateCustomerCartCommodity (action) {
-  const {cartInfo, unionId} = action;
+  const {cartInfo, unionId,searchText,detail,taxId} = action;
   try {
+
     const response = yield call(Api.updateCustomerCartCommodity, cartInfo.itemId, cartInfo.commodityId, cartInfo.amount, unionId);
     if (response.re === 1) {
       const cartInfoItem = response.data;
+        console.log(cartInfoItem)
+        yield put(unionActions.updatePriceListSuccess(cartInfoItem));
       yield put(shoppingActions.updateCartInfoSuccess(cartInfoItem));
-      yield put(unionActions.getUnionPriceList(unionId, 0, count,cartInfo.cartId));
+      if(detail==1){
+          if(taxId!=null){
+              yield put(unionActions.getPriceListByTax(taxId,unionId,cartInfo.cartId));
+          }
+          else{
+              if(searchText!=null && searchText != '' && searchText!=undefined){
+                  yield put(unionActions.getUnionPriceListLucene(unionId, searchText,cartInfo.cartId));
+              }
+              else{
+                  yield put(unionActions.getUnionPriceList(unionId, 0, count,cartInfo.cartId));
+              }
+          }
+
+      }
+
+
       console.log(cartInfo)
     } else {
+        alert(strings.time_out);
       yield put(shoppingActions.updateCartInfoFail(strings.updateCartInfoFail));
     }
   } catch (error) {
@@ -59,6 +105,7 @@ function* clearShoppingCar (action) {
             yield put(shoppingActions.getCartInfo(cartId,unionId));
             yield put(unionActions.getUnionPriceList(unionId, 0, count,cartId));
         } else {
+            alert(strings.time_out);
             yield put(shoppingActions.clearCartInfoFail(strings.clearCarFail));
         }
     } catch (error) {
@@ -70,4 +117,5 @@ export default [
   takeEvery(actions.GET_CART_INFO, getCustomerCartCommodityInfo),
   takeEvery(actions.UPDATE_CART_INFO, updateCustomerCartCommodity),
   takeEvery(actions.CLEAR_CAR, clearShoppingCar),
+  takeEvery(actions.GET_COMMODITY_CLASS, getCommodityClass),
 ]

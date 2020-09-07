@@ -1,8 +1,11 @@
 
 import React, { PureComponent } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, ViewPropTypes } from 'react-native';
+import {
+    View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, ViewPropTypes,
+    ScrollView
+} from 'react-native';
 import strings from '../resources/strings'
-
+var _scrollView: ScrollView;
 // 刷新状态
 export const RefreshState = {
   Idle: 0,
@@ -17,12 +20,14 @@ const log = (text: string) => {};
 
 type Props = {
   refreshState: number,
+  backTop: number,
   onHeaderRefresh: Function,
   onFooterRefresh?: Function,
   data: Array<any>,
 
   listRef?: any,
 
+    isSearchStatus?: any,
   footerRefreshingText?: string,
   footerFailureText?: string,
   footerNoMoreDataText?: string,
@@ -49,10 +54,14 @@ class RefreshListView extends PureComponent<Props, State> {
   };
 
   componentWillReceiveProps(nextProps: Props) {
+
     log(`[RefreshListView]  RefreshListView componentWillReceiveProps ${nextProps.refreshState}`);
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
+      if(this.props.backTop==1){
+          _scrollView.scrollToOffset({offset:0,animated: false})
+      }
     log(`[RefreshListView]  RefreshListView componentDidUpdate ${prevProps.refreshState}`);
   }
 
@@ -177,7 +186,8 @@ class RefreshListView extends PureComponent<Props, State> {
 
     return (
       <FlatList
-        ref={this.props.listRef}
+        // ref={this.props.listRef}
+        ref={(scrollView) => { _scrollView = scrollView; }}
         ListFooterComponent={this.renderFooter}
         onEndReached={this.onEndReached}
         onEndReachedThreshold={0.1}

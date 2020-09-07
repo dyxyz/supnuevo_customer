@@ -19,14 +19,14 @@ import {
     ListView, Alert
 } from "react-native";
 import {connect} from "react-redux";
-import {TopToolBar,ACTION_SKIP} from "../../components/TopToolBar";
+import {TopToolBar, ACTION_SKIP, ACTION_HELP} from "../../components/TopToolBar";
 import {BottomToolBar, ACTION_BACK, ACTION_ORDER} from "../../components/BottomToolBar";
 import {
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
     getHeaderHeight,
     showCenterToast,
-    transFromOrderItemToArray
+    transFromOrderItemToArray, toDecimal2, transFromDiscountItemToArray
 } from "../../utils/tools";
 import {InputWithCalendar} from '../../components/multiFuncTextInput/index';
 import {CheckBox} from "react-native-elements";
@@ -41,10 +41,15 @@ import * as authActions from "../../actions/auth-actions";
 import IntroDivider from "../../components/IntroDivider";
 import * as shoppingActions from "../../actions/shopping-actions";
 import ShoppingList from "../shopping/ShoppingList";
+import * as unionActions from "../../actions/union-actions";
+import {HistoryCar} from "./HistoryCar";
+import {HistoryHelp} from "./HistoryHelp";
+
 
 const orderStateSubmit = constants.ORDER_STATE_SUBMIT;
 const orderStateConfirm = constants.ORDER_STATE_CONFIRM;
 const orderStateFinished = constants.ORDER_STATE_FINISHED;
+const count = constants.PRICE_LIST_PAGE;
 
 export class OrderHistory extends Component {
 
@@ -60,11 +65,15 @@ export class OrderHistory extends Component {
         this.props.dispatch(orderActions.getOrderListOfDate(null,orderStateSubmit));
         // this.setState({orderDate:this.getmyDate()});
         this.props.dispatch(shoppingActions.getCartInfo(this.props.cartId,this.props.auth.get("unionId")));
+        this.props.dispatch(orderActions.getHistoryCarList());
 
     }
 
+
+
     componentWillReceiveProps(nextProps) {
         const orderResponse = this.props.order.get('dataResponse');
+
         const nextOrderResponse = nextProps.order.get('dataResponse');
 
         // 获取历史订单
@@ -74,6 +83,19 @@ export class OrderHistory extends Component {
             showCenterToast(strings.getOrderListFail);
             this.props.dispatch(orderActions.resetOrderResponse());
         }
+
+        // if (orderResponse === constants.INITIAL && nextOrderResponse === constants.RECALL_CAR_SUCCESS) {
+        //     this.props.navigation.navigate("ShoppingList")
+        //     this.props.dispatch(orderActions.resetOrderResponse());
+        // }else if (orderResponse === constants.INITIAL && nextOrderResponse === strings.recallCarFail){
+        //     showCenterToast(strings.recallCarFail);
+        //     this.props.dispatch(orderActions.resetOrderResponse());
+        // }
+
+
+
+
+
     }
 
     getmyDate() {
@@ -109,33 +131,79 @@ export class OrderHistory extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = {this.props.username+'-'+strings.order_history} navigation = {this.props.navigation}
+              <TopToolBar title = 'Historial' navigation = {this.props.navigation}
                           _onLeftIconPress={this._onCarPress}
                           leftAction = {ACTION_SKIP}
                           flag={1}
+                          rightAction={ACTION_HELP}
                           _onRightIconPress={this._onHelpIconPress}/>
               <ScrollView>
-              <View style={{width:SCREEN_WIDTH,flexDirection:"row",backgroundColor:'#eee'}}>
-                  <CheckBox containerStyle={styles.check}
-                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}} allowFontScaling={false}>{strings.order_submit}</Text></View><View style={styles.bottom}/></View>}
-                            uncheckedIcon={<View><Text allowFontScaling={false}>{strings.order_submit}</Text></View>}
-                            checked={this.state.doneState === 1}
-                            onPress={() =>this.switchToUnDone() }
-                  />
-                  <View style={{borderWidth:0.5}}/>
-                  <CheckBox containerStyle={styles.check}
-                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}} allowFontScaling={false}>{strings.order_confirm}</Text></View><View style={styles.bottom}/></View>}
-                            uncheckedIcon={<View><Text allowFontScaling={false}>{strings.order_confirm}</Text></View>}
-                            checked={this.state.doneState === 2}
-                            onPress={() =>this.switchToConfirm()}
-                  />
-                  <View style={{borderWidth:0.5}}/>
-                  <CheckBox containerStyle={styles.check}
-                            checkedIcon={<View><View><Text style={{color:colors.primaryColor}} allowFontScaling={false}>{strings.order_finished}</Text></View><View style={styles.bottom}/></View>}
-                            uncheckedIcon={<View><Text allowFontScaling={false}>{strings.order_finished}</Text></View>}
-                            checked={this.state.doneState === 0}
-                            onPress={() =>this.switchToDone()}
-                  />
+              <View style={{width:SCREEN_WIDTH,flexDirection:"row",backgroundColor:colors.baseWhite,padding:8}}>
+                  {/*<CheckBox containerStyle={styles.check}*/}
+                            {/*checkedIcon={<View><View><Text style={{color:colors.primaryColor}} allowFontScaling={false}>{strings.order_submit}</Text></View><View style={styles.bottom}/></View>}*/}
+                            {/*uncheckedIcon={<View><Text allowFontScaling={false}>{strings.order_submit}</Text></View>}*/}
+                            {/*checked={this.state.doneState === 1}*/}
+                            {/*onPress={() =>this.switchToUnDone() }*/}
+                  {/*/>*/}
+                  {/*<View style={{borderWidth:0.5}}/>*/}
+                  {/*<CheckBox containerStyle={styles.check}*/}
+                            {/*checkedIcon={<View><View><Text style={{color:colors.primaryColor}} allowFontScaling={false}>{strings.order_confirm}</Text></View><View style={styles.bottom}/></View>}*/}
+                            {/*uncheckedIcon={<View><Text allowFontScaling={false}>{strings.order_confirm}</Text></View>}*/}
+                            {/*checked={this.state.doneState === 2}*/}
+                            {/*onPress={() =>this.switchToConfirm()}*/}
+                  {/*/>*/}
+                  {/*<View style={{borderWidth:0.5}}/>*/}
+                  {/*<CheckBox containerStyle={styles.check}*/}
+                            {/*checkedIcon={<View><View><Text style={{color:colors.primaryColor}} allowFontScaling={false}>{strings.order_finished}</Text></View><View style={styles.bottom}/></View>}*/}
+                            {/*uncheckedIcon={<View><Text allowFontScaling={false}>{strings.order_finished}</Text></View>}*/}
+                            {/*checked={this.state.doneState === 0}*/}
+                            {/*onPress={() =>this.switchToDone()}*/}
+                  {/*/>*/}
+                  {
+                      this.state.doneState===1?
+                          <View style={{width:SCREEN_WIDTH,alignItems:"center"}}>
+                              <View style={styles.deliver}>
+                                  <TouchableOpacity
+                                      onPress={()=>{this.switchToUnDone()}}
+
+                                      style={[styles.selected,{backgroundColor:'rgb(114, 135, 191)'}]}
+                                  >
+                                      <View>
+                                          <Text>{strings.order_submit}</Text>
+                                      </View>
+                                  </TouchableOpacity>
+                                  <TouchableOpacity
+                                      onPress={()=>{this.switchToDone()}}
+                                      style={styles.selected}
+                                  >
+                                      <View>
+                                          <Text>{strings.order_finished}</Text>
+                                      </View>
+                                  </TouchableOpacity>
+                              </View>
+                          </View>
+                          :
+                          <View style={{width:SCREEN_WIDTH,alignItems:"center"}}>
+                              <View  style={styles.deliver}>
+                                  <TouchableOpacity
+                                      onPress={()=>{this.switchToUnDone()}}
+                                      style={styles.selected}
+                                  >
+                                      <View>
+                                          <Text>{strings.order_submit}</Text>
+                                      </View>
+                                  </TouchableOpacity>
+                                  <TouchableOpacity
+                                      onPress={()=>{this.switchToDone()}}
+                                      style={[styles.selected,{backgroundColor:'rgb(114, 135, 191)'}]}
+                                  >
+                                      <View>
+                                          <Text>{strings.order_finished}</Text>
+                                      </View>
+                                  </TouchableOpacity>
+                              </View>
+                          </View>
+                  }
 
               </View>
                   {
@@ -145,6 +213,7 @@ export class OrderHistory extends Component {
                               <InputWithCalendar
                                   title={strings.orderDate}
                                   date={this.state.orderDate}
+                                  // style={{marginBottom:8,borderTop:1}}
                                   onDateChange={(value)=>{
                                       this.setState({orderDate:value});
                                       this.props.dispatch(orderActions.getOrderListOfDate(value,null));
@@ -176,29 +245,43 @@ export class OrderHistory extends Component {
 
   _renderOrderItem(orderItem){
       const order = orderItem.order;
+      // console.log(order)
       const itemList = order.itemList;
+      const discountItemList = order.discountItemList;
       let orderView = this._renderBasicInfo(order);
-      let itemView = this._renderOrderItemInfo(itemList);
-      let divider = <IntroDivider dividerStyle={{marginTop: 10}} intro={strings.orderNum+": "+order.orderNum}/>;
+      let itemView = this._renderOrderItemInfo(itemList,order.totalFee,order.discountFee,orderItem.orderDiscountFee,order.totalFeeFinal,order.totalDiscount);
+      let discountView = this._renderDiscountItemInfo(discountItemList,order.discountFee,order.totalFeeFinal,orderItem.noDiscountTotal,orderItem.orderDiscountFee,orderItem.orderDiscountScale,order.totalDiscount);
+      let divider = <IntroDivider
+          dividerStyle={{backgroundColor:'#9DD6EB'}}
+          intro={strings.orderNum+": "+order.orderNum}/>;
       let state =
-          <View style={styles.containerStyle}>
-              <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
-                  <Text style={styles.contentText} allowFontScaling={false}>{strings.order_state}：</Text>
-                  {this.renderState(order.orderState,order.nickName)}
-              {/*{order.orderState==1?*/}
-                    {/*<Text  style={styles.contentText}>已被商家{order.nickName}接单</Text>*/}
-              {/*:*/}
-                    {/*<Text  style={styles.contentText}>未接单</Text>*/}
-              {/*}*/}
-              </View>
+          <View style={[styles.containerStyle,{backgroundColor:colors.baseWhite}]}>
+              {order.orderState==1?
+                  <View style={{flexDirection:"column",justifyContent:"center",alignItems:"center",width:SCREEN_WIDTH,backgroundColor:colors.baseWhite}}>
+                      {/*<Text style={styles.contentText} allowFontScaling={false}>{strings.order_state}：</Text>*/}
+                      {this.renderState(order.orderState,order.nickName)}
+                  </View>
+                  :
+                  <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",width:SCREEN_WIDTH,backgroundColor:colors.baseWhite}}>
+                      {/*<Text style={styles.contentText} allowFontScaling={false}>{strings.order_state}：</Text>*/}
+                      {this.renderState(order.orderState,order.nickName,order.isOverdue)}
+                      {/*{order.orderState==1?*/}
+                      {/*<Text  style={styles.contentText}>已被商家{order.nickName}接单</Text>*/}
+                      {/*:*/}
+                      {/*<Text  style={styles.contentText}>未接单</Text>*/}
+                      {/*}*/}
+                  </View>
+
+              }
+
           </View>;
       let button=
-          <View>
+          <View style={{backgroundColor:colors.baseWhite,width:SCREEN_WIDTH,alignItems:'center'}}>
               {
-                  this.state.doneState==1?
-                  <View style={{height:SCREEN_HEIGHT*0.05,width:SCREEN_WIDTH*0.9,flexDirection:'row',justifyContent:"space-between",alignItems:"center",marginTop:10}}>
+                  this.state.doneState==1 && order.orderState==0?
+                  <View style={{height:SCREEN_HEIGHT*0.05,width:SCREEN_WIDTH*0.9,flexDirection:'row',justifyContent:"space-between",alignItems:"center",marginTop:10,marginBottom:20}}>
                       <TouchableOpacity
-                          onPress={()=>this.recallCar(order.orderId)}
+                          onPress={()=>this.recallCar(order.orderId,itemList,order.totalFee,order.totalFeeFinal,order.discountItemList,order.discountFee,order.unionId,order.cartId,order.isEmpty)}
                       >
                           <View style={styles.button}>
                               <Text style={{color:"white"}} allowFontScaling={false}>{strings.reback_order}</Text>
@@ -216,16 +299,24 @@ export class OrderHistory extends Component {
                   null
               }
           </View>
-      return ([divider,orderView,itemView,state,button]);
+      return ([divider,orderView,itemView,discountView,state,button]);
   }
 
-  renderState(orderState,nickName){
+  renderState(orderState,nickName,isOverdue){
       if(orderState==0){
-          const state=<Text  style={styles.contentText} allowFontScaling={false}>{strings.not_deal}</Text>;
+          var state
+          if(isOverdue){
+              state=<Text  style={[styles.contentText,{textAlign:'center'}]} allowFontScaling={false}>{strings.skip_order}</Text>;
+          }
+          else{
+              state=<Text  style={[styles.contentText,{textAlign:'center'}]} allowFontScaling={false}>{strings.not_deal}</Text>;
+          }
+
           return state;
       }
       if(orderState==1){
-          const submitState=<Text  style={styles.contentText} allowFontScaling={false}>{strings.have_dealed_for}' '{nickName}' '{strings.have_dealed_fore}</Text>;
+          const submitState=
+              <Text  style={[styles.contentText,{textAlign:'center'}]} allowFontScaling={false}>{strings.have_received}</Text>;
           return submitState;
       }
       if(orderState==2){
@@ -235,26 +326,52 @@ export class OrderHistory extends Component {
   }
 
     _renderBasicInfo(order){
-        return(
+      if(order.deliveryType==1){
+          return(
+                  <View style={styles.basicInfoContainer}>
+                      <InformationItem key = {0} type = {TYPE_TEXT} title = {strings.union} content = {order.unionName}/>
+                      <InformationItem key = {1} type = {TYPE_TEXT} title = {strings.orderType} content = {strings.self_delivery}/>
+                      <InformationItem key = {2} type = {TYPE_TEXT} title = {strings.deliverShopName} content = {order.shopName}/>
+                      <InformationItem key = {3} type = {TYPE_TEXT} title = {strings.deliverMobilePhone} content = {order.nomroDeTelePhono}/>
+                      <InformationItem key = {4} type = {TYPE_TEXT} title = {strings.deliverAddress} content = {order.direccion}/>
+                      <InformationItem key = {5} type = {TYPE_TEXT} title = {strings.expectDeliverTime} content = {order.wiseSaleTime}/>
+                  </View>
 
-                order.deliveryType==1?
-                    <View style={styles.basicInfoContainer}>
-                        <InformationItem key = {0} type = {TYPE_TEXT} title = {strings.orderType} content = {strings.self_delivery}/>
-                        <InformationItem key = {1} type = {TYPE_TEXT} title = {strings.customerMobilePhone} content = {this.props.mobilePhone}/>
-                        <InformationItem key = {2} type = {TYPE_TEXT} title = {strings.deliverMobilePhone} content = {order.nomroDetelePhono}/>
-                        <InformationItem key = {3} type = {TYPE_TEXT} title = {strings.deliverAddress} content = {order.direccion}/>
-                        <InformationItem key = {4} type = {TYPE_TEXT} title = {strings.expectDeliverTime} content = {order.wiseSaleTime}/>
-                    </View>
-                    :
-                    <View style={styles.basicInfoContainer}>
-                        <InformationItem key = {0} type = {TYPE_TEXT} title = {strings.orderType} content = {strings.common_delivery}/>
-                        <InformationItem key = {1} type = {TYPE_TEXT} title = {strings.customerMobilePhone} content = {this.props.mobilePhone}/>
-                        <InformationItem key = {2} type = {TYPE_TEXT} title = {strings.pickMobilePhone} content = {order.receiverPhone}/>
-                        <InformationItem key = {3} type = {TYPE_TEXT} title = {strings.pickName} content = {order.receiverName}/>
-                        <InformationItem key = {4} type = {TYPE_TEXT} title = {strings.pickAddress} content = {order.receiverAddr}/>
-                        <InformationItem key = {5} type = {TYPE_TEXT} title = {strings.expectFetchTime} content = {order.wiseSaleTime}/>
-                    </View>
-        );
+          );
+      }
+      else{
+          if(order.orderState==0){
+            return(
+                <View style={styles.basicInfoContainer}>
+                    <InformationItem key = {0} type = {TYPE_TEXT} title = {strings.union} content = {order.unionName}/>
+                    <InformationItem key = {1} type = {TYPE_TEXT} title = {strings.orderType} content = {strings.common_delivery}/>
+                    {/*<InformationItem key = {1} type = {TYPE_TEXT} title = {strings.customerMobilePhone} content = {this.props.mobilePhone}/>*/}
+                    <InformationItem key = {2} type = {TYPE_TEXT} title = {strings.pickMobilePhone} content = {order.receiverPhone}/>
+                    <InformationItem key = {3} type = {TYPE_TEXT} title = {strings.pickName} content = {order.receiverName}/>
+                    <InformationItem key = {4} type = {TYPE_TEXT} title = {strings.pickAddress} content = {order.receiverAddr}/>
+                    <InformationItem key = {5} type = {TYPE_TEXT} title = {strings.expectFetchTime} content = {order.wiseSaleTime}/>
+                </View>
+            )
+          }
+          else{
+              return(
+                  <View style={styles.basicInfoContainer}>
+                      <InformationItem key = {0} type = {TYPE_TEXT} title = {strings.union} content = {order.unionName}/>
+                      <InformationItem key = {1} type = {TYPE_TEXT} title = {strings.deliverShopName} content = {order.shopName}/>
+                      <InformationItem key = {2} type = {TYPE_TEXT} title = {strings.deliverMobilePhone} content = {order.nomroDeTelePhono}/>
+                      <InformationItem key = {3} type = {TYPE_TEXT} title = {strings.deliverAddress} content = {order.direccion}/>
+                      <InformationItem key = {4} type = {TYPE_TEXT} title = {strings.orderType} content = {strings.common_delivery}/>
+                      {/*<InformationItem key = {1} type = {TYPE_TEXT} title = {strings.customerMobilePhone} content = {this.props.mobilePhone}/>*/}
+                      <InformationItem key = {5} type = {TYPE_TEXT} title = {strings.pickMobilePhone} content = {order.receiverPhone}/>
+                      <InformationItem key = {6} type = {TYPE_TEXT} title = {strings.pickName} content = {order.receiverName}/>
+                      <InformationItem key = {7} type = {TYPE_TEXT} title = {strings.pickAddress} content = {order.receiverAddr}/>
+                      <InformationItem key = {8} type = {TYPE_TEXT} title = {strings.expectFetchTime} content = {order.wiseSaleTime}/>
+
+                  </View>
+              )
+          }
+      }
+
   }
 // <View style={styles.basicInfoContainer}>
 // <InformationItem key = {0} type = {TYPE_TEXT} title = {strings.customerMobilePhone} content = {this.props.mobilePhone}/>
@@ -264,24 +381,97 @@ export class OrderHistory extends Component {
 // <InformationItem key = {4} type = {TYPE_TEXT} title = {strings.pickName} content = {order.receiverName}/>
 // </View>
 
-    _renderOrderItemInfo(itemList){
+    _renderOrderItemInfo(itemList,totalFee, discountFee,orderDiscountFee, totalFeeFinal,totalDiscount){
         var itemArray = [];
+        var total=0;
         if(itemList && itemList.length>0)
-            itemList.map((item,i)=>{itemArray.push(transFromOrderItemToArray(item))});
+            itemList.map((item,i)=>{total=total+item.total;itemArray.push(transFromOrderItemToArray(item))});
 
         return(
             itemList && itemList.length>0?
-            <View style={styles.tableInfoCard}>
-                <TableView title={strings.orderInfo} headerList={strings.cartHeaderList} dataList={itemArray} renderAux={null}/>
+            <View style={[styles.tableInfoCard,{backgroundColor:'#9DD6EB'}]}>
+                <TableView title={strings.orderInfo} headerList={strings.cartHeaderList} dataList={itemArray} renderAux={()=>this._renderCartAux(totalFee,totalDiscount,totalFeeFinal,totalDiscount)}/>
             </View>:null
         );
     }
 
-    _onCarPress=() =>{this.props.navigation.push("ShoppingList")};
+    _renderDiscountItemInfo(itemList, discountFee, totalFeeFinal,noDiscountTotal,orderDiscountFee,orderDiscountScale,totalDiscount){
+        var itemArray = [];
+        if(itemList && itemList.length>0)
+            itemList.map((item,i)=>{itemArray.push(transFromDiscountItemToArray(item))});
+        if(Math.abs(orderDiscountFee)>0){
+            var array = [];
+            array.push(orderDiscountScale);
+            array.push(Math.abs(orderDiscountFee));
+            array.push('Desc.  '+orderDiscountScale*100+'%:');
+            itemArray.push(array)
+        }
+
+
+        return(
+            itemList && itemList.length>0?
+                <View style={styles.tableInfoCard}>
+                    <TableView title={strings.discountInfo} headerList={strings.discountHeaderList} dataList={itemArray} renderAux={()=>this._renderDiscountAux(discountFee,totalDiscount)}/>
+                </View>:null
+        );
+    }
+
+    _renderCartAux(totalFee,totalDiscount,totalFeeFinal){
+        return(
+            <View style={styles.auxContainerStyle}>
+                <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+                    <Text style={[styles.carTextStyle,{color:colors.baseBlack}]} allowFontScaling={false}>SUBTOT. SIN DESCUENTOS: </Text>
+                    <Text style={styles.carTextStyle} allowFontScaling={false}>{totalFee}</Text>
+                </View>
+
+                {totalDiscount!=null && totalDiscount!=undefined && totalDiscount!=0 && totalDiscount!=NaN?
+                    <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:5,width:'100%'}}>
+                        <Text style={[styles.carTextStyle,{color:colors.baseBlack}]} allowFontScaling={false}>DESCUNTOS: </Text>
+                        <Text style={styles.carTextStyle} allowFontScaling={false}>{totalDiscount}</Text>
+                    </View>
+                    :
+                    <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:5,width:'100%'}}>
+                        <Text style={[styles.carTextStyle,{color:colors.baseBlack}]} allowFontScaling={false}>DESCUNTOS: </Text>
+                        <Text style={styles.carTextStyle} allowFontScaling={false} />
+                    </View>
+
+                }
+
+
+                <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:5,width:'100%'}}>
+                    <Text style={styles.auxTextStyle} allowFontScaling={false}>TOTAL: </Text>
+                    <Text style={styles.auxTextStyle} allowFontScaling={false}>{totalFeeFinal}</Text>
+                </View>
+
+            </View>
+        );
+    }
+
+    _renderDiscountAux(discountFee,totalDiscount){
+        return(
+            <View style={styles.auxContainerStyle}>
+                <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
+                    <Text style={styles.auxTextStyle} allowFontScaling={false}>TOT. AHORRO: </Text>
+                    <Text style={styles.auxTextStyle} allowFontScaling={false}>{Math.abs(totalDiscount)}</Text>
+                </View>
+            </View>
+
+        )
+    }
+
+  _onCarPress=() =>{
+      if(this.props.carList.length===1){
+          this.props.navigation.push("ShoppingList")
+      }
+      else{
+          this.props.navigation.push("HistoryCar")
+      }
+
+  };
 
   _onVolumeIconPress =() =>{};
 
-  _onHelpIconPress =() =>{};
+  _onHelpIconPress =() =>{this.props.navigation.push("HistoryHelp")};
 
   _onBackIconPress=() =>this.props.navigation.pop();
 
@@ -289,13 +479,18 @@ export class OrderHistory extends Component {
         this.props.dispatch(orderActions.cancelOrder(orderId))
     }
 
-    recallCar(orderId){
-        console.log(this.props.cartInfo.length)
-        if(this.props.cartInfo.length!=0){
+    recallCar(orderId,itemList,totalFee,totalFeeFinal,discountItemList,discountFee,unionId,cartId,isEmpty){
+        if(isEmpty){
+            this.props.dispatch(orderActions.recallCar(orderId,itemList,totalFee,totalFeeFinal,discountItemList,discountFee,cartId,unionId))
+            this.props.navigation.push("ShoppingList")
+        }
+        else{
             Alert.alert(strings.recallCarFail);
             return;
         }
-        this.props.dispatch(orderActions.recallCar(orderId,this.props.cartId))
+
+        // this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, 0, count,this.props.cartId));
+        // this.props.dispatch(shoppingActions.getCartInfo(this.props.cartId,this.props.auth.get("unionId")));
     }
 };
 
@@ -310,16 +505,17 @@ const styles = StyleSheet.create({
         width:SCREEN_WIDTH,
         paddingHorizontal:10,
         paddingVertical:10,
-        borderBottomWidth:1,
+        borderBottomWidth:3,
         marginTop:5,
         borderTopWidth:1,
-        borderColor:'#eee',
+        borderColor:'#9DD6EB',
         justifyContent:"center",
         alignItems:"center",
     },
     contentText: {
-        fontSize:14,
+        fontSize:16,
         color:'#222',
+        fontWeight:'bold'
         // justifyContent:'flex-end',
         // textAlign:'left',
 
@@ -338,6 +534,7 @@ const styles = StyleSheet.create({
     scrollViewContanier:{
         alignItems: 'center',
         marginBottom: 100,
+        backgroundColor:'#9DD6EB'
     },
     tableInfoCard:{
         width:SCREEN_WIDTH-40,
@@ -365,7 +562,40 @@ const styles = StyleSheet.create({
         height:SCREEN_HEIGHT*0.05,
         justifyContent:"center",
         backgroundColor:colors.primaryColor,
-    }
+    },
+    auxContainerStyle:{
+        flex:1,
+        width:"100%",
+        // justifyContent:'flex-end',
+        // alignItems:'flex-end',
+        padding:8,
+        flexDirection: 'column'
+    },
+    auxTextStyle:{
+        // flex:1,
+        // textAlign: 'right',
+        fontWeight:'900',
+        fontSize:18
+    },
+    carTextStyle:{
+        fontSize:18
+    },
+    deliver:{
+        width:SCREEN_WIDTH*0.9,
+        flexDirection:"row",
+        height:SCREEN_HEIGHT*0.06,
+        borderWidth:2,
+        borderColor:'rgb(114, 135, 191)',
+        borderRadius:SCREEN_WIDTH*0.5,
+    },
+    selected:{
+        borderRadius:SCREEN_WIDTH*0.2,
+        flex:1,
+        // borderWidth:1,
+        // borderColor:"red",
+        alignItems:"center",
+        justifyContent:"center",
+    },
 });
 
 const mapStateToProps = (state) => ({
@@ -374,8 +604,11 @@ const mapStateToProps = (state) => ({
     root: state.get('root'),
     order: state.get('order'),
     username:state.get('auth').get('username'),
+    unionId: state.get('auth').get("unionId"),
     cartId: state.get("auth").get("cartId"),
     cartInfo: state.get('shopping').get("cartInfo"),
+    carList:state.get('order').get('carList'),
+    union: state.get('union'),
 });
 
 export default connect(mapStateToProps)(OrderHistory)

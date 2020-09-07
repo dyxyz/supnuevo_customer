@@ -54,7 +54,7 @@ export class OrderRule extends Component {
       const regulation = this.props.union.get("regulation");
       return (
           <View style={styles.container}>
-              <TopToolBar title = {this.props.username+'-'+strings.store_rule} navigation = {this.props.navigation}
+              <TopToolBar title = 'Nota' navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               {this._renderRulePage(regulation)}
@@ -86,7 +86,7 @@ export class OrderRule extends Component {
                               {/*</Text>*/}
                           {/*</View>*/}
 
-                          <View style={{marginBottom:20,marginTop:25}}>
+                          <View style={{marginBottom:20,marginTop:25,flex:1}}>
                               <Text style={styles.ruleText} allowFontScaling={false}>
                                   {regulation.regulation}
                               </Text>

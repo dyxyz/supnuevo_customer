@@ -31,7 +31,7 @@ export function getOrderPrevInfo () {
   };
 }
 
-export function getOrderPrevInfoSuccess(orderItemList, discountItemList, totalFee, discountFee, totalFeeFinal,datetime) {
+export function getOrderPrevInfoSuccess(orderItemList, discountItemList, totalFee, discountFee, totalFeeFinal,isDiscountScale,isOrderMinLimit,noDiscountTotal,orderDiscountFee,orderDiscountScale,totalDiscount) {
   return {
     type: actions.GET_PREV_ORDER_SUCCESS,
     orderItemList: orderItemList,
@@ -39,7 +39,12 @@ export function getOrderPrevInfoSuccess(orderItemList, discountItemList, totalFe
     totalFee: totalFee,
     discountFee: discountFee,
     totalFeeFinal: totalFeeFinal,
-    datetime:datetime,
+    isDiscountScale:isDiscountScale,
+    isOrderMinLimit:isOrderMinLimit,
+    noDiscountTotal:noDiscountTotal,
+    orderDiscountFee:orderDiscountFee,
+    orderDiscountScale:orderDiscountScale,
+    totalDiscount:totalDiscount,
   };
 }
 
@@ -78,6 +83,12 @@ export function resetOrderResponse() {
   }
 }
 
+export function resetRecallState() {
+    return {
+        type: actions.RESET_RECALL_STATE,
+    }
+}
+
 export function cancelOrder (orderId) {
     return {
         type: actions.CANCEL_ORDER,
@@ -85,11 +96,23 @@ export function cancelOrder (orderId) {
     };
 }
 
-export function recallCar (orderId,cartId) {
+export function recallCar (orderId,itemList,totalFee,totalFeeFinal,discountItemList,discountFee,cartId,unionId) {
     return {
         type: actions.RECALL_CAR,
         orderId: orderId,
+        itemList:itemList,
+        totalFee:totalFee,
+        totalFeeFinal:totalFeeFinal,
+        discountItemList:discountItemList,
+        discountFee:discountFee,
         cartId:cartId,
+        unionId:unionId
+    };
+}
+
+export function recallCarSuccess() {
+    return {
+        type: actions.RECALL_CAR_SUCCESS,
     };
 }
 
@@ -112,3 +135,45 @@ export function cancelCustomerOrderFail(error) {
         error: error,
     };
 }
+
+export function sendVerifyCode (verifyTel,verifyCode) {
+    return {
+        type: actions.SEND_VERIFY_CODE,
+        verifyTel:verifyTel,
+        verifyCode: verifyCode,
+    };
+}
+
+export function setCustomerPhoneChecked (verifyTel) {
+    return {
+        type: actions.SET_CHECKED,
+        verifyTel:verifyTel,
+    };
+}
+
+export function getHistoryCarList() {
+    return {
+        type: actions.GET_HISTORY_CAR,
+    };
+}
+
+export function getHistoryCarListSuccess(carList) {
+    return {
+        type: actions.GET_HISTORY_CAR_SUCCESS,
+        carList:carList,
+    };
+}
+
+export function getHistoryCarListFail(error) {
+    return {
+        type: actions.GET_HISTORY_CAR_FAIL,
+        error: error,
+    };
+}
+
+
+
+
+
+
+

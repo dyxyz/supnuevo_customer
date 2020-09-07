@@ -3,7 +3,10 @@
  */
 
 import React, {Component} from "react";
-import {Image, StatusBar, Text, View, TouchableOpacity, TextInput, InteractionManager, StyleSheet, Platform, ImageBackground} from "react-native";
+import {
+    Image, StatusBar, Text, View, TouchableOpacity, TextInput, InteractionManager, StyleSheet, Platform,
+    ImageBackground, Alert
+} from "react-native";
 import {connect} from "react-redux";
 import * as authActions from "../../actions/auth-actions";
 import * as rootActions from "../../actions/root-actions";
@@ -13,6 +16,7 @@ import dimens from '../../resources/dimens';
 import strings from '../../resources/strings';
 import {showCenterToast} from '../../utils/tools'
 import {SpinnerWrapper} from '../../components/SpinnerLoading/index'
+import {put} from "redux-saga/effects";
 
 const backgroundImg = require('../../assets/img/app_background_img.jpg');
 
@@ -36,6 +40,27 @@ export class Login extends Component {
     }
 
     componentDidUpdate() {
+        const {username,password} = this.state.loginForm;
+        const isNewDevice = this.props.auth.get('isNewDevice');
+        if(isNewDevice){
+            Alert.alert(strings.alertTitle, "您正在一台新的设备登录此账号，是否继续登录？",
+                [
+                    {
+                        text: strings.yes,
+                        onPress: () => {
+                            this.props.dispatch(authActions.continueLogin(username, password));
+                        }
+                    },
+                    {
+                        text: strings.no,
+                        onPress: () => {
+                            this.props.dispatch(authActions.resetDeviceStatus());
+                        }
+                    },
+
+                ]
+            );
+        }
         this.proceed()
     }
 
@@ -45,15 +70,23 @@ export class Login extends Component {
         const loginError = this.props.auth.get('loginError');
         const isLoggedIn = this.props.auth.get('isLoggedIn');
 
+
         if(!this.state.isFetchedStore && username != null && password != null)
             this.setState({loginForm:Object.assign(this.state.loginForm,{username: username,password:password}),isFetchedStore:true});
 
-        if (loginError && loginError !== '') {
-            showCenterToast(loginError);
-            this._navigateToRegister();
-        } else if (isLoggedIn) {
+        // if (loginError && loginError !== '') {
+        //     showCenterToast(loginError);
+        //     this._navigateToRegister();
+        // }
+        if (loginError == '登录验证错误') {
+            showCenterToast(strings.password_error);
+        }
+        else if(loginError == '不存在此账户'){
+            showCenterToast(strings.none_user);
+        }else if (isLoggedIn) {
             this.props.navigation.navigate('RootStack'); //自动登录
         }
+
         this.props.dispatch(authActions.resetLoginStatus());
     }
 

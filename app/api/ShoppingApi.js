@@ -16,6 +16,17 @@ export function getCustomerCartCommodityInfo (cartId,unionId) {
   return post(url ,body);
 }
 
+
+// 获取商品种类
+export function getCommodityClass (unionId) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/customerGetCommodityClassMapList';
+    const body = {
+        unionId:unionId
+    };
+
+    return post(url ,body);
+}
+
 // 更新购物车商品信息
 export function updateCustomerCartCommodity (itemId, commodityId, amount, unionId) {
   const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/updateCustomerCartCommodity';

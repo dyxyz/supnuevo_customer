@@ -68,6 +68,13 @@ export default class ShoppingCart extends React.PureComponent {
 
     )
   }
+    // navigateToDetail=(price,index,priceList)=> {
+    //     console.log(price)
+    //     console.log(index)
+    //     console.log(priceList)
+    //     this.props.navigation.push("commodityDetail",{price:price,index:index,priceList:priceList});
+    // }
+
     scroll(value,length){
         var x=length*SCREEN_WIDTH*0.25-SCREEN_WIDTH
         this.setState({value:value})
@@ -88,21 +95,22 @@ export default class ShoppingCart extends React.PureComponent {
       cartItemList.push
       (
 
-            <View style={{width: SCREEN_WIDTH*0.24, height: SCREEN_HEIGHT*0.17,alignItems:"center",justifyContent:"center",marginLeft:SCREEN_WIDTH*0.01}}>
-              <Badge value={item.amount} status="error" containerStyle={{ position: 'absolute', top: 1, right: 1 }}/>
-
+            <View style={{width: SCREEN_WIDTH*0.24, height: SCREEN_HEIGHT*0.17,alignItems:"center",justifyContent:"center",marginLeft:SCREEN_WIDTH*0.01,}}>
+              <Badge value={item.amount} status="error" containerStyle={{ position: 'absolute', top: -0.8, right: -1 }}/>
 
               <SwipeableView key={i} swipeableStyle={styles.picStyle}
                              swipeRow={"col"}
                              onDownSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_DECLINE, item)}
                              onUpSwipe={()=>this.props._onUpdateCartCommodity(constants.CART_ADD, item)}
-                             onMorePress={()=>this.props.navigateToDetail(item)}
-                             onLeftSwipe={()=>{}}
-                             onRightSwipe={()=>{}}
+                             onMorePress={()=>this.props.navigateToDetail(item,i,cartInfo)}
+                             // onLeftSwipe={()=>{}}
+                             // onRightSwipe={()=>{}}
               >
+                  <Badge value={item.amount} status="error" containerStyle={{ position: 'absolute', top: -12.8, right: -12.8 }}/>
 
                 <TouchableOpacity
-                    onPress={()=>this.props.navigateToDetail(item)}
+                    onPress={()=>{this.props.navigateToDetail(item,i,cartInfo,false)}}
+                    // onPress={()=>{this.navigateToDetail(item,i,cartInfo)}}
                 >
                   {
                       item.imageUrl !=null && item.imageUrl!=undefined?
@@ -154,6 +162,12 @@ var styles = StyleSheet.create({
     borderWidth: 0.8,
     borderColor: colors.primaryGrayLight,
     borderRadius:SCREEN_WIDTH*0.02,
+      shadowColor:colors.baseBlack,
+      shadowOffset:{h:2,w:2},
+      shadowOpacity:0.9,
+      elevation: 6,
+      backgroundColor:colors.baseWhite
+
   },
   centerContainer:{
     paddingVertical: 5,

@@ -15,6 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import colors from '../resources/colors';
 import strings from '../resources/strings';
 import {getHeaderHeight, getTabBarHeight, SCREEN_WIDTH} from '../utils/tools';
+// import {UnionList} from "../containers/union/UnionList";
 
 const TEXT_TYPE = 0;
 const ICON_TYPE = 1;
@@ -30,6 +31,9 @@ const ACTION_DISCOUNT={name:strings.discount, type: TEXT_TYPE};
 const ACTION_RULE={name:strings.rule, type: TEXT_TYPE};
 const ACTION_HISTORY={name:strings.history, type: TEXT_TYPE};
 const ACTION_ORDER={name:strings.skip_to_order, type: TEXT_TYPE};
+const ACTION_CLASS={name:strings.skip_to_class, type: TEXT_TYPE};
+const ACTION_SETTING={name:strings.setting, type: TEXT_TYPE};
+
 
 class BottomToolBar extends Component{
 
@@ -41,7 +45,7 @@ class BottomToolBar extends Component{
 
   render()
   {
-    var {leftAction, rightAction}=this.props
+    var {leftAction, rightAction,isRoot}=this.props
 
     var defaultStyle={
       height:getTabBarHeight(),
@@ -55,12 +59,18 @@ class BottomToolBar extends Component{
     return(
         <View style={styles.container}>
           <View style={defaultStyle}>
-            <TouchableOpacity style={styles.IconContainerStyle} onPress={this.props._onLeftIconPress}>
+            <TouchableOpacity style={[styles.IconContainerStyle,{marginLeft:3}]} onPress={this.props._onLeftIconPress}>
               {this._renderAction(leftAction)}
             </TouchableOpacity>
-            <TouchableOpacity style={styles.titleContainerStyle} onPress={this.onHomeIconPress}>
-            {this._renderAction(ACTION_HOME)}
-            </TouchableOpacity>
+              {isRoot?
+                  <View style={styles.titleContainerStyle} />
+
+                  :
+                  <TouchableOpacity style={styles.titleContainerStyle} onPress={this.onHomeIconPress}>
+                      {this._renderAction(ACTION_HOME)}
+                  </TouchableOpacity>
+              }
+
 
             <TouchableOpacity style={styles.IconContainerStyle} onPress={this.props._onRightIconPress}>
               {this._renderAction(rightAction)}
@@ -76,14 +86,22 @@ class BottomToolBar extends Component{
     if(action)
     switch (action.type) {
       case TEXT_TYPE:
-        return (<Text style={styles.textStyle} allowFontScaling={false}>{action.name}</Text>);
+
+            if(action.name==strings.skip_to_class){
+                return (<Text style={[styles.textStyle,{fontSize:18,fontWeight:'bold'}]} allowFontScaling={false}>{action.name}</Text>);
+            }
+            else{
+                return (<Text style={styles.textStyle} allowFontScaling={false}>{action.name}</Text>);
+            }
+
+
       case ICON_TYPE:
         return ( <Ionicons name={action.name} size={30} color="#fff"/>);
     }
   }
 
   onHomeIconPress= () =>{
-    this.props.navigation.navigate('RootPage');
+    this.props.navigation.navigate('UnionList');
   }
 
 }
@@ -95,7 +113,7 @@ var styles = StyleSheet.create({
     bottom:0,
   },
   IconContainerStyle:{
-    width: 85,
+    width: 110,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
@@ -120,6 +138,9 @@ const bottomToolBar ={
   get ACTION_RULE(){return ACTION_RULE},
   get ACTION_HISTORY(){return ACTION_HISTORY},
   get ACTION_ORDER(){return ACTION_ORDER},
+  get ACTION_CLASS(){return ACTION_CLASS},
+  get ACTION_SETTING(){return ACTION_SETTING},
+
 }
 
 module.exports=bottomToolBar

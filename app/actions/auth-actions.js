@@ -5,31 +5,52 @@
 import * as actions from "../actions/action-types";
 
 
-export function getCustomerHelp(helpType) {
+export function getCustomerHelp(helpNum) {
     return {
         type: actions.GET_CUSTOMER_HELP,
-        helpType:helpType,
+        helpNum:helpNum,
     }
 }
 
-export function getRegisterHelpSuccess(registerHelp) {
-    return {
-        type: actions.GET_REGISTER_HELP_SUCCESS,
-        registerHelp:registerHelp,
-    }
-}
-
-export function getLoggedHelpSuccess(loggedHelp) {
-    return {
-        type: actions.GET_LOGGED_HELP_SUCCESS,
-        loggedHelp:loggedHelp,
-    }
-}
-
-export function getCustomerHelpSuccess(help) {
+export function getCustomerHelpSuccess(helpSeg) {
     return {
         type: actions.GET_CUSTOMER_HELP_SUCCESS,
-        help:help,
+        helpSeg:helpSeg,
+    }
+}
+
+export function getRootHelpSuccess(helpSeg) {
+    return {
+        type: actions.GET_ROOT_HELP_SUCCESS,
+        helpSeg:helpSeg,
+    }
+}
+
+export function getUnionHelpSuccess(helpSeg) {
+    return {
+        type: actions.GET_UNION_HELP_SUCCESS,
+        helpSeg:helpSeg,
+    }
+}
+
+export function getShoppingHelpSuccess(helpSeg) {
+    return {
+        type: actions.GET_SHOPPING_HELP_SUCCESS,
+        helpSeg:helpSeg,
+    }
+}
+
+export function getOrderHelpSuccess(helpSeg) {
+    return {
+        type: actions.GET_ORDER_HELP_SUCCESS,
+        helpSeg:helpSeg,
+    }
+}
+
+export function getHistoryHelpSuccess(helpSeg) {
+    return {
+        type: actions.GET_HISTORY_HELP_SUCCESS,
+        helpSeg:helpSeg,
     }
 }
 
@@ -49,7 +70,7 @@ export function login(username, password) {
   }
 }
 
-export function setLoginSuccess(sessionId, username, password,mobilePhone, customerInfo) {
+export function setLoginSuccess(sessionId, username, password,mobilePhone, customerInfo,phoneChecked,isAgree) {
   return {
     type: actions.LOGIN_SUCCESS,
     sessionId: sessionId,
@@ -57,6 +78,8 @@ export function setLoginSuccess(sessionId, username, password,mobilePhone, custo
     password: password,
     mobilePhone:mobilePhone,
     customerInfo: customerInfo,
+    phoneChecked:phoneChecked,
+    isAgree:isAgree,
   }
 }
 
@@ -72,6 +95,20 @@ export function resetLoginStatus() {
     type: actions.RESET_LOGIN_STATUS,
   }
 }
+
+export function resetDeviceStatus() {
+    return {
+        type: actions.RESET_DEVICE_STATUS,
+    }
+}
+export function continueLogin(username, password) {
+    return {
+        type: actions.CONTINUE_LOGIN,
+        username: username,
+        password: password
+    }
+}
+
 
 // register
 export function register(username, telephone, password) {
@@ -118,6 +155,14 @@ export function setCustomerCart(cartId) {
     type: actions.SET_CUSTOMER_CART,
     cartId: cartId,
   }
+}
+
+export function deleteReceiverInfo(deleteType, deleteValue) {
+    return {
+        type: actions.DELETE_RECEIVER_INFO,
+        deleteType: deleteType,
+        deleteValue: deleteValue,
+    }
 }
 
 export function addReceiverInfo(addType, addValue) {
@@ -173,4 +218,33 @@ export function resetAuth(){
   return {
     type: actions.RESET_AUTH,
   }
+}
+
+export function setCustomerPhoneCheckedSuccess (verifyTel) {
+    return {
+        type: actions.SET_CHECKED_SUCCESS,
+        verifyTel:verifyTel,
+    };
+}
+
+export function setCustomerIsAgree(isAgree){
+    return {
+        type: actions.SET_AGREE,
+        isAgree:isAgree,
+    }
+}
+
+export function setUnion(unionId,cartId){
+    return {
+        type: actions.SET_UNION,
+        unionId:unionId,
+        cartId:cartId
+    }
+}
+
+export function setDefaultInfo(deliveryInfo){
+    return {
+        type: actions.SET_DEFAULT_INFO,
+        deliveryInfo:deliveryInfo,
+    }
 }

@@ -72,6 +72,17 @@ export function getSupnuevoBuyerUnionPriceListLucene(unionId, userInput,cartId, 
   return post(url ,body);
 }
 
+//通过种类获取价格表
+export function getPriceListByTax(taxId,unionId,cartId) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/union/getSupnuevoBuyerUnionPriceListTax';
+    const body = {
+        taxId: taxId,
+        unionId: unionId,
+        cartId:cartId,
+    };
+    return post(url ,body);
+}
+
 // 获取联盟规则
 export function getSupnuevoBuyerUnionRegulationInfo (unionId) {
   const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/union/getSupnuevoBuyerUnionRegulationInfo';

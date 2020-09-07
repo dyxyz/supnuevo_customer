@@ -12,8 +12,10 @@ import {
     Platform,
     SafeAreaView,
     StyleSheet,
-    Modal
+    Modal,
+    TouchableOpacity
 } from "react-native";
+import ImageViewer from 'react-native-image-zoom-viewer';
 import {connect} from "react-redux";
 import {TopToolBar} from "../../components/TopToolBar";
 import {BottomToolBar, ACTION_BACK} from "../../components/BottomToolBar";
@@ -32,15 +34,17 @@ export class UnionDiscount extends Component {
     super(props);
       this.state = {
           start: 1,
+          bigPictureVisible:false,
+          bigPictureUrl:null
       };
   }
 
     componentDidMount() {
-      this.props.dispatch(unionActions.getUnionAdvertisementList(this.props.unionId, 0, count));
+      this.props.dispatch(unionActions.getUnionAdvertisementList(this.props.unionId, 0, 99));
     }
 
     onHeaderRefresh = () => {
-        this.props.dispatch(unionActions.getUnionAdvertisementList(this.props.unionId, 0, count));
+        this.props.dispatch(unionActions.getUnionAdvertisementList(this.props.unionId, 0, 99));
         this.setState({ start: 1 });
     };
 
@@ -59,7 +63,7 @@ export class UnionDiscount extends Component {
 
       return (
           <View style={styles.container}>
-              <TopToolBar title = {this.props.username+'-'+strings.discount} navigation = {this.props.navigation}
+              <TopToolBar title = 'Ofertas' navigation = {this.props.navigation}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               {datasError?
@@ -75,7 +79,7 @@ export class UnionDiscount extends Component {
                               footerRefreshingText={strings.loading}
                               ItemSeparatorComponent={() => <View style={styles.separator} />}
                               keyExtractor={(item, index) => `${index}`}
-                              onFooterRefresh={this.onFooterRefresh}
+                              // onFooterRefresh={this.onFooterRefresh}
                               onHeaderRefresh={this.onHeaderRefresh}
                               refreshState={refreshState}
                               renderItem={this.renderCell}
@@ -84,8 +88,14 @@ export class UnionDiscount extends Component {
                       </SafeAreaView>
                   </KeyboardAvoidingView>
               }
+              <Text>{this.state.bigPictureUrl}</Text>
               <BottomToolBar navigation = {this.props.navigation}
               leftAction={ACTION_BACK} _onLeftIconPress={this._onBackIconPress}/>
+              {/*<Modal visible={this.state.bigPictureVisible} transparent={true}>*/}
+
+                    {/*<ImageViewer imageUrls={[{url:strings.head+this.state.bigPictureUrl,props:{}}]} onClick={()=>this.setState({bigPictureVisible:false})}/>*/}
+
+              {/*</Modal>*/}
           </View>
       );
   }
@@ -97,9 +107,14 @@ export class UnionDiscount extends Component {
         const image = advertisement.image?{uri:strings.head+advertisement.image}:require('../../assets/img/img_logo.png');
 
         return (
-            <View style={styles.imageCon}>
-                <Image resizeMode="contain" style={styles.image} source={image}/>
-            </View>
+            <TouchableOpacity
+                // onPress={()=>this.setState({bigPictureVisible:true,bigPictureUrl:advertisement.image})}
+                onPress={()=>{this.props.navigation.push("BigPicture",{bigPictureUrl:advertisement.image});}}
+            >
+                <View style={styles.imageCon}>
+                    <Image resizeMode="contain" style={styles.image} source={image}/>
+                </View>
+            </TouchableOpacity>
         );
     };
 

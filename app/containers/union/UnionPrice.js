@@ -3,10 +3,10 @@
  */
 
 import React, {Component} from "react";
-import {Image, View, StyleSheet, ListView, KeyboardAvoidingView, Platform, SafeAreaView} from "react-native";
+import {Image, View, StyleSheet, ListView, KeyboardAvoidingView, Platform, SafeAreaView,TouchableOpacity,Modal,Text} from "react-native";
 import {connect} from "react-redux";
 import {TopToolBar} from "../../components/TopToolBar";
-import {ACTION_BACK, BottomToolBar} from "../../components/BottomToolBar";
+import {ACTION_BACK, BottomToolBar,ACTION_CLASS} from "../../components/BottomToolBar";
 import goods from "../../test/goods";
 import {Avatar, ListItem} from "react-native-elements";
 import colors from "../../resources/colors";
@@ -16,6 +16,7 @@ import * as unionActions from "../../actions/union-actions";
 import constants from "../../resources/constants";
 import NetworkingError from "./UnionDiscount";
 import strings from "../../resources/strings";
+import ImageViewer from 'react-native-image-zoom-viewer';
 import RefreshListView from "../../components/RefreshListView";
 import {SpinnerWrapper} from "../../components/SpinnerLoading";
 import * as rootActions from "../../actions/root-actions";
@@ -33,6 +34,9 @@ export class UnionPrice extends Component {
             searchResult: [],
             selectedPrice: null,
             isSearchStatus: false,
+            bigPictureVisible:false,
+            bigPictureUrl:null,
+            backTop:0,
         };
     }
 
@@ -63,9 +67,9 @@ export class UnionPrice extends Component {
     onFooterRefresh = () => {
         if(this.state.isSearchStatus)return;
 
-        let curStart = this.state.start + 1;
-        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, this.state.searchText, curStart, count));
-        this.setState({start: curStart});
+        // let curStart = this.state.start + 1;
+        this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, this.props.start, count));
+        // this.setState({start: curStart});
     };
 
     render() {
@@ -77,11 +81,21 @@ export class UnionPrice extends Component {
                             {/*_onLeftIconPress={this._onVolumeIconPress}*/}
                             {/*_onRightIconPress={this._onHelpIconPress}/>*/}
                 <View style={{width:SCREEN_WIDTH,backgroundColor:colors.primaryColor,height:SCREEN_HEIGHT*0.05}}/>
-                {this._renderSearchBar()}
-                {this._renderPriceList()}
+                <View style={{marginBottom: Platform.OS=='ios'?0:getHeaderHeight()}}>
+                    {this._renderSearchBar()}
+                    {this._renderPriceList()}
+                </View>
+                {/*<Modal visible={this.state.bigPictureVisible} transparent={true}>*/}
+
+                    {/*<ImageViewer imageUrls={[{url:strings.head+this.state.bigPictureUrl,props:{}}]} onClick={()=>this.setState({bigPictureVisible:false})}/>*/}
+
+                {/*</Modal>*/}
                 <BottomToolBar navigation={this.props.navigation}
                                leftAction={ACTION_BACK}
-                               _onLeftIconPress={this._onBackIconPress}/>
+                               rightAction={ACTION_CLASS}
+                               _onLeftIconPress={this._onBackIconPress}
+                               _onRightIconPress={this._onVolumeIconPress}
+                />
                 <SpinnerWrapper loading={loading} title={strings.searching}/>
             </View>
         );
@@ -118,6 +132,7 @@ export class UnionPrice extends Component {
                         <RefreshListView
                             data={priceList}
                             footerEmptyDataText={strings.noData}
+                            backTop={this.state.backTop}
                             footerFailureText={strings.loadError}
                             footerNoMoreDataText={strings.noMore}
                             footerRefreshingText={strings.loading}
@@ -137,16 +152,47 @@ export class UnionPrice extends Component {
     renderCell = ({item, index}) => {
         const priceList = this.props.union.get('priceList');
         const price = priceList[index];
+        const image = price.imageUrl && price.imageUrl!==undefined?{uri:strings.head+price.imageUrl}:require('../../assets/img/img_logo.png');
 
         return (
             <ListItem
-                title={price.nombre}
-                subtitle={price.codigo}
-                rightTitle={price.price}
+                title={price.commodityName}
+                subtitle={
+                    <View style={{flexDirection:'row',marginTop:10}}>
+                        <View>
+                            <Text style={styles.subtitleText} allowFontScaling={false}>$ {price.price}</Text>
+                        </View>
+                        {price.advertisementUrl==undefined || price.advertisementUrl==null?
+                            null
+                            :
+                            <TouchableOpacity
+                                // onPress={()=>this.setState({bigPictureVisible:true,bigPictureUrl:price.advertisementUrl,backTop:0})}
+                                onPress={()=>{this.props.navigation.push("BigPicture",{bigPictureUrl:price.advertisementUrl});this.setState({backTop:0})}}
+                            >
+                                <View style={{marginLeft:25}}>
+                                    <Text style={{fontSize:22,color:colors.baseCyan,fontStyle:'italic',fontWeight:'bold'}} allowFontScaling={false}>OFERTA！</Text>
+                                </View>
+                            </TouchableOpacity>
+
+                        }
+                    </View>
+
+                }
+                rightTitle={
+                    <View style={{marginRight:10,justifyContent:"center"}}>
+                        <TouchableOpacity
+                            // onPress={()=>this.setState({bigPictureVisible:true,bigPictureUrl:price.imageUrl})}
+                            onPress={()=>{this.props.navigation.push("BigPicture",{bigPictureUrl:price.imageUrl});}}
+                        >
+                            <Image source={image} style={{width:60,height:60}} resizeMode={"contain"}/>
+                        </TouchableOpacity>
+                    </View>
+                }
                 style={styles.listItemStyle}
-                subtitleStyle={styles.subtitleText}
+                titleStyle={{fontSize:15}}
+                // subtitleStyle={styles.subtitleText}
                 rightTitleStyle={styles.rightTitle}
-                onPress={()=>{this.navigateToDetail(price)}}
+                // onPress={()=>{this.navigateToDetail(price)}}
             />
         );
     };
@@ -156,7 +202,9 @@ export class UnionPrice extends Component {
     }
 
     _onVolumeIconPress = () => {
-    };
+        this.props.navigation.push("CommodityClass",{ refresh: () => {
+                this.setState({backTop:1});
+            }})};
 
     _onHelpIconPress = () => {
     };
@@ -210,8 +258,9 @@ const styles = StyleSheet.create({
         height:60,
     },
     subtitleText:{
-        fontSize:14,
-        color: colors.primaryGray
+        fontSize:20,
+        fontWeight:"700",
+        color:colors.brightRed,
     },
     imageWrapper:{
         flex: 1,
@@ -231,6 +280,7 @@ const mapStateToProps = (state) => ({
     root: state.get('root'),
     union: state.get('union'),
     unionId: state.get('union').get("union").unionId,
+    start: state.get('union').get('start'),
 });
 
 export default connect(mapStateToProps)(UnionPrice)

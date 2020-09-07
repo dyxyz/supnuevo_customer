@@ -15,8 +15,10 @@ function* getUnionList () {
   try {
     const response = yield call(Api.getUnionList);
     if (response.re == 1) {
+      console.log(response)
       yield put(unionActions.getUnionListSuccess(response.data));
     } else {
+      alert(strings.time_out);
       yield put(unionActions.getUnionListFail(strings.getUnionListFail));
     }
   } catch (error) {
@@ -29,11 +31,16 @@ function* getSupnuevoUnionCustomerShoppingCar (action) {
     const {unionId} = action;
     try {
         const response = yield call(Api.getSupnuevoUnionCustomerShoppingCar, unionId);
+        // console.log(response)
         if (response.re == 1) {
-            const cartId = response.data;
-            // const edges = response.data.edgeList;
-            yield put(unionActions.getCustomerShoppingCarSuccess(cartId,unionId));
+            const cartId = response.data.cartId;
+            const merchantId = response.data.merchantId;
+            const union = response.data.union;
+            yield put(unionActions.getCustomerShoppingCarSuccess(cartId,unionId,merchantId,union));
+            yield put(authActions.setCustomerDefaultMerchant(unionId,merchantId));
+            yield put(authActions.setCustomerCart(cartId));
         } else {
+            alert(strings.time_out);
             yield put(unionActions.getCustomerShoppingCarFail(strings.getUnionMemberListFail));
         }
     } catch (error) {
@@ -53,6 +60,7 @@ function* getUnionMemberList (action) {
       yield put(authActions.login(username,password));
       yield put(unionActions.getUnionMemberListSuccess(merchants, edges));
     } else {
+        alert(strings.time_out);
       yield put(unionActions.getUnionMemberListFail(strings.getUnionMemberListFail));
     }
   } catch (error) {
@@ -71,11 +79,13 @@ function* getUnionAdvertisementList( action ) {
       yield put({ type: actions.ADVERTISEMENT_LIST_LOADING });
     }
     const response = yield call(Api.getSupnuevoBuyerUnionAdvertisementList,unionId, start, count);
+    console.log(response)
     if(response.re === 1) {
       const advertisementList = response.data;
       if (start === 0) {
         if (!advertisementList || advertisementList.length === 0) {
           yield put({type: actions.ADVERTISEMENT_LIST_REFRESHING_NO_DATA});
+            yield put({type: actions.GET_ADVERTISEMENT_LIST_SUCCESS, advertisements: null});
         } else {
           yield put({type: actions.GET_ADVERTISEMENT_LIST_SUCCESS, advertisements: advertisementList});
         }
@@ -85,6 +95,7 @@ function* getUnionAdvertisementList( action ) {
         yield put({type: actions.GET_MORE_ADVERTISEMENT_LIST_SUCCESS, advertisements: advertisementList});
       }
     }else{
+        alert(strings.time_out);
       if (start === 0) {
         yield put({ type: actions.GET_ADVERTISEMENT_LIST_FAIL });
       } else {
@@ -104,18 +115,23 @@ function* getUnionAdvertisementList( action ) {
 function* getUnionPriceList (action) {
   try {
     const {unionId, start, count,cartId} = action;
+    var response=null
 
     if (start === 0) {
       yield put({ type: actions.PRICE_LIST_REFRESHING });
+       response = yield call(Api.getSupnuevoBuyerUnionPriceList,unionId, start, count,cartId);
     } else {
       yield put({ type: actions.PRICE_LIST_LOADING });
+      response = yield call(Api.getSupnuevoBuyerUnionPriceList,unionId, start, count,cartId);
     }
-    const response = yield call(Api.getSupnuevoBuyerUnionPriceList,unionId, start, count,cartId);
+    console.log(response)
     if(response.re === 1) {
+        yield put({type: actions.SET_TAX_NULL});
       const priceList = response.data;
       if (start === 0) {
         if (!priceList || priceList.length === 0) {
           yield put({type: actions.PRICE_LIST_REFRESHING_NO_DATA});
+            yield put({type: actions.GET_PRICE_LIST_SUCCESS, priceList: priceList});
         } else {
           yield put({type: actions.GET_PRICE_LIST_SUCCESS, priceList: priceList});
         }
@@ -125,6 +141,7 @@ function* getUnionPriceList (action) {
         yield put({type: actions.GET_MORE_PRICE_LIST_SUCCESS, priceList: priceList});
       }
     }else{
+        alert(strings.time_out);
       if (start === 0) {
         yield put({ type: actions.GET_PRICE_LIST_FAIL });
       } else {
@@ -148,15 +165,44 @@ function* getUnionPriceListLucene (action) {
     const response = yield call(Api.getSupnuevoBuyerUnionPriceListLucene, unionId, userInput,cartId);
     if (response.re == 1) {
       const priceList = response.data;
+      console.log(priceList)
       yield put(unionActions.getUnionPriceListLuceneSuccess(priceList));
+        yield put({type: actions.PRICE_LIST_LOADING_NO_DATA});
+        yield put({type: actions.SET_TAX_NULL});
     } else {
+        alert(strings.time_out);
       yield put(unionActions.getUnionPriceListLuceneFail(strings.getUnionPriceListFail));
     }
   } catch (error) {
     yield put(unionActions.getUnionPriceListLuceneFail(error));
-  } finally {
+  }
+  finally {
     yield put(rootActions.setLoading(false));
   }
+}
+
+//通过种类获取商品
+function* getPriceListByTax (action) {
+    const {taxId,unionId,cartId} = action;
+    try {
+        yield put(rootActions.setLoading(true));
+        const response = yield call(Api.getPriceListByTax,taxId,unionId,cartId);
+        if (response.re == 1) {
+            const priceList = response.data;
+            console.log(response)
+            yield put(unionActions.getPriceListByTaxSuccess(priceList,taxId));
+            // yield put({type: actions.SET_BACK_TOP});
+            yield put({type: actions.PRICE_LIST_LOADING_NO_DATA});
+        } else {
+            alert(strings.time_out);
+            yield put(unionActions.getPriceListByTaxFail(strings.getClassPriceListFail));
+        }
+    } catch (error) {
+        yield put(unionActions.getPriceListByTaxFail(error));
+    }
+    finally {
+        yield put(rootActions.setLoading(false));
+    }
 }
 
 // 获取联盟规则
@@ -168,6 +214,7 @@ function* getUnionRegulation (action) {
       const regulation = response.data;
       yield put(unionActions.getUnionRegulationSuccess(regulation));
     } else {
+        alert(strings.time_out);
       yield put(unionActions.getUnionRegulationFail(strings.getUnionRegulationFail));
     }
   } catch (error) {
@@ -182,5 +229,6 @@ export default [
   takeEvery(actions.GET_ADVERTISEMENT_LIST, getUnionAdvertisementList),
   takeEvery(actions.GET_PRICE_LIST, getUnionPriceList),
   takeEvery(actions.GET_PRICE_LIST_LUCENE, getUnionPriceListLucene),
+  takeEvery(actions.GET_PRICE_LIST_TAX, getPriceListByTax),
   takeEvery(actions.GET_UNION_REGULATION, getUnionRegulation),
 ]

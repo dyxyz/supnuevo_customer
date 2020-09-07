@@ -4,13 +4,26 @@
  */
 
 import constants from "../resources/constants";
-import {post} from '../utils/httpUtils'
+import {post} from '../utils/httpUtils';
+import DeviceInfo from 'react-native-device-info';
+import { getUniqueId, getManufacturer ,getDeviceId} from 'react-native-device-info';
+let deviceId = DeviceInfo.getUniqueId();
+let deviceName = DeviceInfo.getDeviceId();
 
 
-export function getCustomerHelp (helpType) {
-    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/help/getSupnuevoCustomerHelpListByHelpType';
+export function getCustomerHelp (helpNum) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/getSupnuevoCustomerHelpListByHelpNum';
     const body = {
-        helpType:helpType,
+        helpNum:helpNum,
+    };
+
+    return post(url ,body);
+}
+
+export function getDeviceInfo (username) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/getCustomerServoiceInfo';
+    const body = {
+        loginName: username,
     };
 
     return post(url ,body);
@@ -18,10 +31,11 @@ export function getCustomerHelp (helpType) {
 
 // 登录
 export function webLogin (username, password) {
-  const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/auth/webLogin';
+  const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/auth/webLoginPhoneApp';
   const body = {
     loginName: username,
     password: password,
+    parameter: {serviceId: deviceId,loginAnnotation:null,appDeviceType:deviceName},
   };
 
   return post(url ,body);
@@ -83,10 +97,33 @@ export function addCustomerReceiverInfo (addType, addValue) {
   return post(url ,body);
 }
 
-// 登出
-export function logOut () {
-  const url = constants.SUPNUEVO_BASE_URL + '/func/auth/webLogout';
-  const body = {};
+// 删除订单配送信息
+export function deleteCustomerReceiverInfo (deleteType, deleteValue) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/deleteCustomerReceiverInfo';
+    const body = {
+        deleteType: deleteType,
+        deleteValue: deleteValue,
+    };
 
-  return post(url ,body);
+    return post(url ,body);
 }
+
+// 登出
+// export function logOut () {
+//   const url = constants.SUPNUEVO_BASE_URL + '/func/auth/webLogout';
+//   const body = {};
+//
+//   return post(url ,body);
+// }
+
+// 设置已读条款
+export function setReadState(isAgree) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/setCustomerIsAgree';
+    const body = {
+        isAgree:isAgree
+    };
+
+    return post(url ,body);
+}
+
+

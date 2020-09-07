@@ -47,8 +47,9 @@ var styles = StyleSheet.create({
     width:SCREEN_WIDTH,
     paddingHorizontal:10,
     paddingVertical:5,
-    borderBottomWidth:1,
-    borderColor:'#eee'
+    borderBottomWidth:3,
+    borderColor:'#9DD6EB',
+      backgroundColor:colors.baseWhite
   },
   titleWrapperStyle: {
     flex:3.5,

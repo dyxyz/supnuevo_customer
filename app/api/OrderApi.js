@@ -8,6 +8,7 @@ import {post} from '../utils/httpUtils'
 // 提交订单
 export function submitSupnuevoCustomerOrder(deliveryInfo) {
   const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/submitSupnuevoCustomerOrder';
+  console.log(deliveryInfo.datetime)
   let body = null;
   if(deliveryInfo.deliveryType==0) {
       body = {
@@ -17,6 +18,7 @@ export function submitSupnuevoCustomerOrder(deliveryInfo) {
           receiverPhone: deliveryInfo.receiverPhone,
           submitMode: "1",
           wiseSaleTime:deliveryInfo.datetime,
+          isCanOrther:deliveryInfo.agree,
       }
   }
   else{
@@ -27,6 +29,7 @@ export function submitSupnuevoCustomerOrder(deliveryInfo) {
           receiverPhone:null,
           submitMode:"1",
           wiseSaleTime:deliveryInfo.datetime,
+          isCanOrther:deliveryInfo.agree,
       }
   }
 
@@ -72,3 +75,38 @@ export function recallCar(orderId,cartId) {
 
     return post(url ,body);
 }
+
+// 发送验证码
+export function sendVerifyCode(verifyCode,verifyTel) {
+    console.log(verifyCode)
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/sendMessageToCustomerPhone';
+    const body = {
+        verified: verifyCode,
+        mobilePhone:verifyTel
+    };
+
+    return post(url ,body);
+}
+
+// 将用户置为已验证
+export function setCustomerPhoneChecked(verifyTel) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/setCustomerPhoneChecked';
+    const body = {
+        phoneChecked:1,
+        mobilePhone:verifyTel
+    };
+
+    return post(url ,body);
+}
+
+// 获取历史购物车列表
+export function getHistoryCarList() {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/customer/customerGetCartHistoryList';
+    const body = {
+
+    };
+
+    return post(url ,body);
+}
+
+

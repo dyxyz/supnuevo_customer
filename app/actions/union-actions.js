@@ -51,12 +51,13 @@ export function getSupnuevoUnionCustomerShoppingCar(unionId) {
     };
 }
 
-export function getCustomerShoppingCarSuccess(cartId,unionId) {
+export function getCustomerShoppingCarSuccess(cartId,unionId,merchantId,union) {
     return {
         type: actions.GET_UNION_CUSTOMER_SHOPPING_CAR_SUCCESS,
         cartId:cartId,
         unionId:unionId,
-        // merchants: merchants,
+        merchantId:merchantId,
+        union: union,
         // edges: edges,
     }
 }
@@ -122,11 +123,43 @@ export function getUnionPriceListLuceneSuccess(priceList ) {
   }
 }
 
+export function updatePriceListSuccess(priceListItem ) {
+    return {
+        type: actions.UPDATE_PRICE_LIST_SUCCESS,
+        priceListItem: priceListItem,
+    }
+}
+
 export function getUnionPriceListLuceneFail(error ) {
   return {
     type: actions.GET_PRICE_LIST_LUCENE_FAIL,
     error: error,
   }
+}
+
+// 通过种类获取价格表
+export function getPriceListByTax(taxId,unionId,cartId) {
+    return {
+        type: actions.GET_PRICE_LIST_TAX,
+        taxId: taxId,
+        unionId: unionId,
+        cartId:cartId,
+    }
+}
+
+export function getPriceListByTaxSuccess(priceList,taxId) {
+    return {
+        type: actions.GET_PRICE_LIST_TAX_SUCCESS,
+        priceList: priceList,
+        taxId:taxId
+    }
+}
+
+export function getPriceListByTaxFail(error ) {
+    return {
+        type: actions.GET_PRICE_LIST_TAX_FAIL,
+        error: error,
+    }
 }
 
 // 规则

@@ -56,9 +56,16 @@ export class Register extends Component {
 
         if (registerError && registerError !== '') {
             showCenterToast(registerError);
-        } else if (isRegisterSuccess) {
+        }
+        // if (registerError == '登录验证错误') {
+        //     showCenterToast(strings.password_error);
+        // }
+        // else if(registerError == '不存在此账户'){
+        //     showCenterToast(strings.none_user);
+        // }
+        else if (isRegisterSuccess) {
             showCenterToast(strings.register_success);
-            this.props.navigation.navigate('registerHelp')
+            // this.props.navigation.navigate('registerHelp')
             // this.props.navigation.pop();
             if (this.props.navigation.state.params.callback) {
                 this.props.navigation.state.params.callback(username,password);
