@@ -63,7 +63,7 @@ function* login( action ) {
         } else {
             const sessionId = loginResponse.sessionId;
             const customerResponse = yield call(Api.getSupnuevoCustomerInfo, sessionId);
-            // console.log(customerResponse)
+            console.log(customerResponse)
             if(customerResponse.re === 1) {
                 const data = customerResponse.data;
                 const customerInfo = data.customerInfo;

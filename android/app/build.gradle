@@ -109,6 +109,11 @@ android {
         }
     }
 
+    packagingOptions {
+        exclude "lib/arm64-v8a/librealm-jni.so"
+    }
+
+
     signingConfigs {
         release {
             storeFile file(MYAPP_RELEASE_STORE_FILE)

@@ -34,7 +34,7 @@ import strings from "../../resources/strings";
 import {UnionState} from "./UnionState";
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-const mnapImg = require('../../assets/img/map.png');
+const mnapImg = require('../../assets/img/map.jpg');
 export class UnionMemberList extends Component {
 
   constructor(props) {
@@ -75,7 +75,7 @@ export class UnionMemberList extends Component {
       const union = this.props.union.get("union");
       const merchants = this.props.union.get("merchants");
       const edges = this.props.union.get("edges");
-      const mapUrl=strings.head+'supnuevo/map/'+this.props.unionId+'.png'+'?'+ts
+      const mapUrl={uri:strings.head+'supnuevo/map/'+this.props.unionNum+'.jpg'+'?'+ts}
       console.log(mapUrl)
 
 
@@ -86,7 +86,7 @@ export class UnionMemberList extends Component {
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
               {Platform.OS=="ios"?
-                  this._renderMap(edges, merchants)
+                  <Image source={mapUrl} style={{flex:1,width:SCREEN_WIDTH}} resizeMode={"contain"}/>
 
                   :
                   this._renderMap(edges, merchants)
@@ -258,6 +258,7 @@ const mapStateToProps = (state) => ({
     password:state.get('auth').get('password'),
     root: state.get('root'),
     union: state.get('union'),
+    unionNum:state.get("union").get("union").unionNum,
 });
 
 export default connect(mapStateToProps)(UnionMemberList)

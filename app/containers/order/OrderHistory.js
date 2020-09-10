@@ -29,6 +29,7 @@ import {
     transFromOrderItemToArray, toDecimal2, transFromDiscountItemToArray
 } from "../../utils/tools";
 import {InputWithCalendar} from '../../components/multiFuncTextInput/index';
+import IconA from 'react-native-vector-icons/AntDesign';
 import {CheckBox} from "react-native-elements";
 import strings from "../../resources/strings";
 import TableView from "../../components/TableView";
@@ -217,12 +218,27 @@ export class OrderHistory extends Component {
                                   onDateChange={(value)=>{
                                       this.setState({orderDate:value});
                                       this.props.dispatch(orderActions.getOrderListOfDate(value,null));
-                                  }}/>
-                              {orderListView}
+                                  }}
+                              />
+                              {orderListView.length>0?
+                                  orderListView
+                                  :
+                                  <View style={styles.noOrder}>
+                                      <IconA name="exception1" size={60} color="rgb(114, 135, 191)" />
+                                      <Text style={styles.emptyText}>Pedido NO existente.</Text>
+                                  </View>
+                              }
                           </View>
                           :
                           <View style={styles.scrollViewContanier}>
-                              {orderListView}
+                              {orderListView.length>0?
+                                  orderListView
+                                  :
+                                  <View style={styles.noOrder}>
+                                      <IconA name="exception1" size={60} color="rgb(114, 135, 191)" />
+                                      <Text style={styles.emptyText}>Pedido NO existente.</Text>
+                                  </View>
+                              }
                           </View>
 
 
@@ -420,18 +436,18 @@ export class OrderHistory extends Component {
         return(
             <View style={styles.auxContainerStyle}>
                 <View style={{flexDirection:'row',justifyContent:'space-between',width:'100%'}}>
-                    <Text style={[styles.carTextStyle,{color:colors.baseBlack}]} allowFontScaling={false}>SUBTOT. SIN DESCUENTOS: </Text>
+                    <Text style={[styles.carTextStyle,{color:colors.baseBlack}]} allowFontScaling={false}>SUBTOT. SIN DESC: </Text>
                     <Text style={styles.carTextStyle} allowFontScaling={false}>{totalFee}</Text>
                 </View>
 
                 {totalDiscount!=null && totalDiscount!=undefined && totalDiscount!=0 && totalDiscount!=NaN?
                     <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:5,width:'100%'}}>
-                        <Text style={[styles.carTextStyle,{color:colors.baseBlack}]} allowFontScaling={false}>DESCUNTOS: </Text>
+                        <Text style={[styles.carTextStyle,{color:colors.baseBlack}]} allowFontScaling={false}>DESC: </Text>
                         <Text style={styles.carTextStyle} allowFontScaling={false}>{totalDiscount}</Text>
                     </View>
                     :
                     <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:5,width:'100%'}}>
-                        <Text style={[styles.carTextStyle,{color:colors.baseBlack}]} allowFontScaling={false}>DESCUNTOS: </Text>
+                        <Text style={[styles.carTextStyle,{color:colors.baseBlack}]} allowFontScaling={false}>DESC: </Text>
                         <Text style={styles.carTextStyle} allowFontScaling={false} />
                     </View>
 
@@ -535,6 +551,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 100,
         backgroundColor:'#9DD6EB'
+    },
+    emptyText:{
+        marginTop:15,
+        color:"rgb(114, 135, 191)"
+    },
+    noOrder:{
+        height:SCREEN_HEIGHT*0.3,
+        justifyContent:'flex-end',
+        width:SCREEN_WIDTH,
+        alignItems:'center',
+        backgroundColor:colors.baseWhite
     },
     tableInfoCard:{
         width:SCREEN_WIDTH-40,

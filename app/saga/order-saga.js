@@ -64,7 +64,6 @@ function* getSupnuevoCustomerOrderListOfDate (action) {
         else{
             orderList= response.data
         }
-        console.log(orderList)
       yield put(orderActions.getOrderListSuccess(orderList));
     } else {
         alert(strings.time_out);

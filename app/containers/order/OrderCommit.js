@@ -749,7 +749,7 @@ export class OrderCommit extends Component {
                                 {/*<Text allowFontScaling={false}>获取验证码</Text>*/}
                             {/*</View>*/}
                             <CountDown
-                                style={{width:'auto',justifyContent:'center',height:'auto',alignItems:'center',padding:10,borderRadius:5,backgroundColor:colors.primaryColor,marginTop:15}}
+                                style={{width:'auto',justifyContent:'center',height:40,alignItems:'center',padding:10,borderRadius:5,backgroundColor:colors.primaryColor,marginTop:15}}
                                 textStyle={{color: 'white'}}
                                 count={60}
                                 title={strings.get_code}
@@ -998,42 +998,50 @@ export class OrderCommit extends Component {
         const isOrderMinLimit = this.props.order.get("isOrderMinLimit");
         const orderMinLimit = this.props.orderMinLimit;
         const discountScale = this.props.discountScale;
-        if(this.props.merchantId == null || this.props.merchantId == undefined){
-            alert(strings.no_shop)
+        var date = new Date();
+        var hour =  (date.getHours()).toString();
+        if(hour>10 && hour<13){
+            alert('不在服务时间')
         }
         else{
-            if(this.timeFinal()){
-                if(this.props.phoneChecked==1){
-                    if(this.props.isAgree==1){
-                        if(this.checkInfoComplete()!=false) {
-                            if(isOrderMinLimit){
-                                if(isDiscountScale){
-                                    this.props.dispatch(orderActions.submitOrder(this.state.deliveryInfo));
-                                    this.props.dispatch(authActions.setDefaultInfo(this.state.deliveryInfo));
-                                    // this.props.dispatch(authActions.login(this.props.username, this.props.password));
-                                    this.props.dispatch(orderActions.getOrderPrevInfoSuccess(null, null, null, null, null,null,null));
-                                    showCenterToast(strings.submitOrderSuccess);
+            if(this.props.merchantId == null || this.props.merchantId == undefined){
+                alert(strings.no_shop)
+            }
+            else{
+                if(this.timeFinal()){
+                    if(this.props.phoneChecked==1){
+                        if(this.props.isAgree==1){
+                            if(this.checkInfoComplete()!=false) {
+                                if(isOrderMinLimit){
+                                    if(isDiscountScale){
+                                        this.props.dispatch(orderActions.submitOrder(this.state.deliveryInfo));
+                                        this.props.dispatch(authActions.setDefaultInfo(this.state.deliveryInfo));
+                                        // this.props.dispatch(authActions.login(this.props.username, this.props.password));
+                                        this.props.dispatch(orderActions.getOrderPrevInfoSuccess(null, null, null, null, null,null,null));
+                                        showCenterToast(strings.submitOrderSuccess);
+                                    }
+                                    else{
+                                        alert('Las ofertas no pueden superar el '+discountScale+'% del pedido.')
+                                    }
                                 }
                                 else{
-                                    alert('Las ofertas no pueden superar el '+discountScale+'% del pedido.')
+                                    alert('Su pedido debe superar $'+orderMinLimit)
                                 }
-                            }
-                            else{
-                                alert('Su pedido debe superar $'+orderMinLimit)
-                            }
 
+                            }
                         }
+                        else{
+                            this.refs.clause.open()
+                        }
+
                     }
                     else{
-                        this.refs.clause.open()
+                        this.refs.verify.open()
                     }
-
-                }
-                else{
-                    this.refs.verify.open()
                 }
             }
         }
+
 
 
 
