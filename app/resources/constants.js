@@ -16,7 +16,7 @@ export default {
 
   // SUPNUEVO_TEST_BASE_URL: 'http://211.87.224.41:8080/supnuevo',
   // SUPNUEVO_TEST_BASE_URL:'http://142.4.194.0', //远程测试服务器
-  //     SUPNUEVO_TEST_BASE_URL: 'http://192.168.0.105:8080/supnuevo', //legion111
+  //     SUPNUEVO_TEST_BASE_URL: 'http://192.168.1.100:8080/supnuevo', //legion111
   //   SUPNUEVO_TEST_BASE_URL: 'http://192.168.43.43:8080/supnuevo', //legion
   SUPNUEVO_TEST_BASE_URL: 'http://union.supnuevo.com.ar', //正式服务器
   //   SUPNUEVO_TEST_BASE_URL: 'http://192.168.101.11:8080/supnuevo', //家

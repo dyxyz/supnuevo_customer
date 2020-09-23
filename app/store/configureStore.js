@@ -106,6 +106,8 @@ const initialState = new Immutable.Map({
     addressList:[],
     recallState:null,
     carList:[],
+    finishedList:[],
+    unFinishedList:[],
     telList:['123','454','789'],
     nameList:[{id:0,name:'代岩'},{id:1,name:'效果'},{id:2,name:'小朱'},{id:3,name:'亚辉'},
         {id:4,name:'赵一'},{id:5,name:'王二'},{id:6,name:'张三'},{id:7,name:'李四'},

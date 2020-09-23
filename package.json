@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
+    "lint": "eslint .",
     "build_android": "cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
@@ -12,9 +13,9 @@
     "immutable": "^4.0.0-rc.12",
     "prop-types": "^15.6.2",
     "query-string": "4.3.4",
-    "react": "16.6.1",
+    "react": "16.8.3",
     "react-localization": "^1.0.14",
-    "react-native": "0.57.7",
+    "react-native": "0.59.2",
     "react-native-accordion": "^1.0.1",
     "react-native-actionsheet": "^2.4.2",
     "react-native-collapsible": "^1.5.2",
@@ -49,10 +50,14 @@
   },
   "devDependencies": {
     "@types/node": "^12.7.1",
-    "babel-jest": "24.8.0",
-    "jest": "24.8.0",
-    "metro-react-native-babel-preset": "0.55.0",
-    "react-test-renderer": "16.6.1"
+    "@babel/core": "^7.4.0",
+    "@babel/runtime": "^7.4.2",
+    "@react-native-community/eslint-config": "^0.0.3",
+    "babel-jest": "^24.5.0",
+    "eslint": "^5.15.3",
+    "jest": "^24.5.0",
+    "metro-react-native-babel-preset": "^0.53.1",
+    "react-test-renderer": "16.8.3"
   },
   "jest": {
     "preset": "react-native"

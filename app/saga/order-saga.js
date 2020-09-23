@@ -9,6 +9,7 @@ import * as orderActions from "../actions/order-actions";
 import * as shoppingActions from "../actions/shopping-actions";
 import * as authActions from "../actions/auth-actions";
 import * as unionActions from "../actions/union-actions";
+import * as rootActions from "../actions/root-actions";
 import strings from '../resources/strings';
 
 
@@ -51,26 +52,30 @@ function* getSupnuevoCustomerOrderPrevInfo (action) {
 function* getSupnuevoCustomerOrderListOfDate (action) {
   const {orderDate,orderState} = action
   try {
+    yield put(rootActions.setLoading(true));
     const response = yield call(Api.getSupnuevoCustomerOrderListOfDate, orderDate,orderState);
     const response1 = yield call(Api.getSupnuevoCustomerOrderListOfDate, orderDate,1);
 
     if (response.re === 1) {
       const orderList1 = response.data;
         const orderList2 = response1.data;
-        var orderList=null
+        var finishedList=[]
+        var unFinishedList=[]
         if(orderState==0){
-            orderList = orderList1.concat(orderList2);
+            unFinishedList = orderList1.concat(orderList2);
         }
         else{
-            orderList= response.data
+            finishedList= response.data
         }
-      yield put(orderActions.getOrderListSuccess(orderList));
+      yield put(orderActions.getOrderListSuccess(unFinishedList,finishedList));
     } else {
         alert(strings.time_out);
       yield put(orderActions.getOrderListFail(strings.getOrderListFail));
     }
   } catch (error) {
     yield put(orderActions.getOrderListFail(error))
+  }finally {
+      yield put(rootActions.setLoading(false));
   }
 }
 

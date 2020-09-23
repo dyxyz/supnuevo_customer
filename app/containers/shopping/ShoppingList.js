@@ -46,7 +46,7 @@ import Modal from "react-native-modalbox";
 import SwipeableView from "../../components/SwipeableView";
 import {SwipeRow,SwipeListView} from 'react-native-swipe-list-view';
 var _SwipeRow: SwipeRow;
-import { BackAndroid } from 'react-native';
+
 import {BigPicture} from "./BigPicture";
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});

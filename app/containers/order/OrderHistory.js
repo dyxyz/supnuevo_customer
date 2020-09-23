@@ -45,6 +45,7 @@ import ShoppingList from "../shopping/ShoppingList";
 import * as unionActions from "../../actions/union-actions";
 import {HistoryCar} from "./HistoryCar";
 import {HistoryHelp} from "./HistoryHelp";
+import {SpinnerWrapper} from '../../components/SpinnerLoading/index'
 
 
 const orderStateSubmit = constants.ORDER_STATE_SUBMIT;
@@ -124,10 +125,17 @@ export class OrderHistory extends Component {
     }
 
   render() {
+      const loading = this.props.root.get('loading');
       const orderList = this.props.order.get('orderList');
-      const orderListView = [];
-      orderList.map((orderItem,i)=>{
-          orderListView.push(this._renderOrderItem(orderItem));
+      const unFinishedList = this.props.order.get('unFinishedList');
+      const finishedList = this.props.order.get('finishedList');
+      const unFinishedListView = [];
+      unFinishedList.map((orderItem,i)=>{
+          unFinishedListView.push(this._renderOrderItem(orderItem));
+      });
+      const finishedListView = [];
+      finishedList.map((orderItem,i)=>{
+          finishedListView.push(this._renderOrderItem(orderItem));
       });
 
       return (
@@ -220,8 +228,8 @@ export class OrderHistory extends Component {
                                       this.props.dispatch(orderActions.getOrderListOfDate(value,null));
                                   }}
                               />
-                              {orderListView.length>0?
-                                  orderListView
+                              {finishedListView.length>0?
+                                  finishedListView
                                   :
                                   <View style={styles.noOrder}>
                                       <IconA name="exception1" size={60} color="rgb(114, 135, 191)" />
@@ -231,8 +239,8 @@ export class OrderHistory extends Component {
                           </View>
                           :
                           <View style={styles.scrollViewContanier}>
-                              {orderListView.length>0?
-                                  orderListView
+                              {unFinishedListView.length>0?
+                                  unFinishedListView
                                   :
                                   <View style={styles.noOrder}>
                                       <IconA name="exception1" size={60} color="rgb(114, 135, 191)" />
@@ -256,6 +264,7 @@ export class OrderHistory extends Component {
               </ScrollView>
               <BottomToolBar navigation = {this.props.navigation}
               leftAction={ACTION_BACK} _onLeftIconPress={this._onBackIconPress}/>
+              <SpinnerWrapper loading={loading} title={strings.wait_login}/>
           </View>);
   }
 

@@ -1000,8 +1000,8 @@ export class OrderCommit extends Component {
         const discountScale = this.props.discountScale;
         var date = new Date();
         var hour =  (date.getHours()).toString();
-        if(hour>10 && hour<13){
-            alert('不在服务时间')
+        if(hour>1 && hour<5){
+            alert('El servidor está en mantenimiento')
         }
         else{
             if(this.props.merchantId == null || this.props.merchantId == undefined){

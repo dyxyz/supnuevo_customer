@@ -31,7 +31,8 @@ export default function orderReducer(state, action = {}) {
       return state.withMutations(state => state
           .set('dataResponse', constants.GET_ORDER_LIST_SUCCESS)
           .set('dataError', '')
-          .set('orderList', action.orderList));
+          .set('unFinishedList', action.unFinishedList)
+          .set('finishedList', action.finishedList));
     case actions.GET_ORDER_LIST_FAIL:
       return state.withMutations(state => state
           .set('dataResponse', constants.GET_ORDER_LIST_FAIL)

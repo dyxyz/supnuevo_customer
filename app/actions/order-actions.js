@@ -63,10 +63,11 @@ export function getOrderListOfDate (orderDate,orderState) {
   };
 }
 
-export function getOrderListSuccess(orderList) {
+export function getOrderListSuccess(unFinishedList,finishedList) {
   return {
     type: actions.GET_ORDER_LIST_SUCCESS,
-    orderList: orderList
+    unFinishedList: unFinishedList,
+    finishedList:finishedList,
   };
 }
 

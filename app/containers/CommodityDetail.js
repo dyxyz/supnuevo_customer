@@ -39,6 +39,7 @@ export class commodityDetail extends Component{
     render(){
         const index=this.state.index;
         const detail=this.state.priceList[index];
+        console.log(this.state.priceList)
         const imageuri =strings.head+ detail.imageUrl;
 
         var ts=new Date().getTime();
@@ -245,7 +246,13 @@ export class commodityDetail extends Component{
             }
         }
         else {
+            if(this.state.priceList.length==1 && this.state.priceList[this.state.index].amount==1 && type==constants.CART_DECLINE){
+                var list=[]
+                list.push(item)
+                this.setState({priceList:list})
+            }
             this.props.dispatch(shoppingActions.updateCartInfo(this._transFromPriceToCartInfo(item, type), this.props.unionId,this.state.searchText,1,this.props.taxId));
+            console.log(this.state.priceList[this.state.index])
         }
         if(type==constants.CART_ADD) {
             console.log('+')
@@ -259,7 +266,19 @@ export class commodityDetail extends Component{
         else{
             console.log('-')
             if(this.state.priceList[this.state.index].amount>0){
-                this.state.priceList[this.state.index].amount=this.state.priceList[this.state.index].amount-1
+                if(this.state.priceList[this.state.index].amount==1){
+                    if(this.state.isPrice==false && this.state.index>0){
+                        this.setState({index:0})
+                    }
+                    else{
+                        this.state.priceList[this.state.index].amount=this.state.priceList[this.state.index].amount-1
+                    }
+                }
+                else{
+                    this.state.priceList[this.state.index].amount=this.state.priceList[this.state.index].amount-1
+                }
+
+
             }
         }
         // this.state.detail.amount=this.state.amount
@@ -273,7 +292,7 @@ export class commodityDetail extends Component{
             case constants.CART_ADD:amount=price.amount+1;break;
             case constants.CART_DECLINE:amount=price.amount-1;break;
         }
-        const carInfo = {itemId: price.itemId, commodityId: price.commodityId, amount: amount,cartId:this.props.cartId};
+        const carInfo = {itemId: price.itemId, commodityId: price.commodityId, amount: amount,cartId:this.props.cartId,imageUrl:price.imageUrl};
         return carInfo;
     }
 
