@@ -12,11 +12,12 @@ export function getCartInfo(cartId,unionId) {
   };
 }
 
-export function getCartInfoSuccess(cartInfo,goodsNumber) {
+export function getCartInfoSuccess(cartInfo,goodsNumber,goodsPrice) {
   return {
     type: actions.GET_CART_INFO_SUCCESS,
     cartInfo: cartInfo,
     goodsNumber:goodsNumber,
+    goodsPrice:goodsPrice,
   };
 }
 

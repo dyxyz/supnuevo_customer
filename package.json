@@ -30,6 +30,7 @@
     "react-native-image-zoom-viewer": "^2.2.27",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-loading-spinner-overlay": "^1.0.1",
+    "react-native-modal-dropdown": "^0.7.0",
     "react-native-modalbox": "1.6.0",
     "react-native-popover-view": "^2.0.2",
     "react-native-root-toast": "^3.1.2",

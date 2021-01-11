@@ -3,7 +3,7 @@
  */
 
 import React, {Component} from "react";
-import {Image, StatusBar, StyleSheet, Text, View,ScrollView,TouchableOpacity} from "react-native";
+import {Image, StatusBar, StyleSheet, Text, View,ScrollView,TouchableOpacity,Alert} from "react-native";
 import {connect} from "react-redux";
 import {ACTION_HELP, TopToolBar} from '../components/TopToolBar';
 import {BottomToolBar, ACTION_BACK, ACTION_DISCOUNT,ACTION_LOGOUT,ACTION_SETTING} from '../components/BottomToolBar';
@@ -90,7 +90,7 @@ export class RootPage extends Component {
                     <View style={styles.buttonWrapper}><Button title={strings.select_shop} iconName={'isv'} onPress={()=>navigator.push('UnionStack')}/></View>
                     {this.props.unionId == null || this.props.unionId == undefined?
 
-                            <View style={styles.buttonWrapper}><Button title={strings.shopping} iconName={'shoppingcart'} onPress={() => {alert(strings.shopping_with_union)}}/></View>
+                            <View style={styles.buttonWrapper}><Button title={strings.shopping} iconName={'shoppingcart'} onPress={() => {Alert.alert(strings.alertTitle,strings.shopping_with_union)}}/></View>
 
                         :
 

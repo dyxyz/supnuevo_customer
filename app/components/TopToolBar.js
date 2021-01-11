@@ -23,6 +23,8 @@ const TEXT_TYPE = 0;
 const ICON_TYPE = 1;
 
 
+const ACTION_ALL ={name:'ios-sync', type: ICON_TYPE};
+const ACTION_SEARCH ={name:'ios-search', type: ICON_TYPE};
 const ACTION_HELP={name:strings.help, type: TEXT_TYPE};
 const ACTION_SKIP={name:strings.skip_to_car, type: TEXT_TYPE};
 const ACTION_TEL={name:strings.change_tel, type: TEXT_TYPE};
@@ -135,6 +137,8 @@ const topToolBar ={
     get TopToolBar() {return TopToolBar},
     get ACTION_SPACE() {return ACTION_SPACE},
     get ACTION_TEL() {return ACTION_TEL},
+    get ACTION_SEARCH(){return ACTION_SEARCH},
+    get ACTION_ALL() {return ACTION_ALL},
     // get ACTION_DISCOUNT() {return ACTION_DISCOUNT},
 }
 

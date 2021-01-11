@@ -2,6 +2,7 @@
  * auth-saga.js
  */
 
+import  {Alert} from 'react-native'
 import {call, put, take, takeEvery} from "redux-saga/effects";
 import * as actions from "../actions/action-types";
 import * as Api from "../api/AuthApi";
@@ -12,7 +13,7 @@ import strings from '../resources/strings';
 import DeviceInfo from 'react-native-device-info';
 import { getUniqueId, getManufacturer ,getDeviceId} from 'react-native-device-info';
 let deviceId = DeviceInfo.getUniqueId();
-import {Alert} from 'react-native';
+
 
 
 // 获取客户帮助信息
@@ -44,7 +45,7 @@ function* getCustomerHelp (action) {
           }
         }
         else {
-            alert(strings.time_out);
+            Alert.alert(strings.alertTitle,strings.time_out);
             yield put(authActions.getCustomerHelpFail(strings.getCustomerHelpFail));
         }
     } catch (error) {
@@ -56,11 +57,16 @@ function* login( action ) {
     const {username,password} = action;
     try {
         yield put({type:actions.RESET_DEVICE_STATUS})
-        yield put(rootActions.setLoading(true));
+
+
         const loginResponse = yield call(Api.webLogin, deviceId, 1);
-        if (loginResponse.errorMessageList && loginResponse.errorMessageList.length > 0) {
-            yield put(authActions.setLoginError(loginResponse.errorMessageList[1]));
+        console.log(loginResponse)
+        if (loginResponse.dataMap && loginResponse.dataMap!=undefined) {
+            // yield put(authActions.setLoginError(loginResponse.errorMessageList[1]));
+            Alert.alert(strings.alertTitle,loginResponse.dataMap.alert);
+            return
         } else {
+            yield put(rootActions.setLoading(true));
             const sessionId = loginResponse.sessionId;
             const customerResponse = yield call(Api.getSupnuevoCustomerInfo, sessionId);
             console.log(customerResponse)
@@ -77,7 +83,7 @@ function* login( action ) {
                 yield put(unionActions.setDefaultUnionAndMerchant(union,merchant));
             }
             else{
-                alert(strings.time_out);
+                Alert.alert(strings.alertTitle,strings.time_out);
                 yield put(authActions.setLoginError(strings.customer_invalid));
             }
 
@@ -88,7 +94,6 @@ function* login( action ) {
         yield put(rootActions.setLoading(false));
     }
 }
-
 function* continueLogin( action ) {
     const {username,password} = action;
     try {
@@ -112,7 +117,7 @@ function* continueLogin( action ) {
                 yield put(unionActions.setDefaultUnionAndMerchant(union,merchant));
             }
             else{
-                alert(strings.time_out);
+                Alert.alert(strings.alertTitle,strings.time_out);
                 yield put(authActions.setLoginError(strings.customer_invalid));
             }
 
@@ -133,7 +138,7 @@ function* register( action ) {
     if (registerResponse.re === 1) {
       yield put(authActions.setRegisterSuccess(username, password));
     } else {
-        alert(strings.time_out);
+        Alert.alert(strings.alertTitle,strings.time_out);
       const error = registerResponse.data;
       yield put(authActions.setRegisterError(error && error !== undefined?error:strings.register_fail));
     }
@@ -161,7 +166,7 @@ function* addCustomerReceiverInfo( action ) {
       const customerInfo = response.data;
       yield put(authActions.addReceiverInfoSuccess(customerInfo));
     } else {
-        alert(strings.time_out);
+        Alert.alert(strings.alertTitle,strings.time_out);
       yield put(authActions.addReceiverInfoFail(strings.addCustomerReceiverInfoFail));
     }
   } catch (error) {
@@ -179,7 +184,7 @@ function* deleteCustomerReceiverInfo( action ) {
             const customerInfo = response.data;
             yield put(authActions.addReceiverInfoSuccess(customerInfo));
         } else {
-            alert(strings.time_out);
+            Alert.alert(strings.alertTitle,strings.time_out);
             yield put(authActions.addReceiverInfoFail(strings.deleteCustomerReceiverInfoFail));
         }
     } catch (error) {
@@ -216,7 +221,7 @@ function* setCustomerIsAgree(action) {
 
         }
         else{
-            alert(strings.time_out);
+            Alert.alert(strings.alertTitle,strings.time_out);
         }
     } catch (error) {
     }

@@ -5,6 +5,33 @@
 import constants from "../resources/constants";
 import {post} from '../utils/httpUtils'
 
+// 获取省列表
+export function getProvinceList () {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/union/getSupnuevoProvinceList';
+    const body = {};
+
+    return post(url ,body);
+}
+// 获取省列表
+export function getCityList (provinceId) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/union/getSupnuevoCityList';
+    const body = {
+        provinceId:provinceId
+    };
+
+    return post(url ,body);
+}
+
+// 通过市获取联盟列表
+export function getUnionListByCityId (cityId,provinceId) {
+    const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/union/getSupnuevoUnionListByCityId';
+    const body = {
+        cityId:cityId,
+        provinceId:provinceId
+    };
+
+    return post(url ,body);
+}
 // 获取所有联盟列表
 export function getUnionList () {
   const url = constants.SUPNUEVO_TEST_BASE_URL + '/func/union/getSupnuevoBuyerUnionList';

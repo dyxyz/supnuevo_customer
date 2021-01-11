@@ -100,11 +100,11 @@
         var center_lat = 0;
         var center_lng = 0;
         for(var i = 0; i<edges.length; i++){
-            center_lat += edges.latitude;
-            center_lng = edges.longitude;
+            center_lat += edges[i].latitude;
+            center_lng += edges[i].longitude;
         }
         map.setView({
-            center: new Microsoft.Maps.Location( center_lat, center_lng),
+            center: new Microsoft.Maps.Location( center_lat/4, center_lng/4),
             zoom: 12
         });
     }

@@ -182,6 +182,44 @@ export class OrderCommit extends Component {
         var month = (date.getMonth()+1).toString();
         var day = date.getDate().toString();
         var hour =  (date.getHours()+1).toString();
+
+        if(date.getHours()===23){
+            day=(date.getDate()+1).toString()
+            hour='00'
+            if(date.getMonth()+1===1 || date.getMonth()+1===3 || date.getMonth()+1===5 || date.getMonth()+1===7 || date.getMonth()+1===8 || date.getMonth()+1===10){
+                if(date.getDate()>31){
+                    month=(date.getMonth()+2).toString();
+                    day='01'
+                }
+            }
+            else if(date.getMonth()+1===4 || date.getMonth()+1===6 || date.getMonth()+1===9 || date.getMonth()+1===11){
+                if(date.getDate()>30){
+                    month=(date.getMonth()+2).toString();
+                    day='01'
+                }
+            }
+            else if(date.getMonth()+1===12){
+                if(date.getDate()>31){
+                    month='01'
+                    day='01'
+                }
+            }
+            else{
+                if(date.getFullYear()%4===0 && date.getFullYear()%100!==0){
+                    if(date.getDate()>29){
+                        month='03'
+                        day='01'
+                    }
+                }
+                else{
+                    if(date.getDate()>28){
+                        month='03'
+                        day='01'
+                    }
+                }
+            }
+        }
+
         var minute = date.getMinutes().toString();
 
         // return year+'-'+month+'-'+day+'-'+' '+hour+':'+minute;
@@ -241,11 +279,13 @@ export class OrderCommit extends Component {
         var {deliveryType} = this.state.deliveryInfo;
         const merchant = this.props.union.get("merchant");
         const customerInfo = this.props.auth.get("customerInfo");
+        const canDelivery= this.props.canDelivery;
+        const canSelf= this.props.canSelf;
         return(
             <View style={[styles.deliverInfoCard,{backgroundColor:colors.baseWhite}]}>
                 <View style={{width:SCREEN_WIDTH-40,flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
-                    <CheckBox containerStyle={{width:SCREEN_WIDTH*0.38,borderWidth:1,fontSize:6}} title={strings.common_delivery}  checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checked={deliveryType === constants.COMMON_DELIVERY} onPress={() => this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{deliveryType: constants.COMMON_DELIVERY})})}/>
-                    <CheckBox containerStyle={{width:SCREEN_WIDTH*0.38,borderWidth:1,fontSize:6}} title={strings.self_delivery}  checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checked={deliveryType === constants.SELF_DELIVERY} onPress={() =>this.checkMerchant()  }/>
+                    <CheckBox disabled={canDelivery===0} containerStyle={{width:SCREEN_WIDTH*0.38,borderWidth:1,fontSize:6}} title={strings.common_delivery}  checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checked={deliveryType === constants.COMMON_DELIVERY} onPress={() => this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{deliveryType: constants.COMMON_DELIVERY})})}/>
+                    <CheckBox disabled={canSelf===0} containerStyle={{width:SCREEN_WIDTH*0.38,borderWidth:1,fontSize:6}} title={strings.self_delivery}  checkedIcon='dot-circle-o' uncheckedIcon='circle-o' checked={deliveryType === constants.SELF_DELIVERY} onPress={() =>this.checkMerchant()  }/>
                 </View>
                 {
                     deliveryType == constants.COMMON_DELIVERY?
@@ -389,11 +429,12 @@ export class OrderCommit extends Component {
 
             if(this.getDate(sTime)<this.getDate(this.getMinDate())){
                 this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{datetime: this.getPlusFiveDate()})})
-                alert(strings.time_error)
+                Alert.alert(strings.alertTitle,strings.time_error)
 
             }
             else{
                 this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{datetime: datetime})})
+                console.log(datetime)
             }
 
 
@@ -405,6 +446,7 @@ export class OrderCommit extends Component {
         const isOrderMinLimit = this.props.order.get("isOrderMinLimit");
         const orderMinLimit = this.props.orderMinLimit;
         const discountScale = this.props.discountScale;
+
         var date = new Date();
         var str=this.state.deliveryInfo.datetime;
         var i = str.indexOf("-");
@@ -427,60 +469,94 @@ export class OrderCommit extends Component {
 
         console.log(today.getTime())
         if(this.getDate(sTime)<this.getDate(this.getSubmitDate())){
-            alert(strings.time_error)
+            Alert.alert(strings.alertTitle,strings.time_error)
             return false
         }
         else{
-            if(today.getTime()==selectedDay.getTime()){
+            if(this.timeRange()){
+                if(today.getTime()==selectedDay.getTime()){
+                    return true
+                }
+                else{
+                    Alert.alert(strings.alertTitle, 'Recordá que después de las 24 hs los precios podrían modificarse.',
+                        [
+                            {
+                                text: "Aceptar ",
+                                onPress: () => {
+                                    if(isOrderMinLimit){
+                                        if(isDiscountScale){
+                                            this.props.dispatch(orderActions.submitOrder(this.state.deliveryInfo));
+                                            this.props.dispatch(authActions.setDefaultInfo(this.state.deliveryInfo));
+                                            // this.props.dispatch(authActions.login(this.props.username, this.props.password));
+                                            this.props.dispatch(orderActions.getOrderPrevInfoSuccess(null, null, null, null, null,null,null));
+                                            showCenterToast(strings.submitOrderSuccess);
+                                        }
+                                        else{
+                                            Alert.alert(strings.alertTitle,'Las ofertas no pueden superar el '+discountScale+'% del pedido.')
+                                        }
+                                    }
+                                    else{
+                                        Alert.alert(strings.alertTitle,'Su pedido debe superar $'+orderMinLimit)
+                                    }
+
+                                }
+                            },
+                            {
+                                text: "Cancelar",
+                                onPress: () => {return false}
+                            },
+                        ]
+                    );
+                }
+            }
+            else{
+                Alert.alert(strings.alertTitle,strings.no_service)
+            }
+
+
+        }
+    }
+
+    timeRange(){
+        const deliveryAMStartTime = this.props.deliveryAMStartTime;
+        const deliveryAMEndTime = this.props.deliveryAMEndTime;
+        const deliveryPMStartTime = this.props.deliveryPMStartTime;
+        const deliveryPMEndTime = this.props.deliveryPMEndTime;
+        const selfAMStartTime = this.props.selfAMStartTime;
+        const selfAMEndTime = this.props.selfAMEndTime;
+        const selfPMStartTime = this.props.selfPMStartTime;
+        const selfPMEndTime = this.props.selfPMEndTime;
+        const deliveryType = this.state.deliveryInfo.deliveryType;
+        console.log(this.props.union.get('union'))
+        var i;
+        var str=this.state.deliveryInfo.datetime;
+        var j = str.indexOf(" ");
+        var k = str.indexOf(":");
+        var hour = str.substring(j+1, k);
+        var min = str.substring(k+1, str.length);
+        var setTime=str.substring(j+1, str.length);
+
+        if(deliveryType==constants.COMMON_DELIVERY){
+            if(setTime>deliveryAMStartTime && setTime<deliveryAMEndTime || setTime>deliveryPMStartTime && setTime<deliveryPMEndTime){
+
                 return true
             }
             else{
-                Alert.alert(strings.alertTitle, 'Recordá que después de las 24 hs los precios podrían modificarse.',
-                    [
-                        {
-                            text: "Aceptar ",
-                            onPress: () => {
+                console.log(deliveryAMEndTime)
+                return false
 
-                                        if(this.props.phoneChecked==1){
-                                            if(this.props.isAgree==1){
-                                                if(this.checkInfoComplete()!=false) {
-                                                    if(isOrderMinLimit){
-                                                        if(isDiscountScale){
-                                                            this.props.dispatch(orderActions.submitOrder(this.state.deliveryInfo));
-                                                            this.props.dispatch(authActions.setDefaultInfo(this.state.deliveryInfo));
-                                                            // this.props.dispatch(authActions.login(this.props.username, this.props.password));
-                                                            this.props.dispatch(orderActions.getOrderPrevInfoSuccess(null, null, null, null, null,null,null));
-                                                            showCenterToast(strings.submitOrderSuccess);
-                                                        }
-                                                        else{
-                                                            alert('Las ofertas no pueden superar el '+discountScale+'% del pedido.')
-                                                        }
-                                                    }
-                                                    else{
-                                                        alert('Su pedido debe superar $'+orderMinLimit)
-                                                    }
-
-                                                }
-                                            }
-                                            else{
-                                                this.refs.clause.open()
-                                            }
-
-                                        }
-                                        else{
-                                            this.refs.verify.open()
-                                        }
-                                 }
-                        },
-                        {
-                            text: "Cancelar",
-                            onPress: () => {return false}
-                        },
-                    ]
-                );
             }
-
         }
+        else{
+            if(setTime>selfAMStartTime && setTime<selfAMEndTime || setTime>selfPMStartTime && setTime<selfPMEndTime){
+                return true
+            }
+            else{
+                return false
+            }
+        }
+
+
     }
 
      getDate(strDate) {
@@ -502,32 +578,33 @@ export class OrderCommit extends Component {
 
     checkInfoComplete(){
         var {deliveryType,receiverName,receiverPhone,receiverAddr} = this.state.deliveryInfo;
-        if(deliveryType==0){
-            if(this.props.cartInfo.length==0){
-                Alert.alert(strings.empty_car);
-                return false;
-            }
-            if(receiverAddr==null || receiverAddr==undefined || receiverAddr==""){
-                Alert.alert(strings.receiverAddr_input);
-                return false;
-            }
-            if(receiverPhone==null || receiverPhone==undefined || receiverPhone==""){
-                Alert.alert(strings.receiverPhone_input);
-                return false;
-            }
-            if(receiverName==null || receiverName==undefined || receiverName==""){
-                Alert.alert(strings.receiverName_input);
-                return false;
-            }
-
-
+        if(this.props.cartInfo.length==0){
+            Alert.alert(strings.empty_car);
+            return false;
         }
         else{
-            if(this.props.cartInfo.length==0){
-                Alert.alert(strings.empty_car);
-                return false;
+            if(deliveryType==0){
+                if(this.props.cartInfo.length==0){
+                    Alert.alert(strings.alertTitle,strings.empty_car);
+                    return false;
+                }
+                if(receiverAddr==null || receiverAddr==undefined || receiverAddr==""){
+                    Alert.alert(strings.alertTitle,strings.receiverAddr_input);
+                    return false;
+                }
+                if(receiverPhone==null || receiverPhone==undefined || receiverPhone==""){
+                    Alert.alert(strings.alertTitle,strings.receiverPhone_input);
+                    return false;
+                }
+                if(receiverName==null || receiverName==undefined || receiverName==""){
+                    Alert.alert(strings.alertTitle,strings.receiverName_input);
+                    return false;
+                }
+
+
             }
         }
+
     }
 
     // _renderDeliverInfo(){
@@ -549,7 +626,7 @@ export class OrderCommit extends Component {
             this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{deliveryType: constants.SELF_DELIVERY})})
         }
         else{
-            alert(strings.no_shop)
+            Alert.alert(strings.alertTitle,strings.no_shop)
         }
     }
 
@@ -702,6 +779,7 @@ export class OrderCommit extends Component {
                 <View style={{width:SCREEN_WIDTH*0.8,flexDirection:'row',padding:20,justifyContent:'space-around',alignItems:'center',backgroundColor:'rgba(66, 148, 136, 1.0)'}}>
                     <TextInput
                         style={{width:SCREEN_WIDTH*0.5,backgroundColor:colors.baseWhite,borderRadius:5,padding:5}}
+                        keyboardType={deliveryAddType==constants.PHONE_TYPE?'numeric':'default'}
                         onChangeText={(value) =>{
                              switch (deliveryAddType) {
                                  case constants.NAME_TYPE:this.setState({deliveryInfo:Object.assign(this.state.deliveryInfo,{receiverName: value}),deliveryTextInput:value});break;
@@ -790,7 +868,7 @@ export class OrderCommit extends Component {
     fetchCode=()=>{
 
         if(this.state.verifyTel==null || this.state.verifyTel==''  || this.state.verifyTel==undefined){
-            alert(strings.null_tel)
+            Alert.alert(strings.alertTitle,strings.null_tel)
             return false
         }
         else{
@@ -811,7 +889,7 @@ export class OrderCommit extends Component {
 
     verifyFinal(){
         if(this.state.inputCode==null || this.state.inputCode==''  || this.state.inputCode==undefined){
-            alert(strings.null_code)
+            Alert.alert(strings.alertTitle,strings.null_code)
         }
         else{
             if(this.state.inputCode==this.state.verifyCode){
@@ -820,7 +898,7 @@ export class OrderCommit extends Component {
                 this.props.dispatch(orderActions.setCustomerPhoneChecked(this.state.verifyTel.toString()));
             }
             else{
-                alert(strings.code_error)
+                Alert.alert(strings.alertTitle,strings.code_error)
             }
         }
     }
@@ -1001,33 +1079,34 @@ export class OrderCommit extends Component {
         var date = new Date();
         var hour =  (date.getHours()).toString();
         if(hour>1 && hour<5){
-            alert('El servidor está en mantenimiento')
+            Alert.alert(strings.alertTitle,strings.no_service)
         }
         else{
             if(this.props.merchantId == null || this.props.merchantId == undefined){
-                alert(strings.no_shop)
+                Alert.alert(strings.alertTitle,strings.no_shop)
             }
             else{
-                if(this.timeFinal()){
+
                     if(this.props.phoneChecked==1){
                         if(this.props.isAgree==1){
                             if(this.checkInfoComplete()!=false) {
-                                if(isOrderMinLimit){
-                                    if(isDiscountScale){
-                                        this.props.dispatch(orderActions.submitOrder(this.state.deliveryInfo));
-                                        this.props.dispatch(authActions.setDefaultInfo(this.state.deliveryInfo));
-                                        // this.props.dispatch(authActions.login(this.props.username, this.props.password));
-                                        this.props.dispatch(orderActions.getOrderPrevInfoSuccess(null, null, null, null, null,null,null));
-                                        showCenterToast(strings.submitOrderSuccess);
+                                if(this.timeFinal()){
+                                    if(isOrderMinLimit){
+                                        if(isDiscountScale){
+                                            this.props.dispatch(orderActions.submitOrder(this.state.deliveryInfo));
+                                            this.props.dispatch(authActions.setDefaultInfo(this.state.deliveryInfo));
+                                            // this.props.dispatch(authActions.login(this.props.username, this.props.password));
+                                            this.props.dispatch(orderActions.getOrderPrevInfoSuccess(null, null, null, null, null,null,null));
+                                            showCenterToast(strings.submitOrderSuccess);
+                                        }
+                                        else{
+                                            Alert.alert(strings.alertTitle,'Las ofertas no pueden superar el '+discountScale+'% del pedido.')
+                                        }
                                     }
                                     else{
-                                        alert('Las ofertas no pueden superar el '+discountScale+'% del pedido.')
+                                        Alert.alert(strings.alertTitle,'Su pedido debe superar $'+orderMinLimit)
                                     }
                                 }
-                                else{
-                                    alert('Su pedido debe superar $'+orderMinLimit)
-                                }
-
                             }
                         }
                         else{
@@ -1038,7 +1117,7 @@ export class OrderCommit extends Component {
                     else{
                         this.refs.verify.open()
                     }
-                }
+
             }
         }
 
@@ -1176,6 +1255,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignItems:'center',
         height:400,
+        borderRadius:20,
         // minHeight:400,
         width:SCREEN_WIDTH*0.8,
     },
@@ -1203,6 +1283,16 @@ const mapStateToProps = (state) => ({
     union: state.get('union'),
     orderMinLimit:state.get("union").get("union").orderMinLimit,
     discountScale:state.get("union").get("union").discountScale,
+    canDelivery:state.get("union").get("union").canDelivery,
+    canSelf:state.get("union").get("union").canSelf,
+    deliveryAMEndTime:state.get("union").get("union").deliveryAMEndTime,
+    deliveryAMStartTime:state.get("union").get("union").deliveryAMStartTime,
+    deliveryPMEndTime:state.get("union").get("union").deliveryPMEndTime,
+    deliveryPMStartTime:state.get("union").get("union").deliveryPMStartTime,
+    selfAMEndTime:state.get("union").get("union").selfAMEndTime,
+    selfAMStartTime:state.get("union").get("union").selfAMStartTime,
+    selfPMEndTime:state.get("union").get("union").selfPMEndTime,
+    selfPMStartTime:state.get("union").get("union").selfPMStartTime,
     order: state.get('order'),
     shopping: state.get('shopping'),
     cartInfo:state.get('shopping').get('cartInfo'),

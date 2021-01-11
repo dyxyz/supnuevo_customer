@@ -6,9 +6,26 @@ import * as actions from "../actions/action-types";
 import constants from '../resources/constants';
 import {RefreshState} from "../components/RefreshListView";
 import {updatePriceList} from "../utils/tools";
+const count = constants.PRICE_LIST_PAGE;
 
 export default function unionReducer(state, action = {}) {
   switch (action.type) {
+      case actions.GET_PROVINCE_LIST_SUCCESS:
+          return state.withMutations(state => state
+              .set('dataError', '')
+              .set('province',action.province));
+      case actions.GET_PROVINCE_LIST_FAIL:
+          return state.withMutations(state => state
+              .set('dataError', action.error));
+      case actions.GET_CITY_LIST_SUCCESS:
+          action.city.splice(0,0,{cityName:'Todo',cityId:-1});
+          console.log(action.city)
+          return state.withMutations(state => state
+              .set('dataError', '')
+              .set('city',action.city));
+      case actions.GET_CITY_LIST_FAIL:
+          return state.withMutations(state => state
+              .set('dataError', action.error));
     case actions.GET_UNION_LIST_SUCCESS:
       return state.withMutations(state => state
           .set('dataResponse', constants.GET_UNION_LIST_SUCCESS)
@@ -20,6 +37,7 @@ export default function unionReducer(state, action = {}) {
           .set('dataError', action.error));
 
       case actions.GET_UNION_CUSTOMER_SHOPPING_CAR_SUCCESS:
+        console.log(action.union)
           return state.withMutations(state => state
               .set('dataResponse', constants.GET_UNION_MEMBER_LIST_SUCCESS)
               .set('dataError', '')
@@ -37,8 +55,7 @@ export default function unionReducer(state, action = {}) {
       return state.withMutations(state => state
           .set('dataResponse', constants.GET_UNION_MEMBER_LIST_SUCCESS)
           .set('dataError', '')
-          .set('merchants', action.merchants)
-          .set('edges', action.edges));
+          .set('merchants', action.merchants));
     case actions.GET_UNION_MEMBER_LIST_FAIL:
       return state.withMutations(state => state
           .set('dataResponse', constants.GET_UNION_MEMBER_LIST_FAIL)
@@ -76,7 +93,7 @@ export default function unionReducer(state, action = {}) {
 
     case actions.PRICE_LIST_REFRESHING:
       return state.withMutations(state => state
-          .set('start',2)
+          .set('start',10)
           .set('refreshState', RefreshState.HeaderRefreshing));
     case actions.PRICE_LIST_REFRESHING_NO_DATA:
       return state.withMutations(state => state
@@ -85,7 +102,7 @@ export default function unionReducer(state, action = {}) {
       // var start=state.get('union').get('start')+1
       //   console.log(start)
       return state.withMutations(state => state
-          .set('start', state.get('start')+1)
+          .set('start', state.get('start')+count)
           .set('refreshState', RefreshState.FooterRefreshing));
     case actions.PRICE_LIST_LOADING_NO_DATA:
       return state.withMutations(state => state
@@ -150,6 +167,8 @@ export default function unionReducer(state, action = {}) {
           .set('dataError', ''));
     case actions.SET_DEFAULT_UNION_AND_MERCHANT:
       return state.withMutations(state => state
+
+          .set('edges', action.union.edgeList?action.union.edgeList:state.get("edges"))
           .set('union', action.union?action.union:state.get("union"))
           .set('merchant', action.merchant?action.merchant:state.get("merchant")));
     case actions.UPDATE_PRICE_LIST_SUCCESS:

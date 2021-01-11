@@ -2,6 +2,7 @@
  * shopping-saga.js
  */
 
+import {Alert} from 'react-native'
 import {call, put, take, takeEvery} from "redux-saga/effects";
 import * as actions from "../actions/action-types";
 import * as Api from "../api/OrderApi";
@@ -40,7 +41,7 @@ function* getSupnuevoCustomerOrderPrevInfo (action) {
       }
 
     } else {
-        alert(strings.time_out);
+        Alert.alert(strings.alertTitle,strings.time_out);
       yield put(orderActions.getOrderPrevInfoFail(strings.getPrevOrderFail));
     }
   } catch (error) {
@@ -69,7 +70,7 @@ function* getSupnuevoCustomerOrderListOfDate (action) {
         }
       yield put(orderActions.getOrderListSuccess(unFinishedList,finishedList));
     } else {
-        alert(strings.time_out);
+        Alert.alert(strings.time_out);
       yield put(orderActions.getOrderListFail(strings.getOrderListFail));
     }
   } catch (error) {
@@ -88,7 +89,7 @@ function* submitSupnuevoCustomerOrder (action) {
       const newCarId= response.data;
       yield put(orderActions.submitOrderSuccess(newCarId));
     } else {
-        alert(strings.time_out);
+        Alert.alert(strings.time_out);
       yield put(orderActions.submitOrderFail(strings.submitOrderFail));
     }
   } catch (error) {
@@ -107,7 +108,7 @@ function* cancelCustomerOrder (action) {
         }
 
         else {
-            alert(strings.time_out);
+            Alert.alert(strings.alertTitle,strings.time_out);
             yield put(orderActions.cancelCustomerOrderFail(strings.submitOrderFail));
         }
     } catch (error) {
@@ -132,7 +133,7 @@ function* recallOrderToCar (action) {
         }
 
         else {
-            alert(strings.time_out);
+            Alert.alert(strings.alertTitle,strings.time_out);
             yield put(orderActions.recallCarFail(strings.submitOrderFail));
             // alert(strings.submitOrderFail)
         }
@@ -148,6 +149,9 @@ function* sendVerifyCode (action) {
     const {verifyCode,verifyTel} = action;
     try {
         const response = yield call(Api.sendVerifyCode, verifyCode,verifyTel);
+        if(response.re===-1){
+            Alert.alert(strings.alertTitle,response.data)
+        }
         // if (response.re === 1) {
         //
         //     yield put(orderActions.getOrderListOfDate(null,0));
@@ -171,7 +175,7 @@ function* setCustomerPhoneChecked (action) {
             yield put(authActions.setCustomerPhoneCheckedSuccess(verifyTel));
         }
         else{
-            alert(strings.time_out);
+            Alert.alert(strings.time_out);
         }
 
 
@@ -190,7 +194,7 @@ function* getHistoryCarList (action) {
             yield put(orderActions.getHistoryCarListSuccess(carList));
 
         } else {
-            alert(strings.time_out);
+            Alert.alert(strings.time_out);
             yield put(orderActions.getHistoryCarListFail(strings.getHistoryCarFail));
         }
     } catch (error) {

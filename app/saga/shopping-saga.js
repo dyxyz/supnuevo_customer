@@ -2,6 +2,7 @@
  * shopping-saga.js
  */
 
+import {Alert} from 'react-native'
 import {call, put, take, takeEvery} from "redux-saga/effects";
 import * as actions from "../actions/action-types";
 import * as Api from "../api/ShoppingApi";
@@ -16,22 +17,24 @@ const count = constants.PRICE_LIST_PAGE;
 function* getCustomerCartCommodityInfo (action) {
   const {cartId,unionId} = action;
     var goodsNumber=0;
+    var goodsPrice=0;
   try {
     const response = yield call(Api.getCustomerCartCommodityInfo, cartId,unionId);
     if (response.re === 1) {
-        // console.log(response.data)
+        console.log(response.data)
       const cartId = response.data.cartId;
       const cartInfo = response.data.itemList;
         cartInfo.map((item,i)=>{
             goodsNumber=goodsNumber+item.amount;
+            goodsPrice=goodsPrice+item.amount*item.price;
         });
       yield put(authActions.setCustomerCart(cartId));
-      yield put(shoppingActions.getCartInfoSuccess(cartInfo,goodsNumber));
+      yield put(shoppingActions.getCartInfoSuccess(cartInfo,goodsNumber,goodsPrice));
 
 
       // console.log(cartInfo.length)
     } else {
-        alert(strings.time_out);
+        Alert.alert(strings.alertTitle,strings.time_out);
       yield put(shoppingActions.getCartInfoFail(strings.getCartInfoFail));
     }
   } catch (error) {
@@ -44,13 +47,14 @@ function* getCommodityClass (action) {
     const {unionId} = action;
     try {
         const response = yield call(Api.getCommodityClass,unionId);
+        console.log(response)
         if (response.re === 1) {
             console.log(response)
             const classList = response.data;
             yield put(shoppingActions.getCommodityClassSuccess(classList));
 
         } else {
-            alert(strings.time_out);
+            Alert.alert(strings.alertTitle,strings.time_out);
             yield put(shoppingActions.getCommodityClassFail(strings.getCommodityClassFail));
         }
     } catch (error) {
@@ -87,7 +91,7 @@ function* updateCustomerCartCommodity (action) {
 
       console.log(cartInfo)
     } else {
-        alert(strings.time_out);
+        Alert.alert(strings.alertTitle,strings.time_out);
       yield put(shoppingActions.updateCartInfoFail(strings.updateCartInfoFail));
     }
   } catch (error) {
@@ -105,7 +109,7 @@ function* clearShoppingCar (action) {
             yield put(shoppingActions.getCartInfo(cartId,unionId));
             yield put(unionActions.getUnionPriceList(unionId, 0, count,cartId));
         } else {
-            alert(strings.time_out);
+            Alert.alert(strings.alertTitle,strings.time_out);
             yield put(shoppingActions.clearCartInfoFail(strings.clearCarFail));
         }
     } catch (error) {

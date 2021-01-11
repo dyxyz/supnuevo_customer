@@ -4,6 +4,68 @@
 
 import * as actions from "../actions/action-types";
 
+
+// 省列表
+export function getProvinceList() {
+    return {
+        type: actions.GET_PROVINCE_LIST,
+    };
+}
+export function getProvinceListSuccess(province) {
+    return {
+        type: actions.GET_PROVINCE_LIST_SUCCESS,
+        province: province,
+    }
+}
+
+export function getProvinceListFail(error) {
+    return {
+        type: actions.GET_PROVINCE_LIST_FAIL,
+        error: error
+    }
+}
+// 市列表
+export function getCityList(provinceId) {
+    return {
+        type: actions.GET_CITY_LIST,
+        provinceId:provinceId
+    };
+}
+export function getCityListSuccess(city) {
+    return {
+        type: actions.GET_CITY_LIST_SUCCESS,
+        city: city,
+    }
+}
+
+export function getCityListFail(error) {
+    return {
+        type: actions.GET_CITY_LIST_FAIL,
+        error: error
+    }
+}
+// cityId获取联盟列表
+export function getUnionListByCityId(cityId,provinceId) {
+    return {
+        type: actions.GET_UNION_LIST_CITY,
+        cityId:cityId,
+        provinceId:provinceId
+    };
+}
+
+export function getUnionListByCityIdSuccess(unions) {
+    return {
+        type: actions.GET_UNION_LIST_CITY_SUCCESS,
+        unions: unions,
+    }
+}
+
+export function getUnionListByCityIdFail(error) {
+    return {
+        type: actions.GET_UNION_LIST_CITY_FAIL,
+        error: error
+    }
+}
 // 联盟列表
 export function getUnionList() {
   return {
@@ -34,12 +96,13 @@ export function setDefaultUnionAndMerchant(union, merchant){
 }
 
 // 联盟成员
-export function getUnionMemberList(unionId,username,password) {
+export function getUnionMemberList(unionId,username,password,union) {
   return {
     type: actions.GET_UNION_MEMBER_LIST_ACTION,
     unionId: unionId,
     username:username,
     password:password,
+    union:union,
   };
 }
 
@@ -69,11 +132,11 @@ export function getCustomerShoppingCarFail(error) {
     }
 }
 
-export function getUnionMemberListSuccess(merchants, edges) {
+export function getUnionMemberListSuccess(merchants) {
   return {
     type: actions.GET_UNION_MEMBER_LIST_SUCCESS,
     merchants: merchants,
-    edges: edges,
+    // edges: edges,
   }
 }
 

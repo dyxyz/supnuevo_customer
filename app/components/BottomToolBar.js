@@ -23,6 +23,7 @@ const ICON_TYPE = 1;
 // const ACTION_HOME={name:'md-home', type: ICON_TYPE};
 // const ACTION_BACK={name:'md-arrow-back', type: ICON_TYPE};
 // const ACTION_LOGOUT={name:'md-log-out', type: ICON_TYPE};
+
 const ACTION_HOME={name:strings.first_page, type: TEXT_TYPE};
 const ACTION_BACK={name:strings.back, type: TEXT_TYPE};
 const ACTION_LOGOUT={name:strings.log_out, type: TEXT_TYPE};
@@ -140,6 +141,7 @@ const bottomToolBar ={
   get ACTION_ORDER(){return ACTION_ORDER},
   get ACTION_CLASS(){return ACTION_CLASS},
   get ACTION_SETTING(){return ACTION_SETTING},
+
 
 }
 

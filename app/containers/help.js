@@ -66,7 +66,7 @@ export class help extends Component {
                 >
                     <View style={{width:SCREEN_WIDTH*0.4,marginTop:SCREEN_HEIGHT*0.05,backgroundColor:colors.primaryColor,height:SCREEN_HEIGHT*0.05,
                         justifyContent:"center",alignItems:"center",borderRadius:SCREEN_WIDTH*0.02}}>
-                        <Text style={{fontSize:16,color:"white",letterSpacing:0}} allowFontScaling={false}>skip</Text>
+                        <Text style={{fontSize:16,color:"white",letterSpacing:0}} allowFontScaling={false}>Continuar</Text>
                     </View>
                 </TouchableOpacity>
                 <View style={styles.indicator}>

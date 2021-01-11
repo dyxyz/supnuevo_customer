@@ -49,7 +49,7 @@ export class UnionMemberList extends Component {
 
     componentDidMount() {
       const union = this.props.union.get("union");
-      this.props.dispatch(unionActions.getUnionMemberList(union.unionId,this.props.username,this.props.password));
+      this.props.dispatch(unionActions.getUnionMemberList(union.unionId,this.props.username,this.props.password,union));
       // console.log(this.props.union.get("merchants"))
     }
 
@@ -76,7 +76,6 @@ export class UnionMemberList extends Component {
       const merchants = this.props.union.get("merchants");
       const edges = this.props.union.get("edges");
       const mapUrl={uri:strings.head+'supnuevo/map/'+this.props.unionNum+'.jpg'+'?'+ts}
-      console.log(mapUrl)
 
 
       return (
@@ -85,14 +84,14 @@ export class UnionMemberList extends Component {
                           rightAction={ACTION_HELP}
                           _onLeftIconPress={this._onVolumeIconPress}
                           _onRightIconPress={this._onHelpIconPress}/>
-              {Platform.OS=="ios"?
-                  <Image source={mapUrl} style={{flex:1,width:SCREEN_WIDTH}} resizeMode={"contain"}/>
+              {/*{Platform.OS=="ios"?*/}
+                  {/*<Image source={mapUrl} style={{flex:1,width:SCREEN_WIDTH}} resizeMode={"contain"}/>*/}
 
-                  :
-                  this._renderMap(edges, merchants)
-              }
+                  {/*:*/}
+                  {/*this._renderMap(edges, merchants)*/}
+              {/*}*/}
 
-
+              {this._renderMap(edges, merchants)}
               {this._renderUnionList(merchants)}
               <BottomToolBar navigation = {this.props.navigation}
                              leftAction = {ACTION_DISCOUNT}
@@ -109,6 +108,7 @@ export class UnionMemberList extends Component {
   }
 
   _renderMap(edges, merchants){
+
       return (
           <MicrosoftMap edges={edges} merchants={merchants}/>
       );
@@ -209,10 +209,11 @@ export class UnionMemberList extends Component {
   _onPricePress =() =>{this.props.navigation.push("UnionPrice")};
 
   _onUnionMember =(member) =>{
+      console.log(member)
       const unionId = this.props.union.get("union").unionId;
       const merchantId = member.merchantId;
       this.props.dispatch(authActions.setCustomerDefaultMerchant(unionId, merchantId));
-      this.props.dispatch(unionActions.setDefaultUnionAndMerchant(null,member));
+      this.props.dispatch(unionActions.setDefaultUnionAndMerchant(this.props.union.get("union"),member));
 
   };
 

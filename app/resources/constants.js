@@ -14,9 +14,9 @@ export default {
   SUPNUEVO_VENTAS_BASE_URL: 'http://Supnuevo-ventas.com.ar:8080',
   SPORTS_HOT_BASE_URL: 'http://114.215.99.2',
 
-  // SUPNUEVO_TEST_BASE_URL: 'http://211.87.224.41:8080/supnuevo',
+  // SUPNUEVO_TEST_BASE_URL: 'http://211.87.224.41:8080',
   // SUPNUEVO_TEST_BASE_URL:'http://142.4.194.0', //远程测试服务器
-  //     SUPNUEVO_TEST_BASE_URL: 'http://192.168.1.100:8080/supnuevo', //legion111
+  //     SUPNUEVO_TEST_BASE_URL: 'http://192.168.1.101:8080', //legion111
   //   SUPNUEVO_TEST_BASE_URL: 'http://192.168.43.43:8080/supnuevo', //legion
   SUPNUEVO_TEST_BASE_URL: 'http://union.supnuevo.com.ar', //正式服务器
   //   SUPNUEVO_TEST_BASE_URL: 'http://192.168.101.11:8080/supnuevo', //家

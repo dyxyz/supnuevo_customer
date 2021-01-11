@@ -12,6 +12,7 @@ export default function shoppingReducer(state, action = {}) {
                 .set('dataResponse', constants.GET_CART_INFO_SUCCESS)
                 .set('dataError', '')
                 .set('goodsNumber', action.goodsNumber)
+                .set('goodsPrice', action.goodsPrice)
                 .set('cartInfo', action.cartInfo));
         case actions.GET_CART_INFO_FAIL:
             return state.withMutations(state => state
@@ -30,13 +31,16 @@ export default function shoppingReducer(state, action = {}) {
             console.log(state.get('priceList'))
             const newCarInfo = updateCartInfo(state.get('cartInfo'),action.cartInfoItem);
             var goodsNumber=0;
+            var goodsPrice=0;
             newCarInfo.map((item,i)=>{
                 goodsNumber=goodsNumber+item.amount;
+                goodsPrice=goodsPrice+item.amount*item.price;
             });
             return state.withMutations(state => state
                 .set('dataResponse', constants.UPDATE_CART_INFO_SUCCESS)
                 .set('dataError', '')
                 .set('cartInfo', newCarInfo)
+                .set('goodsPrice', goodsPrice)
                 .set('goodsNumber', goodsNumber));
         case actions.UPDATE_CART_INFO_FAIL:
             return state.withMutations(state => state

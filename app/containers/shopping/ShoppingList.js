@@ -27,7 +27,7 @@ import {Avatar, Badge, ListItem} from "react-native-elements";
 import colors from "../../resources/colors";
 import {
     getHeaderHeight, replaceMember, SCREEN_WIDTH, SCREEN_HEIGHT, showCenterToast,
-    getTabBarHeight
+    getTabBarHeight,toDecimal2
 } from "../../utils/tools";
 import ShoppingCart from "../../components/ShoppingCart";
 import {AISearchBar} from "../../components/AIServer";
@@ -126,6 +126,7 @@ export class ShoppingList extends Component {
 
         // let curStart = this.state.start + 1;
         this.props.dispatch(unionActions.getUnionPriceList(this.props.unionId, this.props.start, count, this.props.cartId));
+        console.log(this.props.start)
         // this.setState({start: curStart});
     };
 
@@ -148,7 +149,7 @@ export class ShoppingList extends Component {
                 <View
                     style={{marginBottom: Platform.OS=='ios'?8:getHeaderHeight(),flex:1}}
                 >
-                    <IntroDivider intro={strings.car_forth+' '+this.props.goodsNumber+' '+strings.car_fore} _onClearPress={this._clearCar} flag={'1'} />
+                    <IntroDivider intro={strings.car_forth+' '+this.props.goodsNumber+' '+strings.car_fore+' ,$'+toDecimal2(this.props.goodsPrice)} _onClearPress={this._clearCar} flag={'1'} />
                     {this._renderShoppingCart(cartInfo)}
                     {this._renderSearchBar()}
                     {this._renderPriceList()}
@@ -451,6 +452,7 @@ export class ShoppingList extends Component {
     }
 
     _transFromPriceToCartInfo(price, type){
+        console.log(price.itemId)
         var amount =1;
         switch (type) {
             case constants.CART_CREATE:amount=1;break;
@@ -551,6 +553,8 @@ const mapStateToProps = (state) => ({
     shopping: state.get('shopping'),
     cartInfo: state.get('shopping').get("cartInfo"),
     goodsNumber: state.get('shopping').get("goodsNumber"),
+    goodsPrice: state.get('shopping').get("goodsPrice"),
+
 });
 
 export default connect(mapStateToProps)(ShoppingList)

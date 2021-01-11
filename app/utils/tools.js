@@ -269,7 +269,7 @@ export function toDecimal2(x) {
     rs = s.length;
     s += '.';
   }
-  while (s.length <= rs + 3) {
+  while (s.length <= rs + 2) {
     s += '0';
   }
   return s;

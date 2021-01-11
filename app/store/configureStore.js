@@ -65,12 +65,14 @@ const initialState = new Immutable.Map({
     isNewDevice:false,
   }),
   union: Immutable.Map({
+    province:null,
+    city:null,
     union: null,
     discount: null,
     priceList: [],
     taxId:null,
     backTop:0,
-    start:2,
+    start:10,
     unions: [],
     merchant: null,
     merchants: [],
@@ -86,6 +88,7 @@ const initialState = new Immutable.Map({
     dataResponse: constants.INITIAL,
     cartInfo:[],
     goodsNumber:0,
+    goodsPrice:0,
     classList:[],
   }),
   order: Immutable.Map({
